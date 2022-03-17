@@ -1,0 +1,32 @@
+
+.title {
+  font-family: "Monoton", cursive;
+  font-size: 5rem;
+  text-align: center;
+  color: #1C375B;
+}
+
+.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.signInContainer {
+  width:40%;
+  border-radius: 10px;
+  border: 1px gray solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.collLogo {
+  margin-top: 60px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-height: 100px;
+  max-width: auto;
+}

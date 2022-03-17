@@ -1,0 +1,37 @@
+.ql-editor {
+  min-height: 100px;
+  max-height: 100px;
+  overflow: hidden;
+  overflow-y: scroll;
+}
+
+.ql-snow.ql-toolbar {
+  background: #f8f9fa;
+}
+
+.comment:hover {
+  background: #f8f9fa;
+  border-left: 3px solid #428bca;
+}
+
+.reply {
+  font-size: 0.9rem;
+  color: #545759;
+}
+
+.upVoteIcon:hover {
+  color: #808588;
+}
+
+.downVoteIcon:hover {
+  color: #808588;
+}
+
+.dropdown-toggle::after {
+  display: none;
+}
+
+.comment-menu:hover {
+  background-color: #0069d9;
+  color: white;
+}

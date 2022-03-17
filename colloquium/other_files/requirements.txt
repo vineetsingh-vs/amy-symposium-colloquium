@@ -1,0 +1,13 @@
+flask
+flask_cors
+flask_jwt_extended==3.25.1
+requests
+waitress
+pytest
+sqlalchemy
+psycopg2-binary
+argon2-cffi
+oauth2client
+flask_restful
+xmltodict
+flask_cas
