@@ -29,8 +29,17 @@ export const PATHS = {
 };
 
 export const URI_GENERATORS = {
-  REVIEW_PAPER: paperId => "/reviewpaper/" + paperId,
-  REVIEW_LIST: paperId => "/reviews/" + paperId,
+  // Make a new Review on a paper
+  REVIEW_PAPER: paperId => "/" + paperId + "/" + "/reviewpaper/",
+  // Get all Reviews on a paper
+  REVIEW_LIST: paperId => "/" + paperId + "/" + "/reviews/",
+
+  // Make a new Comment on a paper
+  COMMENT_PAPER: paperId => "/" + paperId + "/" + "/commentpaper/",
+
+  // Return the document
+  PAPER : paperId => "/" + paperId + "/",
+
   USER_PROFILE: userId => "/user/" + userId
 }
 
@@ -107,6 +116,9 @@ class AppRouter extends React.Component {
               />
             )}
           />
+
+          {/* IF THE USER IS LOGGED IN HERE */}
+
           {!this.state.loggedInUser.name ? null : (
             <div>
               <NavRoute
@@ -116,6 +128,8 @@ class AppRouter extends React.Component {
                   <UserProfile loggedInUser={this.state.loggedInUser} />
                 )}
               />
+              
+              {/* DASHBOARD */}
               <NavRoute
                 path={PATHS.DASHBOARD}
                 exact
@@ -123,30 +137,38 @@ class AppRouter extends React.Component {
                   <PaperDashboard loggedInUser={this.state.loggedInUser} />
                 )}
               />
+
               <NavRoute
                 path={PATHS.PUBLISH_PAPER}
                 key="addPaper"
                 exact
                 component={() => <PaperEditPage isNewPaper={true} loggedInUser={this.state.loggedInUser}/>}
               />
+
               <NavRoute
                 path={PATHS.EDIT_PAPER}
                 key="editPaper"
                 exact
                 component={() => <PaperEditPage isNewPaper={false} loggedInUser={this.state.loggedInUser}/>}
               />
+
               <NavRoute
-                path={"/reviewpaper/:paperId"}
+                path={":paperId/reviewpaper/"}
                 key="reviewpaper"
                 exact
                 component={() => <ReviewPaper />}
               />
+
+              {/* Separating Reviews from actual paper instead of doing :paperId/reviews */}
               <NavRoute
-                path={"/reviews/:paperId"}
+                path={":paperId/reviews/"}
                 key="reviews"
                 exact
                 component={() => <ReviewList />}
               />
+
+              {/* Shared Papers, Published Papers, My Papers */}
+
               <NavRoute
                 path={PATHS.ACTIVITIY}
                 key="activity"
