@@ -16,6 +16,7 @@ import ReviewPaper from "./views/ReviewPaper";
 import ReviewList from "./views/ReviewList";
 import UserProfile from "./views/UserProfile";
 import ActivityPage from "./views/ActivityPage";
+import DocumentView from "./views/DocumentView";
 
 export const PATHS = {
   HOME: "/",
@@ -168,6 +169,14 @@ class AppRouter extends React.Component {
               />
 
               {/* Shared Papers, Published Papers, My Papers */}
+
+              {/* Document View Page */}
+              <NavRoute
+                path={":paperId"}
+                key="documentview"
+                exact 
+                component={() => <DocumentView />}
+              />
 
               <NavRoute
                 path={PATHS.ACTIVITIY}
