@@ -26,6 +26,9 @@ class PaperDashboard extends React.Component {
     this.navigateToReview = this.navigateToReview.bind(this);
     this.navigateToReviewList = this.navigateToReviewList.bind(this);
     this.handleTagChange = this.handleTagChange.bind(this);
+
+    // Adding Navigation to comments
+    this.navigateToComment = this.navigateToComment.bind(this);
   }
 
   handleTagChange(updatedTags) {
@@ -81,22 +84,39 @@ class PaperDashboard extends React.Component {
     );
   }
 
-  navigateToReview(paperId) {
-    this.props.history.push({
-      pathname: URI_GENERATORS.REVIEW_PAPER(paperId),
-    });
-  }
-
+  // THIS IS WHERE WE WANT TO CONSOLIDATE COMMENTS AND REVIEWS
   navigateToReviewList(paperId) {
     this.props.history.push({
       pathname: URI_GENERATORS.REVIEW_LIST(paperId),
     });
   }
 
+  navigateToReview(paperId) {
+    this.props.history.push({
+      pathname: URI_GENERATORS.REVIEW_PAPER(paperId),
+    });
+  }
+
+  // Navigating to a paper and get comments ***** will need to query to get specific section of comments for a page (get all comments --> get page related comments)
+
+  navigateToComment(paperId){
+    this.props.history.push({
+      pathname: URI_GENERATORS.COMMENT_PAPER(paperId),
+    })
+  }
+
   navigateToUserProfile(userId) {
     this.props.history.push({
       pathname: URI_GENERATORS.USER_PROFILE(userId),
     });
+  }
+
+  // Developing the Paper URI for react-doc-viewer -------------------------- MAY NOT NEED TO BE HERE 
+
+  navigateToPaper(paperId){
+    this.props.history.push({
+      pathname: URI_GENERATORS.PAPER(paperId),
+    })
   }
 
   makeValidHttpUrl(string) {
