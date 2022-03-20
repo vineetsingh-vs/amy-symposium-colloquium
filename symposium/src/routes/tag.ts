@@ -1,8 +1,8 @@
 import express from "express";
-import { getUser } from "../controllers/user";
+import { getTags } from "../controllers/tag";
 
 const router = express.Router();
 
-router.post("/me", getUser);
+router.post("/", getTags);
 
 export default router;

@@ -1,66 +1,17 @@
-import { Request, Response } from 'express';
-import { User } from '../entities/User';
+import { Request, Response } from "express";
 
-export const signupUser = async (req: Request, res: Response) => {
-  const { username, password } = req.body;
-
-  const existingUser = await User.findOne({
-    where: `"username" ILIKE '${username}'`,
-  });
-
-  if (existingUser) {
-    return res
-      .status(401)
-      .send({ message: `Username '${username}' is already taken.` });
-  }
-
-  const saltRounds = 10;
-  const passwordHash = await bcrypt.hash(password, saltRounds);
-
-  const user = User.create({ username, passwordHash });
-  await user.save();
-
-  const token = jwt.sign(
-    {
-      id: user.id,
-      username: user.username,
-    },
-    JWT_SECRET
-  );
-
-  return res.status(201).json({
-    id: user.id,
-    username: user.username,
-    token,
-  });
+export const signUp = async (req: Request, res: Response) => {
+    res.status(200).send({ body: "SignUp", access_token: "test" });
 };
 
-export const loginUser = async (req: Request, res: Response) => {
-  const { username, password } = req.body;
-  const { errors, valid } = loginValidator(username, password);
+export const login = async (req: Request, res: Response) => {
+    res.status(200).send({ body: "Login", access_token: "test" });
+};
 
-  if (!valid) {
-    return res.status(400).send({ message: Object.values(errors)[0] });
-  }
+export const loginCas = async (req: Request, res: Response) => {
+    res.status(200).send({ body: "Login CAS", access_token: "test" });
+};
 
-  const user = await User.findOne({
-    where: `"username" ILIKE '${username}'`,
-  });
-
-  if (!user) {
-    return res.status(401).send({ message: `User: '${username}' not found.` });
-  }
-
-  const credentialsValid = await bcrypt.compare(password, user.passwordHash);
-
-  if (!credentialsValid) {
-    return res.status(401).send({ message: 'Invalid credentials.' });
-  }
-
-  const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET);
-  return res.status(201).json({
-    id: user.id,
-    username: user.username,
-    token,
-  });
+export const loginSocial = async (req: Request, res: Response) => {
+    res.status(200).send({ body: "Login Social", access_token: "test" });
 };

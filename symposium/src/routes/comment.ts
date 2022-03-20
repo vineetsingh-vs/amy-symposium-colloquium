@@ -1,8 +1,8 @@
 import express from "express";
-import { getUser } from "../controllers/user";
+import { getComments } from "../controllers/comment";
 
 const router = express.Router();
 
-router.post("/me", getUser);
+router.post("/", getComments);
 
 export default router;

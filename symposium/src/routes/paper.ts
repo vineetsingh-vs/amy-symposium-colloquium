@@ -1,8 +1,8 @@
 import express from "express";
-import { getUser } from "../controllers/user";
+import { getPapers } from "../controllers/paper";
 
 const router = express.Router();
 
-router.post("/me", getUser);
+router.post("/", getPapers);
 
 export default router;
