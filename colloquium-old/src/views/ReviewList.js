@@ -142,7 +142,6 @@ class ReviewList extends React.Component {
           <h3>Reviews for {this.state.paper.title}</h3>
         </Row>
         <DiscussionForum
-          paper = {this.state.paper}
           comments={this.state.paper.reviews.map((r) => {
             return {
               reviewText: r.reviewText,

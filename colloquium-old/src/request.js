@@ -3,8 +3,8 @@ import { PATHS } from "./AppRouter";
 const PORT_FROM_WINDOW_VAR = window.location.port
   ? ":" + window.location.port
   : "";
-const SERVER_PORT =
-  process.env.NODE_ENV === "development" ? ":5000" : PORT_FROM_WINDOW_VAR;
+const SERVER_PORT = ":4000"
+  //process.env.NODE_ENV === "development" ? ":5000" : PORT_FROM_WINDOW_VAR;
 const HOSTNAME =
   window.location.protocol + "//" + window.location.hostname + SERVER_PORT;
 const JWT_TOKEN_KEY = "jwt-token";

@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc",
-    "dev": "nodemon dist/index.js",
+    "dev": "npx nodemon src/app.ts",
     "start": "node dist/index.js",
     "docker:db": "docker-compose -f docker-compose.db.yml up -d"
+    "build": "tsc -p ."
   },
   "keywords": [],
   "author": "",
