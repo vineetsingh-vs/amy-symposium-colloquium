@@ -3,6 +3,6 @@ import { getComments } from "../controllers/comment";
 
 const router = express.Router();
 
-router.post("/", getComments);
+router.get("/", getComments);
 
 export default router;

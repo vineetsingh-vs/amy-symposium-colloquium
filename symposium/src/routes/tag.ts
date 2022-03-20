@@ -3,6 +3,6 @@ import { getTags } from "../controllers/tag";
 
 const router = express.Router();
 
-router.post("/", getTags);
+router.get("/", getTags);
 
 export default router;

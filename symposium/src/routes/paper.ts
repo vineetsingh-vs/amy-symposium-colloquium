@@ -3,6 +3,6 @@ import { getPapers } from "../controllers/paper";
 
 const router = express.Router();
 
-router.post("/", getPapers);
+router.get("/", getPapers);
 
 export default router;
