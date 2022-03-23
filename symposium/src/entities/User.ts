@@ -30,7 +30,7 @@ export class User extends BaseEntity {
     @Column()
     affiliation!: string;
 
-    @Column()
+    @Column("text", { array: true })
     roles!: string[];
 
     // TODO:
