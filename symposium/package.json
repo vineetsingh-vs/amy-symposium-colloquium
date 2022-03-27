@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "npx nodemon src/app.ts",
+    "dev": "npx nodemon src/index.ts",
     "start": "node dist/index.js",
     "docker:db": "docker-compose -f docker-compose.db.yml up -d",
     "build": "tsc -p ."
@@ -26,6 +26,7 @@
     "cors": "^2.8.5",
     "dotenv-safe": "^8.2.0",
     "express": "^4.17.3",
+    "express-async-handler": "^1.2.0",
     "formidable": "^2.0.1",
     "pg": "^8.4.0",
     "reflect-metadata": "^0.1.13",
