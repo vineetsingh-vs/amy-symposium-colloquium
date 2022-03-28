@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
 import { Admin, Resource } from "react-admin";
-import { UserList } from "../admin/UserList";
+import { UserList, UserCreate, UserEdit } from "./admin-ui/user";
 import jsonServerProvider from "ra-data-json-server";
 
 // test data from json place holder site
@@ -10,7 +9,7 @@ const AdminDashboard = () => {
     return (
         <div className="adminDashboard">
             <Admin dataProvider={dataProvider} title={"Symposium"}>
-                <Resource name="users" list={UserList} />
+                <Resource name="users" list={UserList} edit={UserEdit} create={UserCreate} />
             </Admin>
         </div>
     );
