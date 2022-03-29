@@ -7,7 +7,6 @@ services:
       context: .
       dockerfile: Dockerfile.dev
     env_file: .env.local
-    command: npm run dev
     ports:
       - 4000:4000
     external_links:

@@ -6,9 +6,8 @@ services:
     restart: always
     build:
       context: .
-      dockerfile: Dockerfile.dev
-    env_file: .env.local
-    command: npm run dev
+      dockerfile: Dockerfile
+    env_file: .env
     ports:
       - 4000:8080
     external_links:

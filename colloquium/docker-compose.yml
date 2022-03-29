@@ -7,7 +7,6 @@ services:
       context: .
       dockerfile: Dockerfile.dev
     env_file: .env.local
-    command: npm start
     ports:
       - 3000:3000
     networks:

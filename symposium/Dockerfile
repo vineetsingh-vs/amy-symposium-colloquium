@@ -21,7 +21,7 @@ WORKDIR /usr
 COPY package.json ./
 
 RUN npm install --only=production
-COPY --from=build /usr/build ./
+COPY --from=build /usr/dist ./
 COPY --from=build /usr/.env ./
 COPY --from=build /usr/.env.example ./
 RUN npm install pm2 -g
