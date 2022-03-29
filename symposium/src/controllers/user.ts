@@ -8,6 +8,13 @@ export const createUser = async (req: Request, res: Response) => {
     console.log("[userController] createUser");
     const { firstName, lastName, username, email, affiliation, password } = req.body;
 
+    let userExists = await User.findOne({ where: { email: email } });
+
+    if (userExists) {
+        res.status(400);
+        console.log("User already exists");
+    }
+
     //
     // create user from schema and save to db
     const newUser = User.create({
@@ -19,6 +26,9 @@ export const createUser = async (req: Request, res: Response) => {
         password: password,
         affiliation: affiliation,
     });
+
+    // TODO: create empty many-many relations with papers and reviews
+
     await newUser.save();
     console.log("saved user: ");
     console.log(newUser);
