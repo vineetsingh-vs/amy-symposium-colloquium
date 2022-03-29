@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 
-export const getPapers = async (req: Request, res: Response) => {
+export const getAllPapers = async (req: Request, res: Response) => {
     let ao = [];
     ao.push({
         id: "1",
@@ -13,3 +13,15 @@ export const getPapers = async (req: Request, res: Response) => {
     });
     res.status(200).send(ao);
 };
+
+export const getPaperById = async(req: Request, res: Response) => {};
+
+export const getPaperVersionById = async(req: Request, res: Response) => {};
+
+export const addPaper = async(req: Request, res: Response) => {};
+
+export const updatePaper = async(req: Request, res: Response) => {};
+
+export const deletePaper = async(req: Request, res: Response) => {};
+
+export const deletePaperVersion = async(req: Request, res: Response) => {};
