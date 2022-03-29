@@ -13,25 +13,25 @@ function App() {
                     <Route path="*" component={PageNotFound} />
 
                     {/* Log in Page */}
-                    {/* <Route exact path="/" components={LoginView} /> */}
+                    <Route exact path="/" components={LoginView} />
 
                     {/* Document and Comments */}
-                    {/* <Route exact path="/:paperId" component={DocumentView} /> */}
+                    <Route exact path="/:paperId" component={DocumentView} />
 
                     {/* Review Page containing all Comments + overall Reviews */}
-                    {/* <Route exact path="/:paperId/reviews" component={ReviewView} /> */}
+                    <Route exact path="/:paperId/reviews" component={ReviewView} />
 
                     {/* <Route exact path="/:paperId/comments" component={CommentView} /> */}
 
                     {/* Main User Screens */}
-                    {/* <Route exact path="/published" component={PublishView} /> */}
-                    {/* <Route exact path="/shared" component={SharedView} /> */}
-                    {/* <Route exact path="/mypapers" component={MyPapersView} /> */}
+                    <Route exact path="/published" component={PublishView} />
+                    <Route exact path="/shared" component={SharedView} />
+                    <Route exact path="/mypapers" component={MyPapersView} />
 
                     {/* "Popup screens" */}
-                    {/* <Route exact path="/:paperId/share" components={SharingView} /> */}
-                    {/* <Route exact path="/:paperId/reupload" components={ReuploadView} /> */}
-                    {/* <Route exact path="/upload" components={UploadPaperView} /> */}
+                    <Route exact path="/:paperId/share" components={SharingView} />
+                    <Route exact path="/:paperId/reupload" components={ReuploadView} />
+                    <Route exact path="/upload" components={UploadPaperView} />
 
                 </Switch>
             </div>
