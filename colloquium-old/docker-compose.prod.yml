@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  colloquium:
+    container_name: colloquium
+    restart: always
+    build: .
+    env_file: .env
+    ports:
+      - 80:80
+    networks:
+      - app-network
+
+networks:
+    app-network:
+        driver: bridge
