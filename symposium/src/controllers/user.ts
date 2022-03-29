@@ -101,9 +101,7 @@ export const updateUser = async (req: Request, res: Response) => {
         user.firstName = firstName || user.firstName;
         user.lastName = lastName || user.lastName;
         user.username = username || user.username;
-        if (password) {
-            user.password = password;
-        }
+        user.password = password || user.password;
         user.affiliation = affiliation || user.affiliation;
         await user.save();
         res.status(200).json({
