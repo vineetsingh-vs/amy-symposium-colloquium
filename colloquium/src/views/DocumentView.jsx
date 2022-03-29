@@ -2,13 +2,13 @@ import React from "react";
 import DocViewer from "react-doc-viewer";
 import { withRouter } from "react-router-dom";
 
-class DocumentView extends React.Component{
-    constructor(props){
+class DocumentView extends React.Component {
+    constructor(props) {
         super(props);
 
         this.state = {
             version: 1,
-        }
+        };
 
         this.addComment = this.addComment.bind(this);
         this.addReplyComment = this.addReplyComment.bind(this);
@@ -21,42 +21,27 @@ class DocumentView extends React.Component{
     }
 
     // Adds comment to specific paperId/pageId
-    addComment(paperId, pageId, commentId){
-        
-    }
+    addComment(paperId, pageId, commentId) {}
 
     // Adds reply to a previous parent comment
-    addReplyComment(paperId, pageId, parentCommentId, commentId){
-
-    }
+    addReplyComment(paperId, pageId, parentCommentId, commentId) {}
 
     // Page to reupload document for the next version
-    reupload(paperId, versionId){
-
-    }
+    reupload(paperId, versionId) {}
 
     // Adding or Deleting people allowed to view paper
-    handleShare(paperId){
-
-    }
+    handleShare(paperId) {}
 
     // Update version number and "clear" comments / reviews
-    handleVersion(paperId){
-
-    }
+    handleVersion(paperId) {}
 
     // Views: Review, Documents, Comments, or Document and Comments
-    handleViewChange(paperId){
+    handleViewChange(paperId) {}
 
-    }
-
-    render(){
-        return (
-            <h1>
-                THIS IS TESTING THE VIEW OF A DOCUMENT
-            </h1>
-        )
+    render() {
+        return <h1>THIS IS TESTING THE VIEW OF A DOCUMENT</h1>;
     }
 }
 
 export default withRouter(DocumentView);
+
