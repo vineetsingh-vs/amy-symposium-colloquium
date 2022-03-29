@@ -2,7 +2,10 @@ import * as React from "react";
 import {
     List,
     Datagrid,
+    PasswordInput,
     TextField,
+    DateField,
+    DateInput,
     EmailField,
     Create,
     Edit,
@@ -14,14 +17,15 @@ export const UserList = (props) => {
     return (
         <List {...props} bulkActionButtons={false} title={"Users"}>
             <Datagrid rowClick="edit">
-                <TextField source="id" />
-                <TextField source="name" />
-                <TextField source="username" />
-                <EmailField source="email" />
-                <TextField source="address.street" />
-                <TextField source="phone" />
-                <TextField source="website" />
-                <TextField source="company.name" />
+                <TextField label="Affiliation" source="affiliation" />
+                <EmailField label="Email" source="email" />
+                <DateField source="createdAt" label="Created At" />
+                <TextField label="First Name" source="firstName" />
+                <TextField label="ID" source="id" />
+                <TextField label="Last Name" source="lastName" />
+                <TextField label="Roles" source="roles" />
+                <DateField source="updatedAt" label="Updated At" />
+                <TextField label="Username" source="username" />
             </Datagrid>
         </List>
     );
@@ -31,14 +35,13 @@ export const UserCreate = (props) => {
     return (
         <Create {...props}>
             <SimpleForm>
-                <TextInput source="id" />
-                <TextInput source="name" />
-                <TextInput source="username" />
-                <TextInput type="email" source="email" />
-                <TextInput source="address.street" />
-                <TextInput source="phone" />
-                <TextInput source="website" />
-                <TextInput source="company.name" />
+                <TextInput label="Affiliation" source="affiliation" />
+                <TextInput label="Email" type="email" source="email" />
+                <TextInput label="First Name" source="firstName" />
+                <TextInput label="Last Name" source="lastName" />
+                <TextInput label="Roles" source="roles" />
+                <TextInput label="Username" source="username" />
+                <PasswordInput label="Password" source="password" />
             </SimpleForm>
         </Create>
     );
@@ -47,14 +50,11 @@ export const UserCreate = (props) => {
 export const UserEdit = (props) => (
     <Edit {...props}>
         <SimpleForm>
-                <TextInput disabled source="id" />
-                <TextInput source="name" />
-                <TextInput source="username" />
+                <TextInput label="Affiliation" source="affiliation" />
                 <TextInput type="email" source="email" />
-                <TextInput source="address.street" />
-                <TextInput source="phone" />
-                <TextInput source="website" />
-                <TextInput source="company.name" />
+                <TextInput label="First Name" source="firstName" />
+                <TextInput label="Last Name" source="lastName" />
+                <TextInput label="Username" source="username" />
         </SimpleForm>
     </Edit>
 );

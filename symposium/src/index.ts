@@ -25,6 +25,7 @@ const main = async () => {
     app.use(
         cors({
             origin: "*",
+            allowedHeaders: "*",
         })
     );
 

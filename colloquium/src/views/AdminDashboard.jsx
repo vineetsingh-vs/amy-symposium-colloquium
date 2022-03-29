@@ -1,9 +1,10 @@
-import { Admin, Resource } from "react-admin";
-import { UserList, UserCreate, UserEdit } from "./admin-ui/user";
-import jsonServerProvider from "ra-data-json-server";
+import {Admin, Resource} from "react-admin";
+import {UserList, UserCreate, UserEdit} from "./admin-ui/user";
+import dataProvider from "./admin-ui/dataprovider"
+// import jsonServerProvider from "ra-data-json-server";
 
 // test data from json place holder site
-const dataProvider = jsonServerProvider("https://jsonplaceholder.typicode.com");
+// const dataProvider = jsonServerProvider("https://jsonplaceholder.typicode.com");
 
 const AdminDashboard = () => {
     return (
