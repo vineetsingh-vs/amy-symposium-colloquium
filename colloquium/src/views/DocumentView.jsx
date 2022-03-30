@@ -20,8 +20,8 @@ import Link from '@material-ui/core/Link';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import PersonIcon from '@material-ui/icons/Person';
-import Comments from "./Comments";
-import GoogleViewer from "../Components/docs";
+import CommentList from "../components/CommentList";
+import GoogleViewer from "../components/docs";
 import { mainListItems } from './listItems';
 
 function Copyright() {
@@ -231,7 +231,7 @@ const DocumentView = () => {
                         </Grid>
                         {/* Comments */}
                         <Grid item xs={4}>
-                            <Comments />
+                            <CommentList />
                             <Button
                                 color="primary"
                                 variant="contained"
