@@ -1,6 +1,12 @@
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import AdminDashboard from "./views/AdminDashboard";
 import PageNotFound from "./views/PageNotFound";
+import LoginView from "./views/LoginView";
+import SharingView from "./views/SharingView";
+import DocumentView from "./views/DocumentView";
+import MyPapersView from "./views/MyPapersView";
+import SharedView from "./views/SharedView";
+import PublishView from "./views/PublishView";
 import "./App.css";
 
 function App() {
@@ -10,13 +16,13 @@ function App() {
                 <Switch>
                     {/* Admin Page of Users */}
                     <Route exact path="/admin" component={AdminDashboard} />
-                    <Route path="*" component={PageNotFound} />
+                    <Route path="/notFound" component={PageNotFound} />
 
                     {/* Log in Page */}
-                    {/* <Route exact path="/" components={LoginView} /> */}
+                    <Route exact path="/" component={LoginView} />
 
                     {/* Document and Comments */}
-                    {/* <Route exact path="/:paperId" component={DocumentView} /> */}
+                    <Route exact path="/1" component={DocumentView} />
 
                     {/* Review Page containing all Comments + overall Reviews */}
                     {/* <Route exact path="/:paperId/reviews" component={ReviewView} /> */}
@@ -24,14 +30,14 @@ function App() {
                     {/* <Route exact path="/:paperId/comments" component={CommentView} /> */}
 
                     {/* Main User Screens */}
-                    {/* <Route exact path="/published" component={PublishView} /> */}
-                    {/* <Route exact path="/shared" component={SharedView} /> */}
-                    {/* <Route exact path="/mypapers" component={MyPapersView} /> */}
+                    <Route exact path="/published" component={PublishView} />
+                    <Route exact path="/shared" component={SharedView} />
+                    <Route exact path="/mypapers" component={MyPapersView} />
 
                     {/* "Popup screens" */}
-                    {/* <Route exact path="/:paperId/share" components={SharingView} /> */}
-                    {/* <Route exact path="/:paperId/reupload" components={ReuploadView} /> */}
-                    {/* <Route exact path="/upload" components={UploadPaperView} /> */}
+                    <Route exact path="/1/share" component={SharingView} />
+                    {/* <Route exact path="/:paperId/reupload" component={ReuploadView} /> */}
+                    {/* <Route exact path="/upload" component={UploadPaperView} /> */}
 
                 </Switch>
             </div>
