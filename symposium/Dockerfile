@@ -9,7 +9,6 @@ COPY src ./src
 COPY .env ./
 COPY .env.example ./
 
-RUN ls -a
 RUN npm install
 RUN npm run build
 
