@@ -13,23 +13,23 @@ export class Paper extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
+    @Column({ type: "varchar", length: 60 })
+    title: string;
+
+    @Column("text")
+    creator_id: string;
+
+    @Column()
+    filepath: string;
+
     @Column("text", { array: true })
     authors: string[];
 
     @Column("text", { array: true })
     tags: string[]
 
-    @Column()
-    filepath: string;
-
     @Column("text", { array: true })
     revisions: string[];
-
-    @Column("text")
-    creator_id: string;
-
-    @Column({ type: "varchar", length: 60 })
-    title: string;
     
     @Column("boolean", { default: true })
     isPublished: boolean = false;
