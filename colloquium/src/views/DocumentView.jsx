@@ -10,6 +10,8 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import Container from '@material-ui/core/Container';
@@ -125,6 +127,7 @@ const DocumentView = () => {
 
     const [comments, setComments] = React.useState([]);
     const [isFetching, setFetching] = React.useState(false);
+    const [version, setVersion] = React.useState("");
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -139,6 +142,11 @@ const DocumentView = () => {
     const docs = [
         { uri: require("../TestingData/test.pdf") }
     ];
+
+    const handleChange = (event) => {
+      setVersion(event.target.value);
+  };
+
      
     // Adds comment to specific paperId/pageId
     // const addComment = (paperId, pageId, commentId) => {}
@@ -199,6 +207,18 @@ const DocumentView = () => {
                 </div>
                 <Divider />
                 <List>{mainListItems}</List>
+                <Select
+                    labelId="Version Select Label"
+                    id="Version Select"
+                    label="Version"
+                    value={version}
+                    onChange={handleChange}
+                >
+                    <MenuItem value={1}>Version 1</MenuItem>
+                    <MenuItem value={2}>Version 2</MenuItem>
+                    <MenuItem value={3}>Version 3</MenuItem>
+                </Select>
+
             </Drawer>
             <main className={classes.content}>
                 <div className={classes.appBarSpacer} />
