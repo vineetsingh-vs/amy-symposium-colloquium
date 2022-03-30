@@ -37,7 +37,7 @@ function Copyright() {
     );
 };
 
-const DocumentView = () => {
+const ReviewView = () => {
     const drawerWidth = 240;
 
     const useStyles = makeStyles((theme) => ({
@@ -122,7 +122,7 @@ const DocumentView = () => {
     const classes = useStyles();
 
     const [open, setOpen] = React.useState(false);
-    const [docuemntTitle, setDocumentTitle] = React.useState("Document Title");
+    const [documentTitle, setDocumentTitle] = React.useState("Document Title");
     const [username, setUsername] = React.useState("Default Username");
 
     const [comments, setComments] = React.useState([]);
@@ -147,25 +147,6 @@ const DocumentView = () => {
       setVersion(event.target.value);
   };
 
-     
-    // Adds comment to specific paperId/pageId
-    // const addComment = (paperId, pageId, commentId) => {}
-
-    // // Adds reply to a previous parent comment
-    // const addReplyComment = (paperId, pageId, parentCommentId, commentId) => {}
-
-    // // Page to reupload document for the next version
-    // const reupload = (paperId, versionId) => {}
-
-    // // Adding or Deleting people allowed to view paper
-    // const handleShare = (paperId) => {}
-
-    // // Update version number and "clear" comments / reviews
-    // const handleVersion = (paperId) => {}
-
-    // // Views: Review, Documents, Comments, or Document and Comments
-    // const handleViewChange = (paperId) => {}
-
     return (
         <div className={classes.root}>
             <CssBaseline />
@@ -181,7 +162,7 @@ const DocumentView = () => {
                         <MenuIcon />
                     </IconButton>
                     <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-                        {docuemntTitle}
+                        {documentTitle}
                     </Typography>
                     <Button
                         variant="link"
@@ -223,23 +204,16 @@ const DocumentView = () => {
             <main className={classes.content}>
                 <div className={classes.appBarSpacer} />
                 <Container maxWidth="lg" className={classes.container}>
-                    <Grid container spacing={5}>
-                        {/* Document */}
-                        <Grid item xs={8}>
-                            {/* <DocViewer pluginRenderers={DocViewerRenderers} documents={docs} /> */}
-                            <GoogleViewer source={"https://s2.q4cdn.com/498544986/files/doc_downloads/test.pdf"} />
-                        </Grid>
-                        {/* Comments */}
-                        <Grid item xs={4}>
-                            <Comments />
-                            <Button
-                                color="primary"
-                                variant="contained"
-                                fullWidth="true"
-                            >
-                                Add Comment
-                            </Button>
-                        </Grid>
+                    {/* Reviews */}
+                    <Grid item xs={12}>
+                        <Comments />
+                        <Button
+                            color="primary"
+                            variant="contained"
+                            fullWidth="true"
+                        >
+                            Add Review
+                        </Button>
                     </Grid>
                     <Box pt={4}>
                         <Copyright />
@@ -250,5 +224,5 @@ const DocumentView = () => {
     );
 }
 
-export default DocumentView;
+export default ReviewView;
 

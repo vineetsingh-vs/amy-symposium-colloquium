@@ -21,8 +21,8 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import PersonIcon from '@material-ui/icons/Person';
 import Comments from "./Comments";
-import GoogleViewer from "../Components/docs";
-import { mainListItems } from './listItems';
+import TextField from "@material-ui/core/TextField";
+import { secondaryListItems } from './listItems';
 
 function Copyright() {
     return (
@@ -37,7 +37,7 @@ function Copyright() {
     );
 };
 
-const DocumentView = () => {
+const ProfileView = () => {
     const drawerWidth = 240;
 
     const useStyles = makeStyles((theme) => ({
@@ -122,8 +122,10 @@ const DocumentView = () => {
     const classes = useStyles();
 
     const [open, setOpen] = React.useState(false);
-    const [docuemntTitle, setDocumentTitle] = React.useState("Document Title");
     const [username, setUsername] = React.useState("Default Username");
+    const [profileUser, setProfileUserName] = React.useState("Profile Username");
+    const [description, setDescription] = React.useState("Default Description");
+    const [editing, setEditing] = React.useState(false);
 
     const [comments, setComments] = React.useState([]);
     const [isFetching, setFetching] = React.useState(false);
@@ -145,26 +147,11 @@ const DocumentView = () => {
 
     const handleChange = (event) => {
       setVersion(event.target.value);
-  };
+    };
 
-     
-    // Adds comment to specific paperId/pageId
-    // const addComment = (paperId, pageId, commentId) => {}
-
-    // // Adds reply to a previous parent comment
-    // const addReplyComment = (paperId, pageId, parentCommentId, commentId) => {}
-
-    // // Page to reupload document for the next version
-    // const reupload = (paperId, versionId) => {}
-
-    // // Adding or Deleting people allowed to view paper
-    // const handleShare = (paperId) => {}
-
-    // // Update version number and "clear" comments / reviews
-    // const handleVersion = (paperId) => {}
-
-    // // Views: Review, Documents, Comments, or Document and Comments
-    // const handleViewChange = (paperId) => {}
+    const handleEditing = () => {
+        setEditing(!editing);
+    };
 
     return (
         <div className={classes.root}>
@@ -181,13 +168,13 @@ const DocumentView = () => {
                         <MenuIcon />
                     </IconButton>
                     <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-                        {docuemntTitle}
+                        {profileUser}
                     </Typography>
                     <Button
                         variant="link"
                         color="inherit"
                         startIcon={<PersonIcon />}
-                        href="/userprofile"
+                        href="/"
                     >
                         {username}
                     </Button>
@@ -206,41 +193,15 @@ const DocumentView = () => {
                     </IconButton>
                 </div>
                 <Divider />
-                <List>{mainListItems}</List>
-                <Select
-                    labelId="Version Select Label"
-                    id="Version Select"
-                    label="Version"
-                    value={version}
-                    onChange={handleChange}
-                >
-                    <MenuItem value={1}>Version 1</MenuItem>
-                    <MenuItem value={2}>Version 2</MenuItem>
-                    <MenuItem value={3}>Version 3</MenuItem>
-                </Select>
-
+                <List>{secondaryListItems}</List>
             </Drawer>
             <main className={classes.content}>
                 <div className={classes.appBarSpacer} />
                 <Container maxWidth="lg" className={classes.container}>
-                    <Grid container spacing={5}>
-                        {/* Document */}
-                        <Grid item xs={8}>
-                            {/* <DocViewer pluginRenderers={DocViewerRenderers} documents={docs} /> */}
-                            <GoogleViewer source={"https://s2.q4cdn.com/498544986/files/doc_downloads/test.pdf"} />
-                        </Grid>
-                        {/* Comments */}
-                        <Grid item xs={4}>
-                            <Comments />
-                            <Button
-                                color="primary"
-                                variant="contained"
-                                fullWidth="true"
-                            >
-                                Add Comment
-                            </Button>
-                        </Grid>
-                    </Grid>
+                    {/* Profile */}
+                        <h1>About Me</h1>
+                        <TextField fullWidth id="description" disabled={!editing} placeholder={description} onChange={(e) => {setDescription(e.target.value)}}/>
+                        <Button variant="contained" color="primary" id="editButton" onClick={handleEditing}>{editing ? "Save Edits" : "Edit Description"}</Button>
                     <Box pt={4}>
                         <Copyright />
                     </Box>
@@ -250,5 +211,5 @@ const DocumentView = () => {
     );
 }
 
-export default DocumentView;
+export default ProfileView;
 

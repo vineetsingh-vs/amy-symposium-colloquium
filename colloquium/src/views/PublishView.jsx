@@ -210,7 +210,7 @@ const PublishView = () => {
                                         {rows.map((row) => (
                                             <TableRow key={row.id}>
                                                 <TableCell>
-                                                    <Link href="/">
+                                                    <Link href="/1">
                                                         {row.paperLink}
                                                     </Link>
                                                 </TableCell>

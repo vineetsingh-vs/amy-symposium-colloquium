@@ -91,7 +91,7 @@ const LoginView = () => {
             fullWidth
             variant="contained"
             color="primary"
-            href='/1'
+            href='/published'
             className={classes.submit}
           >
             Sign In
