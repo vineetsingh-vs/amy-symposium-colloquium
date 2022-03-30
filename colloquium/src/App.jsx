@@ -1,6 +1,8 @@
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import AdminDashboard from "./views/AdminDashboard";
 import PageNotFound from "./views/PageNotFound";
+import LoginView from "./views/LoginView";
+import DocumentView from "./views/DocumentView";
 import "./App.css";
 
 function App() {
@@ -10,13 +12,13 @@ function App() {
                 <Switch>
                     {/* Admin Page of Users */}
                     <Route exact path="/admin" component={AdminDashboard} />
-                    <Route path="*" component={PageNotFound} />
+                    <Route path="/notFound" component={PageNotFound} />
 
                     {/* Log in Page */}
-                    {/* <Route exact path="/" components={LoginView} /> */}
+                    <Route exact path="/" component={LoginView} />
 
                     {/* Document and Comments */}
-                    {/* <Route exact path="/:paperId" component={DocumentView} /> */}
+                    <Route exact path="/1" component={DocumentView} />
 
                     {/* Review Page containing all Comments + overall Reviews */}
                     {/* <Route exact path="/:paperId/reviews" component={ReviewView} /> */}
