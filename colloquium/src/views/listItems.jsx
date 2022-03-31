@@ -12,7 +12,7 @@ export const mainListItems = (
       <ListItemIcon>
         <DashboardIcon />
       </ListItemIcon>
-      <Link href="/">
+      <Link href="/published">
         Dashboard
       </Link>
     </ListItem>
@@ -20,7 +20,7 @@ export const mainListItems = (
       <ListItemIcon>
         <AssignmentIcon />
       </ListItemIcon>
-      <Link href="/">
+      <Link href="/1">
         Document
       </Link>
     </ListItem>
@@ -28,8 +28,37 @@ export const mainListItems = (
       <ListItemIcon>
         <PeopleIcon />
       </ListItemIcon>
-      <Link href="/">
+      <Link href="/1/reviews">
         Reviews
+      </Link>
+    </ListItem>
+    <ListItem button>
+      <ListItemIcon>
+        <PeopleIcon />
+      </ListItemIcon>
+      <Link href="/1/share">
+        Share With
+      </Link>
+    </ListItem>
+    <ListItem button>
+      <ListItemIcon>
+        <AssignmentIcon />
+      </ListItemIcon>
+      <Link href="/">
+        ReUpload
+      </Link>
+    </ListItem>
+  </div>
+);
+
+export const secondaryListItems = (
+  <div>
+    <ListItem button >
+      <ListItemIcon>
+        <DashboardIcon />
+      </ListItemIcon>
+      <Link href="/published">
+        Dashboard
       </Link>
     </ListItem>
   </div>

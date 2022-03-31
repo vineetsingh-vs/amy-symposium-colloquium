@@ -21,17 +21,13 @@ import {
     TableHead,
     TableRow,
     Toolbar,
-    Typography
+    Typography,
+    Switch,
+    FormControlLabel,
 } from '@material-ui/core';
-
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import People from '@material-ui/icons/People';
-
-import Box from '@material-ui/core/Box';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
-
 
 const drawerWidth = 240;
 
@@ -110,7 +106,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 //Creating fake data so the 
-function createData(id, paperLink, uploader, date, published) {
+const createData = (id, paperLink, uploader, date, published) => {
     return { id, paperLink, uploader, date, published };
 }
   
@@ -120,21 +116,20 @@ const rows = [
     createData(2, 'My Paper3', 'Me', '3/27/2022', true),
 ];
 
-
-
 const MyPapersView = () => {
     const classes = useStyles();
     const [open, setOpen] = React.useState(true);
+
     const handleDrawerOpen = () => {
         setOpen(true);
     };
+
     const handleDrawerClose = () => {
         setOpen(false);
     };
-    const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
     // const [publish, setPublished] = React.useState(false);
-    function handlePublishedClick(id, paperLink, uploader, date, published) {
+    const handlePublishedClick = (id, paperLink, uploader, date, published) => {
         rows[id] = createData(id, paperLink, uploader, date, published);
     }
 
@@ -207,7 +202,7 @@ const MyPapersView = () => {
                                 </Button>
                             </Grid>
                             <Grid item xs={12} md={12} lg={12}>
-                                <Table component="publishedPapers">
+                                <Table component="PublishedPapers">
                                     <TableHead>
                                         <TableRow>
                                             <TableCell>My Papers</TableCell>
@@ -220,7 +215,7 @@ const MyPapersView = () => {
                                         {rows.map((row) => (
                                             <TableRow key={row.id}>
                                                 <TableCell>
-                                                    <Link href="/">
+                                                    <Link href="/1">
                                                         {row.paperLink}
                                                     </Link>
                                                 </TableCell>
