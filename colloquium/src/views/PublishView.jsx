@@ -127,7 +127,6 @@ const PublishView = () => {
     const handleDrawerClose = () => {
         setOpen(false);
     };
-    const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
     return (
         <div className={classes.root}>
@@ -210,7 +209,7 @@ const PublishView = () => {
                                         {rows.map((row) => (
                                             <TableRow key={row.id}>
                                                 <TableCell>
-                                                    <Link href="/">
+                                                    <Link href="/1">
                                                         {row.paperLink}
                                                     </Link>
                                                 </TableCell>

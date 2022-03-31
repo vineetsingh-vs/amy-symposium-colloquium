@@ -16,7 +16,7 @@ const SharingView = () => {
     return (
         <div className="sharingView">
             <h1>Enter New Person to Share With</h1>
-            <TextField id="outlined-basic" label="Outlined" variant="outlined" />
+            <TextField id="outlined-basic" label="Share With" variant="outlined" />
             <br></br>
             <Button variant="contained">Submit</Button>
             <br></br>

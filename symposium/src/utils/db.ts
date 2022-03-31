@@ -1,4 +1,6 @@
 import config from "./config";
+import { Comment } from "../entities/Comment";
+import { Review } from "../entities/Review";
 import { User } from "../entities/User";
 import "reflect-metadata";
 import { createConnection } from "typeorm";
@@ -13,7 +15,7 @@ export default async () => {
             username: config.postgresUser,
             password: config.postgresPass,
             database: config.postgresDB,
-            entities: [User, Paper, Tag],
+            entities: [User, Paper, Tag, Review, Comment],
             synchronize: true,
         });
         console.log("database connected");
