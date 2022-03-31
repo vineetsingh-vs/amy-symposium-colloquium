@@ -127,7 +127,6 @@ const MyPapersView = () => {
     const handleDrawerClose = () => {
         setOpen(false);
     };
-    const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
     // const [publish, setPublished] = React.useState(false);
     const handlePublishedClick = (id, paperLink, uploader, date, published) => {
@@ -216,7 +215,7 @@ const MyPapersView = () => {
                                         {rows.map((row) => (
                                             <TableRow key={row.id}>
                                                 <TableCell>
-                                                    <Link href="/">
+                                                    <Link href="/1">
                                                         {row.paperLink}
                                                     </Link>
                                                 </TableCell>
