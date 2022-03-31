@@ -28,7 +28,6 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import People from '@material-ui/icons/People';
 
-import Box from '@material-ui/core/Box';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 
@@ -131,7 +130,6 @@ const MyPapersView = () => {
     const handleDrawerClose = () => {
         setOpen(false);
     };
-    const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
     // const [publish, setPublished] = React.useState(false);
     function handlePublishedClick(id, paperLink, uploader, date, published) {
@@ -220,7 +218,7 @@ const MyPapersView = () => {
                                         {rows.map((row) => (
                                             <TableRow key={row.id}>
                                                 <TableCell>
-                                                    <Link href="/">
+                                                    <Link href="/1">
                                                         {row.paperLink}
                                                     </Link>
                                                 </TableCell>
