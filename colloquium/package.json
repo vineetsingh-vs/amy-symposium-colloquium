@@ -16,6 +16,8 @@
     "react-bootstrap": "^2.2.1",
     "react-doc-viewer": "^0.1.5",
     "react-dom": "^17.0.2",
+    "react-file-viewer": "^1.2.1",
+    "react-file-viewer-extended": "^2.0.3",
     "react-scripts": "5.0.0",
     "web-vitals": "^2.1.4"
   },

@@ -25,6 +25,7 @@ import CommentList from "../components/CommentList";
 import DocIFrame from "../components/DocIFrame.jsx";
 import { mainListItems } from "./listItems";
 import Copyright from '../components/Copyright'
+import FileDisplay from "../components/FileDisplay";
 
 const drawerWidth = 240;
 
@@ -141,7 +142,7 @@ const DocumentView = () => {
 
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
-    const docs = [{ uri: require("../TestingData/test.pdf") }];
+    const docs = [{ uri: "https://api.printnode.com/static/test/pdf/multipage.pdf" }];
 
     useEffect(() => {
         console.log("[CommentList] mount");
@@ -242,12 +243,23 @@ const DocumentView = () => {
                         <Grid container spacing={5}>
                             {/* Document */}
                             <Grid item xs={8}>
-                                {/* <DocViewer pluginRenderers={DocViewerRenderers} documents={docs} /> */}
-                                <DocIFrame
-                                    source={
-                                        "https://s2.q4cdn.com/498544986/files/doc_downloads/test.pdf"
-                                    }
+                                <DocViewer 
+                                    pluginRenderers={DocViewerRenderers} 
+                                    documents={docs} 
+                                    config={{
+                                        header: {
+                                            disableFileName: true,
+                                            disableHeader: true,
+                                            retainURLParams: false
+                                        }
+                                    }}
                                 />
+                                {/* <DocIFrame
+                                    source={
+                                        "https://www.ets.org/Media/Tests/GRE/pdf/gre_research_validity_data.pdf"
+                                    }
+                                /> */}
+                                {/* <FileDisplay /> */}
                             </Grid>
                             {/* Comments */}
                             <Grid item xs={4}>
