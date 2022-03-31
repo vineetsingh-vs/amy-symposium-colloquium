@@ -1,5 +1,8 @@
 import { Request, Response } from "express";
+import { Fields, Files, IncomingForm } from "formidable";
+import fs from "fs";
 import { Paper } from "../entities/Paper"
+import config from "../utils/config"
 
 export const getAllPapers = async (req: Request, res: Response) => {
     console.log("[paperController] getAllPapers");
@@ -41,33 +44,55 @@ export const addPaper = async(req: Request, res: Response) => {
     console.log("[paperController] addPaper");
     console.log(req.body);
 
-    const { title, creator_id, filepath, authors, tags } = req.body;
+    let form = new IncomingForm({ multiples: true, uploadDir: config.tmpFolder });
+    form.parse(req, async (err, fields: Fields, files: Files) => {
+        if (err) {
+            console.log("Error parsing file");
+            res.status(400).json({
+                message: "Error parsing file",
+                error: err,
+            });
+        }
+        if (!Array.isArray(files.files)) {
+            let file = files.files;
+            try {
+                var oldPath = file.filepath;
+                // TODO: Where we would either save file to AWS or local storage
+                var newPath = config.uploadFolder + "/" + file.originalFilename;
+                fields.filepath = newPath;
+                fs.writeFileSync(newPath, fs.readFileSync(oldPath));
 
-    const newPaper = Paper.create({
-        title: title,
-        creator_id: creator_id,
-        filepath: filepath,
-        authors: authors,
-        tags: tags,
-        revisions: [filepath],
-    });
+            } catch(e) {
+                console.log("Error writing file", e);
+                res.status(400).json({
+                    message: "File couldn't be saved",
+                });
+            }
+            console.log("[paperController] File uploaded");
+        } else {
+            res.status(500).json({ message: "Backend currently can't handle multiple files" });
+            console.log("[paperController] Can't handle multiple files");
+        }
 
-    await newPaper.save();
-    console.log("saved paper: ");
-    console.log(newPaper);
+        const newPaper = Paper.create(fields);
 
-    res.status(200).json({
-        id: newPaper.id,
-        title: newPaper.title,
-        creator_id: newPaper.creator_id,
-        filepath: newPaper.filepath,
-        authors: newPaper.authors,
-        tags: newPaper.tags,
-        revisions: newPaper.revisions,
-        isPublished: newPaper.isPublished,
-        createdAt: newPaper.createdAt,
-        updatedAt: newPaper.updatedAt,
-        versionNumber: newPaper.versionNumber
+        await newPaper.save();
+        console.log("saved paper: ");
+        console.log(newPaper);
+
+        res.status(200).json({
+            id: newPaper.id,
+            title: newPaper.title,
+            creator_id: newPaper.creator_id,
+            filepath: newPaper.filepath,
+            authors: newPaper.authors,
+            tags: newPaper.tags,
+            revisions: newPaper.revisions,
+            isPublished: newPaper.isPublished,
+            createdAt: newPaper.createdAt,
+            updatedAt: newPaper.updatedAt,
+            versionNumber: newPaper.versionNumber
+        });
     });
 };
 
