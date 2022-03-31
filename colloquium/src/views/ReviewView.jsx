@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
 import clsx from "clsx";
 import {
@@ -21,7 +21,7 @@ import {
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import PersonIcon from "@material-ui/icons/Person";
-import Comment from "../components/Comment";
+import CommentList from "../components/CommentList";
 import { mainListItems } from "./listItems";
 import Copyright from "../components/Copyright";
 
@@ -112,7 +112,7 @@ const ReviewView = () => {
     const [open, setOpen] = useState(false);
     const [documentTitle, setDocumentTitle] = useState("Document Title");
     const [username, setUsername] = useState("Default Username");
-    const [comments, setComments] = useState([])
+    const [comments, setComments] = useState([]);
     const [version, setVersion] = useState("");
 
     const handleDrawerOpen = () => {
@@ -198,12 +198,7 @@ const ReviewView = () => {
                 <Container maxWidth="lg" className={classes.container}>
                     {/* Reviews */}
                     <Grid item xs={12}>
-                        <List className={classes.root}>
-                            {comments.map((comment) => {
-                                console.log("Comment", comment);
-                                return <Comment comment={comment} />;
-                            })}
-                        </List>
+                        <CommentList comments={comments} />
                         <Button color="primary" variant="contained" fullWidth="true">
                             Add Review
                         </Button>

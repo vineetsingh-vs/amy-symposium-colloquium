@@ -21,7 +21,7 @@ import {
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import PersonIcon from "@material-ui/icons/Person";
-import Comment from "../components/Comment";
+import CommentList from "../components/CommentList";
 import DocIFrame from "../components/DocIFrame.jsx";
 import { mainListItems } from "./listItems";
 import Copyright from '../components/Copyright'
@@ -251,12 +251,7 @@ const DocumentView = () => {
                             </Grid>
                             {/* Comments */}
                             <Grid item xs={4}>
-                                <List className={classes.root}>
-                                    {comments.map((comment) => {
-                                        console.log("Comment", comment);
-                                        return <Comment comment={comment} />;
-                                    })}
-                                </List>
+                                <CommentList comments={comments}/>
                                 <Button color="primary" variant="contained" fullWidth="true">
                                     Add Comment
                                 </Button>

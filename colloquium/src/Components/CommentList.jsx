@@ -57,4 +57,15 @@ const Comment = ({ comment }) => {
     );
 };
 
-export default Comment;
+const CommentList = ({ comments }) => {
+    const classes = useStyles();
+    return (
+        <List className={classes.root}>
+            {comments.map((comment) => (
+                <Comment comment={comment} />
+            ))}
+        </List>
+    );
+};
+
+export default CommentList;
