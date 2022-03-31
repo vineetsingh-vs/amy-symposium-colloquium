@@ -7,7 +7,32 @@ export const getAllPapers = async (req: Request, res: Response) => {
     res.status(200).send(papers);
 };
 
-export const getPaperById = async(req: Request, res: Response) => {};
+export const getPaperById = async(req: Request, res: Response) => {
+    console.log("[paperController] getPaperById");
+    const { paperid } = req.params;
+    console.log("Our id is: ")
+    console.log(paperid);
+
+    let paper = await Paper.findOne({ where: { id: paperid } });
+
+    if (paper) {
+        res.status(200).json({
+            id: paper.id,
+            title: paper.title,
+            creator_id: paper.creator_id,
+            filepath: paper.filepath,
+            authors: paper.authors,
+            tags: paper.tags,
+            revisions: paper.revisions,
+            isPublished: paper.isPublished,
+            createdAt: paper.createdAt,
+            updatedAt: paper.updatedAt,
+            versionNumber: paper.versionNumber
+        });
+    } else {
+        res.status(400).json({ message: "Could not find Paper" });
+    }
+};
 
 export const getPaperVersionById = async(req: Request, res: Response) => {};
 
@@ -44,13 +69,22 @@ export const addPaper = async(req: Request, res: Response) => {
         updatedAt: newPaper.updatedAt,
         versionNumber: newPaper.versionNumber
     });
-
-
-
 };
 
 export const updatePaper = async(req: Request, res: Response) => {};
 
-export const deletePaper = async(req: Request, res: Response) => {};
+export const deletePaper = async(req: Request, res: Response) => {
+    console.log("[paperController] deletePaper");
+    const { paperid } = req.params;
+
+    let paper = await Paper.findOne({ where: { id: paperid } });
+
+    if (paper) {
+        await paper.remove();
+        res.status(200).json({ message: "Successfully deleted paper" });
+    } else {
+        res.status(400).json({ message: "Paper not found" });
+    }
+};
 
 export const deletePaperVersion = async(req: Request, res: Response) => {};

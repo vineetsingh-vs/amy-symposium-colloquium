@@ -11,7 +11,7 @@ import {
 @Entity()
 export class Paper extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
-    id: string;
+    id!: string;
 
     @Column({ type: "varchar", length: 60 })
     title: string;
