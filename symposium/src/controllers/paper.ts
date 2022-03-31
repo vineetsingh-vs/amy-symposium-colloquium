@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Paper } from "../models/Paper"
+import { Paper } from "../entities/Paper"
 
 export const getAllPapers = async (req: Request, res: Response) => {
     console.log("[paperController] getAllPapers");
@@ -41,7 +41,7 @@ export const addPaper = async(req: Request, res: Response) => {
     console.log("[paperController] addPaper");
     console.log(req.body);
 
-    const { title, creator_id, filepath, authors, tags, revisions } = req.body;
+    const { title, creator_id, filepath, authors, tags } = req.body;
 
     const newPaper = Paper.create({
         title: title,
@@ -49,7 +49,7 @@ export const addPaper = async(req: Request, res: Response) => {
         filepath: filepath,
         authors: authors,
         tags: tags,
-        revisions: revisions,
+        revisions: [filepath],
     });
 
     await newPaper.save();
@@ -71,7 +71,45 @@ export const addPaper = async(req: Request, res: Response) => {
     });
 };
 
-export const updatePaper = async(req: Request, res: Response) => {};
+export const updatePaper = async(req: Request, res: Response) => {
+    console.log("[paperController] updatePaper");
+    const { paperid } = req.params;
+    const { title, creator_id, filepath, authors, tags, revisions, isPublished } = req.body;
+
+    let paper = await Paper.findOne({ where: { id: paperid } });
+    if (paper) {
+        
+        paper.title = title || paper.title;
+        paper.creator_id = creator_id || paper.creator_id;
+        paper.filepath = filepath || paper.filepath;
+        paper.authors = authors || paper.authors;
+        paper.tags = tags || paper.tags;
+        paper.revisions = revisions || paper.revisions;
+        paper.isPublished = isPublished || paper.isPublished;
+
+
+        await paper.save();
+        res.status(200).json({
+            id: paper.id,
+            title: paper.title,
+            creator_id: paper.creator_id,
+            filepath: paper.filepath,
+            authors: paper.authors,
+            tags: paper.tags,
+            revisions: paper.revisions,
+            isPublished: paper.isPublished,
+            createdAt: paper.createdAt,
+            updatedAt: paper.updatedAt,
+            versionNumber: paper.versionNumber
+        });
+    } else {
+        res.status(400).json({ message: "Paper not found" });
+    }
+
+
+
+
+};
 
 export const deletePaper = async(req: Request, res: Response) => {
     console.log("[paperController] deletePaper");

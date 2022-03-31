@@ -14,7 +14,7 @@ router.get('/:paperid/:versionid', getPaperVersionById);
  * Adds file to the list of revisions  */
 router.post('/', addPaper); 
 
-/**Upload a new version of an already existing paper */
+/**Edit details and metadata of an already existing paper */
 router.put('/:paperid', updatePaper);
 
 /**Delete a paper */

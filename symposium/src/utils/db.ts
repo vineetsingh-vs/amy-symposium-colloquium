@@ -2,8 +2,8 @@ import config from "./config";
 import { User } from "../entities/User";
 import "reflect-metadata";
 import { createConnection } from "typeorm";
-import { Paper } from "../models/Paper";
-import { Tag } from "../models/Tag";
+import { Paper } from "../entities/Paper";
+import { Tag } from "../entities/Tag";
 
 export default async () => {
     try {
