@@ -42,8 +42,7 @@ export const getPaperVersionById = async(req: Request, res: Response) => {};
 export const addPaper = async(req: Request, res: Response) => {
 
     console.log("[paperController] addPaper");
-    console.log(req.body);
-
+    
     let form = new IncomingForm({ multiples: true, uploadDir: config.tmpFolder });
     form.parse(req, async (err, fields: Fields, files: Files) => {
         if (err) {
@@ -55,6 +54,7 @@ export const addPaper = async(req: Request, res: Response) => {
         }
         if (!Array.isArray(files.files)) {
             let file = files.files;
+            console.log(files)
             try {
                 var oldPath = file.filepath;
                 // TODO: Where we would either save file to AWS or local storage

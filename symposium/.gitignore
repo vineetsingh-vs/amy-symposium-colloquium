@@ -40,3 +40,6 @@ dist/**/*
 # ignore package locks
 package-lock.json
 yarn.lock
+
+# Saved Files
+files
