@@ -6,6 +6,7 @@ import "reflect-metadata";
 import { createConnection } from "typeorm";
 import { Paper } from "../entities/Paper";
 import { Tag } from "../entities/Tag";
+import { Extra } from "../entities/Extra";
 
 export default async () => {
     try {
@@ -15,7 +16,7 @@ export default async () => {
             username: config.postgresUser,
             password: config.postgresPass,
             database: config.postgresDB,
-            entities: [User, Paper, Tag, Review, Comment],
+            entities: [User, Paper, Tag, Review, Comment, Extra],
             synchronize: true,
         });
         console.log("database connected");

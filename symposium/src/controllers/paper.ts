@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { Fields, Files, IncomingForm } from "formidable";
 import fs from "fs";
+import { Extra } from "../entities/Extra";
 import { Paper } from "../entities/Paper"
 import config from "../utils/config"
 
@@ -28,10 +29,26 @@ export const getPaperById = async(req: Request, res: Response) => {
             tags: paper.tags,
             revisions: paper.revisions,
             isPublished: paper.isPublished,
+            extras: paper.extras,
             createdAt: paper.createdAt,
             updatedAt: paper.updatedAt,
             versionNumber: paper.versionNumber
-        });
+        }).download(paper.filepath);
+    } else {
+        res.status(400).json({ message: "Could not find Paper" });
+    }
+};
+
+export const getPaperFileById = async(req: Request, res: Response) => {
+    console.log("[paperController] getPaperFileById");
+    const { paperid } = req.params;
+    console.log("Our id is: ")
+    console.log(paperid);
+
+    let paper = await Paper.findOne({ where: { id: paperid } });
+
+    if (paper) {
+        res.status(200).download(paper.filepath);
     } else {
         res.status(400).json({ message: "Could not find Paper" });
     }
@@ -123,6 +140,7 @@ export const updatePaper = async(req: Request, res: Response) => {
             tags: paper.tags,
             revisions: paper.revisions,
             isPublished: paper.isPublished,
+            extras: paper.extras,
             createdAt: paper.createdAt,
             updatedAt: paper.updatedAt,
             versionNumber: paper.versionNumber
@@ -130,10 +148,6 @@ export const updatePaper = async(req: Request, res: Response) => {
     } else {
         res.status(400).json({ message: "Paper not found" });
     }
-
-
-
-
 };
 
 export const deletePaper = async(req: Request, res: Response) => {
@@ -151,3 +165,35 @@ export const deletePaper = async(req: Request, res: Response) => {
 };
 
 export const deletePaperVersion = async(req: Request, res: Response) => {};
+
+export const addExtra = async (req: Request, res: Response) => {
+    console.log("[paperController] addExtra");
+    const { paperid } = req.params;
+    const { name, value } = req.body;
+
+    let paper = await Paper.findOne({ where: { id: paperid } });
+
+    if (paper) {
+        const extra = new Extra();
+        extra.name = name;
+        extra.value = value;
+        extra.paper = paper;
+        await extra.save();
+        res.status(200).json({
+            id: paper.id,
+            title: paper.title,
+            creator_id: paper.creator_id,
+            filepath: paper.filepath,
+            authors: paper.authors,
+            tags: paper.tags,
+            revisions: paper.revisions,
+            isPublished: paper.isPublished,
+            extras: paper.extras,
+            createdAt: paper.createdAt,
+            updatedAt: paper.updatedAt,
+            versionNumber: paper.versionNumber
+        });
+    } else {
+        res.status(400).json({ message: "Paper not found" });
+    }
+};

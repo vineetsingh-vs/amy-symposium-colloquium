@@ -6,7 +6,10 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
     VersionColumn,
+    OneToMany,
+    JoinColumn,
 } from "typeorm";
+import { Extra } from "./Extra";
 
 @Entity()
 export class Paper extends BaseEntity {
@@ -33,6 +36,14 @@ export class Paper extends BaseEntity {
     
     @Column("boolean", { default: true })
     isPublished: boolean = false;
+
+    @OneToMany('Extra', (extra: Extra) => extra.paper, {
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+        eager: true
+    })
+    @JoinColumn()
+    extras: Extra[];
 
     @CreateDateColumn()
     createdAt: Date;
