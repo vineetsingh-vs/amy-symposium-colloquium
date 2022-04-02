@@ -1,7 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
 
-import { 
+import {
     AppBar,
     Button,
     CssBaseline,
@@ -11,22 +11,23 @@ import {
     Grid,
     IconButton,
     Link,
-    List, 
+    List,
     ListItem,
     ListItemIcon,
-    makeStyles,
     Table,
     TableBody,
     TableCell,
     TableHead,
     TableRow,
     Toolbar,
-    Typography
-} from '@material-ui/core';
+    Typography,
+} from '@mui/material';
 
-import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import People from '@material-ui/icons/People';
+import makeStyles from '@mui/styles/makeStyles';
+
+import MenuIcon from '@mui/icons-material/Menu';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import People from '@mui/icons-material/People';
 
 
 const drawerWidth = 240;
@@ -109,7 +110,7 @@ const useStyles = makeStyles((theme) => ({
 function createData(id, paperLink, uploader, date) {
     return { id, paperLink, uploader, date };
 }
-  
+
 const rows = [
     createData(0, 'Shared Paper1', 'User 1', '3/25/2022'),
     createData(1, 'Shared Paper2', 'User 2', '3/26/2022'),
@@ -139,7 +140,7 @@ const SharedView = () => {
                         aria-label="open drawer"
                         onClick={handleDrawerOpen}
                         className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
-                    >
+                        size="large">
                         <MenuIcon />
                     </IconButton>
                     <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
@@ -155,7 +156,7 @@ const SharedView = () => {
                 open={open}
             >
                 <div className={classes.toolbarIcon}>
-                    <IconButton onClick={handleDrawerClose}>
+                    <IconButton onClick={handleDrawerClose} size="large">
                         <ChevronLeftIcon />
                     </IconButton>
                 </div>
@@ -165,7 +166,7 @@ const SharedView = () => {
                         <ListItemIcon onClick={handleDrawerOpen}>
                             <People />
                         </ListItemIcon>
-                        <Link href="./published">
+                        <Link href="./published" underline="hover">
                             Published
                         </Link>
                     </ListItem>
@@ -173,7 +174,7 @@ const SharedView = () => {
                         <ListItemIcon onClick={handleDrawerOpen}>
                             <People />
                         </ListItemIcon>
-                        <Link href="./shared">
+                        <Link href="./shared" underline="hover">
                             Shared With Me
                         </Link>
                     </ListItem>
@@ -181,7 +182,7 @@ const SharedView = () => {
                         <ListItemIcon onClick={handleDrawerOpen}>
                             <People />
                         </ListItemIcon>
-                        <Link href="./mypapers">
+                        <Link href="./mypapers" underline="hover">
                             My Papers
                         </Link>
                     </ListItem>
@@ -209,7 +210,7 @@ const SharedView = () => {
                                         {rows.map((row) => (
                                             <TableRow key={row.id}>
                                                 <TableCell>
-                                                    <Link href="/1">
+                                                    <Link href="/1" underline="hover">
                                                         {row.paperLink}
                                                     </Link>
                                                 </TableCell>

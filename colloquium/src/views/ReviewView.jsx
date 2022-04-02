@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
 import clsx from "clsx";
 import {
     AppBar,
@@ -14,13 +13,13 @@ import {
     Grid,
     IconButton,
     List,
-    makeStyles,
     Toolbar,
     Typography,
-} from "@material-ui/core";
-import MenuIcon from "@material-ui/icons/Menu";
-import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-import PersonIcon from "@material-ui/icons/Person";
+} from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
+import MenuIcon from "@mui/icons-material/Menu";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import PersonIcon from "@mui/icons-material/Person";
 import CommentList from "../components/CommentList";
 import { mainListItems } from "./listItems";
 import Copyright from "../components/Copyright";
@@ -145,7 +144,7 @@ const ReviewView = () => {
                         aria-label="open drawer"
                         onClick={handleDrawerOpen}
                         className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
-                    >
+                        size="large">
                         <MenuIcon />
                     </IconButton>
                     <Typography
@@ -175,7 +174,7 @@ const ReviewView = () => {
                 open={open}
             >
                 <div className={classes.toolbarIcon}>
-                    <IconButton onClick={handleDrawerClose}>
+                    <IconButton onClick={handleDrawerClose} size="large">
                         <ChevronLeftIcon />
                     </IconButton>
                 </div>

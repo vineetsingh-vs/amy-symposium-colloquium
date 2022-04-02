@@ -1,13 +1,13 @@
 import {
     Typography,
     Link, 
-} from '@material-ui/core'
+} from '@mui/material'
 
 const Copyright = () => {
     return (
         <Typography variant="body2" color="textSecondary" align="center">
         {'Copyright © '}
-        <Link color="inherit">
+        <Link color="inherit" underline="hover">
             Colloquium
         </Link>{' '}
         {new Date().getFullYear()}

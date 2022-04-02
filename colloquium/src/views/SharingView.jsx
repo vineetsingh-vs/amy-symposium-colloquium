@@ -10,7 +10,7 @@ import {
     List,
     ListItem,
 
-} from '@material-ui/core'
+} from '@mui/material'
 
 const SharingView = () => {
     return (

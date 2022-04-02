@@ -1,10 +1,10 @@
 import React from 'react';
-import Link from "@material-ui/core/Link";
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import DashboardIcon from '@material-ui/icons/Dashboard';
-import PeopleIcon from '@material-ui/icons/People';
-import AssignmentIcon from '@material-ui/icons/Assignment';
+import Link from "@mui/material/Link";
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import PeopleIcon from '@mui/icons-material/People';
+import AssignmentIcon from '@mui/icons-material/Assignment';
 
 export const mainListItems = (
   <div>
@@ -12,7 +12,7 @@ export const mainListItems = (
       <ListItemIcon>
         <DashboardIcon />
       </ListItemIcon>
-      <Link href="/published">
+      <Link href="/published" underline="hover">
         Dashboard
       </Link>
     </ListItem>
@@ -20,7 +20,7 @@ export const mainListItems = (
       <ListItemIcon>
         <AssignmentIcon />
       </ListItemIcon>
-      <Link href="/1">
+      <Link href="/1" underline="hover">
         Document
       </Link>
     </ListItem>
@@ -28,7 +28,7 @@ export const mainListItems = (
       <ListItemIcon>
         <PeopleIcon />
       </ListItemIcon>
-      <Link href="/1/reviews">
+      <Link href="/1/reviews" underline="hover">
         Reviews
       </Link>
     </ListItem>
@@ -36,7 +36,7 @@ export const mainListItems = (
       <ListItemIcon>
         <PeopleIcon />
       </ListItemIcon>
-      <Link href="/1/share">
+      <Link href="/1/share" underline="hover">
         Share With
       </Link>
     </ListItem>
@@ -44,7 +44,7 @@ export const mainListItems = (
       <ListItemIcon>
         <AssignmentIcon />
       </ListItemIcon>
-      <Link href="/">
+      <Link href="/" underline="hover">
         ReUpload
       </Link>
     </ListItem>
@@ -57,7 +57,7 @@ export const secondaryListItems = (
       <ListItemIcon>
         <DashboardIcon />
       </ListItemIcon>
-      <Link href="/published">
+      <Link href="/published" underline="hover">
         Dashboard
       </Link>
     </ListItem>
