@@ -48,11 +48,9 @@ export const createUser = async (req: Request, res: Response) => {
     });
 };
 
-export const getUserList = async (_req: Request, res: Response) => {
+export const getUserList = async (req: Request, res: Response) => {
     console.log("[userController] getUserList");
     const users = await User.find();
-    res.header("Access-Control-Expose-Headers", "Content-Range");
-    res.header("Content-Range", "posts 0-20/20");
     res.status(200).json(users);
 };
 
