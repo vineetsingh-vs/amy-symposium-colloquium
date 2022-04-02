@@ -9,6 +9,7 @@ const DocIframe = ({ source }) => {
   return (
     <div>
       <iframe
+        id="doc_iframe"
         src={"https://docs.google.com/viewer?url=" + src + "&embedded=true"}
         title="file"
         width="100%"
