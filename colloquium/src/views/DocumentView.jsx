@@ -243,7 +243,7 @@ const DocumentView = () => {
                             {/* Document */}
                             <Grid item xs={8}>
                                 <DocViewer 
-                                    pluginRenderers={DocViewerRenderers}
+                                    pluginRenderers={[CustomPDFRenderer]}
                                     documents={docs} 
                                     config={{
                                         header: {
