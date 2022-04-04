@@ -15,6 +15,7 @@ const Container = styled.div({
 });
 
 const PDFCustomControls = () => {
+    // Can get current page number from here!!!!
     const context = useContext(PDFContext)
 
     return (
