@@ -1,5 +1,5 @@
 import axios from "axios";
-import { apiUrl } from "api.config";
+import { apiUrl } from "./api.config";
 
 const resource = "/users";
 
@@ -17,10 +17,8 @@ const userApi = {
             .put(`${apiUrl}/${resource}/${userId}`)
             .then((response) => response.data);
     },
-    create: async (userId) => {
-        return await axios
-            .post(`${apiUrl}/${resource}/${userId}`)
-            .then((response) => response.data);
+    create: async (email, password) => {
+        return await axios.post(`${apiUrl}/${resource}`).then((response) => response.data);
     },
     delete: async (userId) => {
         return await axios

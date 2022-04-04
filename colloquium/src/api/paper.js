@@ -1,5 +1,5 @@
 import axios from "axios";
-import { apiUrl } from "api.config";
+import { apiUrl } from "./api.config";
 
 const resource = "/papers";
 
@@ -25,14 +25,24 @@ const paperApi = {
             .get(`${apiUrl}/${resource}?${JSON.stringify(query)}`)
             .then((response) => response.data);
     },
-    getOneById: async (paperId) => {
+    getMetaDataById: async (paperId) => {
         return await axios
             .get(`${apiUrl}/${resource}/${paperId}`)
             .then((response) => response.data);
     },
-    update: async (paperId) => {
+    getFileVersionById: async (paperId, versionId) => {
+        return await axios
+            .get(`${apiUrl}/${resource}/${paperId}/${versionId}`)
+            .then((response) => response.data);
+    },
+    updateMetadata: async (paperId) => {
         return await axios
             .put(`${apiUrl}/${resource}/${paperId}`)
+            .then((response) => response.data);
+    },
+    updateFileVersion: async (paperId, versionId) => {
+        return await axios
+            .get(`${apiUrl}/${resource}/${paperId}/${versionId}`)
             .then((response) => response.data);
     },
     create: async (paperId) => {

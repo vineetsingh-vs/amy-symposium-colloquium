@@ -9,6 +9,7 @@ import SharedView from "./views/SharedView";
 import PublishView from "./views/PublishView";
 import ReviewView from "./views/ReviewView";
 import ProfileView from "./views/ProfileView";
+import SignUp from "./views/SignUpView"
 import "./App.css";
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
 
                     {/* Log in Page */}
                     <Route exact path="/" component={LoginView} />
+                    <Route exact path="/signup" component={SignUp} />
 
                     {/* Document and Comments */}
                     <Route exact path="/1" component={DocumentView} />
