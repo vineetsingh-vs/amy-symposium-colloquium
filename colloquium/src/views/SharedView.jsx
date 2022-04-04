@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import clsx from 'clsx';
 
 import {
@@ -11,9 +11,7 @@ import {
     Grid,
     IconButton,
     Link,
-    List,
-    ListItem,
-    ListItemIcon,
+    Box,
     Table,
     TableBody,
     TableCell,
@@ -27,7 +25,9 @@ import makeStyles from '@mui/styles/makeStyles';
 
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import People from '@mui/icons-material/People';
+import Person from '@mui/icons-material/Person';
+import { dashboardItems } from '../components/listItems';
+import Copyright from "../components/Copyright";
 
 
 const drawerWidth = 240;
@@ -121,7 +121,8 @@ const rows = [
 
 const SharedView = () => {
     const classes = useStyles();
-    const [open, setOpen] = React.useState(true);
+    const [username, setUsername] = useState("Default Username");
+    const [open, setOpen] = useState(true);
     const handleDrawerOpen = () => {
         setOpen(true);
     };
@@ -146,6 +147,14 @@ const SharedView = () => {
                     <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
                         Papers Shared With Me
                     </Typography>
+                    <Button
+                        variant="link"
+                        color="inherit"
+                        startIcon={<Person />}
+                        href="/userprofile"
+                    >
+                        {username}
+                    </Button>
                 </Toolbar>
             </AppBar>
             <Drawer
@@ -161,32 +170,7 @@ const SharedView = () => {
                     </IconButton>
                 </div>
                 <Divider />
-                <List>
-                    <ListItem button>
-                        <ListItemIcon onClick={handleDrawerOpen}>
-                            <People />
-                        </ListItemIcon>
-                        <Link href="./published" underline="hover">
-                            Published
-                        </Link>
-                    </ListItem>
-                    <ListItem button>
-                        <ListItemIcon onClick={handleDrawerOpen}>
-                            <People />
-                        </ListItemIcon>
-                        <Link href="./shared" underline="hover">
-                            Shared With Me
-                        </Link>
-                    </ListItem>
-                    <ListItem button>
-                        <ListItemIcon onClick={handleDrawerOpen}>
-                            <People />
-                        </ListItemIcon>
-                        <Link href="./mypapers" underline="hover">
-                            My Papers
-                        </Link>
-                    </ListItem>
-                </List>
+                {dashboardItems}
             </Drawer>
             <main className={classes.content}>
                 <div className={classes.appBarSpacer}>
@@ -226,6 +210,9 @@ const SharedView = () => {
                                 </Table>
                             </Grid>
                         </Grid>
+                        <Box pt={4}>
+                            <Copyright />
+                        </Box>
                     </Container>
                 </div>   
             </main>

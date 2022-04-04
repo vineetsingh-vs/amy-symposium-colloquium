@@ -28,24 +28,13 @@ import {
     Person,
     Assignment
 } from "@mui/icons-material"
+import { dashboardItems } from '../components/listItems';
+import Copyright from "../components/Copyright";
 
 
 
 
 const drawerWidth = 240;
-
-function Copyright() {
-    return (
-        <Typography variant="body2" color="textSecondary" align="center">
-        {'Copyright © '}
-        <Link color="inherit">
-            Colloquium
-        </Link>{' '}
-        {new Date().getFullYear()}
-        {'.'}
-        </Typography>
-    );
-};
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -178,32 +167,7 @@ const UploadPaperView = () => {
                     </IconButton>
                 </div>
                 <Divider />
-                <List component="paperViews">
-                    <ListItem button>
-                        <ListItemIcon onClick={handleDrawerOpen}>
-                            <Assignment />
-                        </ListItemIcon>
-                        <Link href="./published">
-                            Published
-                        </Link>
-                    </ListItem>
-                    <ListItem button>
-                        <ListItemIcon onClick={handleDrawerOpen}>
-                            <People />
-                        </ListItemIcon>
-                        <Link href="./shared">
-                            Shared With Me
-                        </Link>
-                    </ListItem>
-                    <ListItem button>
-                        <ListItemIcon onClick={handleDrawerOpen}>
-                            <Person />
-                        </ListItemIcon>
-                        <Link href="./mypapers">
-                            My Papers
-                        </Link>
-                    </ListItem>
-                </List>
+                {dashboardItems}
             </Drawer>
             <main className = {classes.content}>
                 <div className={classes.appBarSpacer} >

@@ -1,4 +1,8 @@
 import React from "react";
+import clsx from 'clsx';
+import { documentItems } from '../components/listItems';
+import makeStyles from '@mui/styles/makeStyles';
+
 import {
     TextField,
     Button,
@@ -9,40 +13,217 @@ import {
     TableHead,
     List,
     ListItem,
+    AppBar,
+    CssBaseline,
+    Container,
+    Drawer,
+    Divider,
+    Grid,
+    IconButton,
+    Link,
+    ListItemIcon,
+    Toolbar,
+    Typography,
+    Box
 
-} from '@mui/material'
+} from "@mui/material"
+
+import {
+  Menu,
+  ChevronLeft,
+  Person,
+  People
+} from "@mui/icons-material"
+
+import Copyright from "../components/Copyright";
+
+const drawerWidth = 240;
+
+
+//Creating fake data so the 
+function createData(id, shareName) {
+    return { id, shareName };
+}
+  
+const rows = [
+    createData(0, 'John'),
+    createData(1, 'Jacob'),
+    createData(2, 'Julia'),
+];
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+      display: 'flex',
+    },
+    toolbar: {
+      paddingRight: 24, // keep right padding when drawer closed
+    },
+    toolbarIcon: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'flex-end',
+      padding: '0 8px',
+      ...theme.mixins.toolbar,
+    },
+    appBar: {
+      zIndex: theme.zIndex.drawer + 1,
+      transition: theme.transitions.create(['width', 'margin'], {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+      }),
+    },
+    appBarShift: {
+      marginLeft: drawerWidth,
+      width: `calc(100% - ${drawerWidth}px)`,
+      transition: theme.transitions.create(['width', 'margin'], {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.enteringScreen,
+      }),
+    },
+    menuButton: {
+      marginRight: 36,
+    },
+    menuButtonHidden: {
+      display: 'none',
+    },
+    title: {
+      flexGrow: 1,
+    },
+    drawerPaper: {
+      position: 'relative',
+      whiteSpace: 'nowrap',
+      width: drawerWidth,
+      transition: theme.transitions.create('width', {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.enteringScreen,
+      }),
+    },
+    drawerPaperClose: {
+      overflowX: 'hidden',
+      transition: theme.transitions.create('width', {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+      }),
+      width: theme.spacing(7),
+      [theme.breakpoints.up('sm')]: {
+        width: theme.spacing(9),
+      },
+    },
+    appBarSpacer: theme.mixins.toolbar,
+    content: {
+      flexGrow: 1,
+      height: '100vh',
+      overflow: 'auto',
+    },
+    container: {
+      paddingTop: theme.spacing(10),
+      paddingBottom: theme.spacing(4),
+    },
+    fixedHeight: {
+      height: 240,
+    },
+  }));
 
 const SharingView = () => {
+    const classes = useStyles();
+    const [open, setOpen] = React.useState(true);
+    const handleDrawerOpen = () => {
+        setOpen(true);
+    };
+    const handleDrawerClose = () => {
+        setOpen(false);
+    };
+    const [username, setUsername] = React.useState("Default Username");
+    const [docuemntTitle, setDocumentTitle] = React.useState("Document Title");
+
+
+
     return (
-        <div className="sharingView">
-            <h1>Enter New Person to Share With</h1>
-            <TextField id="outlined-basic" label="Share With" variant="outlined" />
-            <br></br>
-            <Button variant="contained">Submit</Button>
-            <br></br>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                <TableHead>
-                    <TableRow>
-                        <TableCell>Currently Shared With</TableCell>
-                        <TableCell>Delete?</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    <TableRow>
-                        <TableCell>Anakin</TableCell>
-                        <TableCell><Button variant="contained">Delete</Button></TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell>Obi-Wan</TableCell>
-                        <TableCell><Button variant="contained">Delete</Button></TableCell>
-                    </TableRow>
-                </TableBody>
-            </Table>
-            <br></br>
-        </div>
+        <div className={classes.root}>
+        <CssBaseline />
+        <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
+            <Toolbar className={classes.toolbar}>
+                <IconButton
+                    edge="start"
+                    color="inherit"
+                    aria-label="open drawer"
+                    onClick={handleDrawerOpen}
+                    className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
+                >
+                    <Menu />
+                </IconButton>
+                <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
+                    Share {docuemntTitle} With:
+                </Typography>
+                <Button
+                        variant="link"
+                        color="inherit"
+                        startIcon={<Person />}
+                        href="/userprofile"
+                    >
+                        {username}
+                    </Button>
+            </Toolbar>
+        </AppBar>
+        <Drawer
+            variant="permanent"
+            classes={{
+                paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
+            }}
+            open={open}
+        >
+            <div className={classes.toolbarIcon}>
+                <IconButton onClick={handleDrawerClose}>
+                    <ChevronLeft />
+                </IconButton>
+            </div>
+            <Divider />
+            {documentItems}
+        </Drawer>
+        <main className={classes.content}>
+            <div className={classes.appBarSpacer}>
+                <Container maxWidth="lg" className={classes.container}>
+                    <Grid container spacing={3}>
+                        <Grid item xs={12} md={12} lg={12}>
+                            <TextField fullWidth label='Please Enter User to Share With'></TextField>
+                            <Button variant="contained" color="primary" href="">
+                                Share With
+                            </Button>
+                        </Grid>
+                        <Grid item xs={12} md={12} lg={12}>
+                            <Table component="sharingView">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Shared With</TableCell>
+                                        <TableCell>Remove Share?</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {rows.map((row) => (
+                                        <TableRow key={row.id}>
+                                            <TableCell>
+                                                {row.shareName}
+                                            </TableCell>
+                                            <TableCell>
+                                                <Button variant="contained" color="secondary" href="">Remove?</Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </Grid>
+                    </Grid>
+                    <Box pt={4}>
+                        <Copyright />
+                    </Box>
+                </Container>
+            </div>   
+        </main>
+    </div>
        
     );
 };
 
 
 export default SharingView;
+

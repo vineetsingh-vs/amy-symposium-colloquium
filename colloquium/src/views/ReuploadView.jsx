@@ -27,20 +27,8 @@ import {
   Assignment
 } from "@mui/icons-material"
 
-import { mainListItems } from './listItems';
-
-function Copyright() {
-    return (
-        <Typography variant="body2" color="textSecondary" align="center">
-        {'Copyright © '}
-        <Link color="inherit">
-            Colloquium
-        </Link>{' '}
-        {new Date().getFullYear()}
-        {'.'}
-        </Typography>
-    );
-};
+import { documentItems } from '../components/listItems';
+import Copyright from "../components/Copyright";
 
 const ReuploadView = () => {
     const drawerWidth = 240;
@@ -191,7 +179,7 @@ const ReuploadView = () => {
                     </IconButton>
                 </div>
                 <Divider />
-                <List>{mainListItems}</List>
+                {documentItems}
                 <Select
                     labelId="Version Select Label"
                     id="Version Select"

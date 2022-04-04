@@ -19,11 +19,11 @@ import {
     Container,
     Grid,
 } from "@mui/material"
-import MenuIcon from "@mui/icons-material/Menu";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import PersonIcon from "@mui/icons-material/Person";
+import Menu from "@mui/icons-material/Menu";
+import ChevronLeft from "@mui/icons-material/ChevronLeft";
+import Person from "@mui/icons-material/Person";
 import CommentList from "../components/CommentList";
-import { mainListItems } from "./listItems";
+import { documentItems } from "../components/listItems";
 import Copyright from '../components/Copyright'
 
 const drawerWidth = 240;
@@ -189,7 +189,7 @@ const DocumentView = () => {
                                 open && classes.menuButtonHidden
                             )}
                             size="large">
-                            <MenuIcon />
+                            <Menu />
                         </IconButton>
                         <Typography
                             component="h1"
@@ -203,7 +203,7 @@ const DocumentView = () => {
                         <Button
                             variant="link"
                             color="inherit"
-                            startIcon={<PersonIcon />}
+                            startIcon={<Person />}
                             href="/userprofile"
                         >
                             {username}
@@ -219,11 +219,11 @@ const DocumentView = () => {
                 >
                     <div className={classes.toolbarIcon}>
                         <IconButton onClick={handleDrawerClose} size="large">
-                            <ChevronLeftIcon />
+                            <ChevronLeft />
                         </IconButton>
                     </div>
                     <Divider />
-                    <List>{mainListItems}</List>
+                    {documentItems}
                     <Select
                         labelId="Version Select Label"
                         id="Version Select"

@@ -21,7 +21,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import PersonIcon from "@mui/icons-material/Person";
 import CommentList from "../components/CommentList";
-import { mainListItems } from "./listItems";
+import { documentItems } from "../components/listItems";
 import Copyright from "../components/Copyright";
 
 const drawerWidth = 240;
@@ -179,7 +179,7 @@ const ReviewView = () => {
                     </IconButton>
                 </div>
                 <Divider />
-                <List>{mainListItems}</List>
+                {documentItems}
                 <Select
                     labelId="Version Select Label"
                     id="Version Select"
