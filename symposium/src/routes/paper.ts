@@ -1,25 +1,23 @@
 import express from "express";
-import { getAllPapers, getPaperById, getPaperVersionById, addPaper, updatePaper, deletePaper, deletePaperVersion } from "../controllers/paper";
+import {
+    getPaperList,
+    getPaperMetaData,
+    getPaperFileVersion,
+    createPaper,
+    updatePaperMetaData,
+    updatePaperFileVersion,
+    deletePaper,
+    deletePaperVersion,
+} from "../controllers/paper";
 
 const router = express.Router();
 
-/**Return all papers */
-router.get('/', getAllPapers);
-/**Return a paper of a specific id */
-router.get('/:paperid', getPaperById);
-/**Return a specific version of a paper */
-router.get('/:paperid/:versionid', getPaperVersionById);
-
-/**For creating an initial paper, creates all attributes of a paper, author, name, etc. 
- * Adds file to the list of revisions  */
-router.post('/', addPaper); 
-
-/**Edit details and metadata of an already existing paper */
-router.put('/:paperid', updatePaper);
-
-/**Delete a paper */
-router.delete('/:paperid', deletePaper);
-/**Delete a specific version of a paper */
-router.delete('/:paperid/:versionid', deletePaperVersion);
+router.route("/").get(getPaperList).post(createPaper);
+router.route("/:paperId").get(getPaperMetaData).put(updatePaperMetaData).delete(deletePaper);
+router
+    .route("/:paperId/:versionId")
+    .get(getPaperFileVersion)
+    .put(updatePaperFileVersion)
+    .delete(deletePaperVersion);
 
 export default router;

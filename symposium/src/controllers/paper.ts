@@ -4,17 +4,25 @@ import fs from "fs";
 import { Paper } from "../entities/Paper";
 import config from "../utils/config";
 
-export const getAllPapers = async (req: Request, res: Response) => {
-    console.log("[paperController] getAllPapers");
-    const papers = await Paper.find();
-    res.status(200).send(papers);
+export const getPaperList = async (req: Request, res: Response) => {
+    const { filter, userId } = req.query;
+    console.log("[paperController] getPaperList");
+
+    let paperList;
+    if (filter === "shared") {
+    } else if (filter === "uploaded") {
+    } else {
+        // if user admin return all papers
+        // else return papers shared with or associated with
+        paperList = await Paper.find();
+    }
+
+    res.status(200).send(paperList);
 };
 
-export const getPaperById = async (req: Request, res: Response) => {
-    console.log("[paperController] getPaperById");
+export const getPaperMetaData = async (req: Request, res: Response) => {
+    console.log("[paperController] getPaperMetaData");
     const { paperid } = req.params;
-    console.log("Our id is: ");
-    console.log(paperid);
 
     let paper = await Paper.findOne({ where: { id: paperid } });
 
@@ -37,10 +45,10 @@ export const getPaperById = async (req: Request, res: Response) => {
     }
 };
 
-export const getPaperVersionById = async (req: Request, res: Response) => {};
+export const getPaperFileVersion = async (req: Request, res: Response) => {};
 
-export const addPaper = async (req: Request, res: Response) => {
-    console.log("[paperController] addPaper");
+export const createPaper = async (req: Request, res: Response) => {
+    console.log("[paperController] createPaper");
     console.log(req.body);
 
     let form = new IncomingForm({ multiples: true, uploadDir: config.tmpFolder });
@@ -94,8 +102,8 @@ export const addPaper = async (req: Request, res: Response) => {
     });
 };
 
-export const updatePaper = async (req: Request, res: Response) => {
-    console.log("[paperController] updatePaper");
+export const updatePaperMetaData = async (req: Request, res: Response) => {
+    console.log("[paperController] updatePaperMetaData");
     const { paperid } = req.params;
     const { title, creator_id, filepath, authors, tags, revisions, isPublished } = req.body;
 
@@ -128,6 +136,8 @@ export const updatePaper = async (req: Request, res: Response) => {
     }
 };
 
+export const updatePaperFileVersion = async (req: Request, res: Response) => {};
+
 export const deletePaper = async (req: Request, res: Response) => {
     console.log("[paperController] deletePaper");
     const { paperid } = req.params;
@@ -143,4 +153,3 @@ export const deletePaper = async (req: Request, res: Response) => {
 };
 
 export const deletePaperVersion = async (req: Request, res: Response) => {};
-
