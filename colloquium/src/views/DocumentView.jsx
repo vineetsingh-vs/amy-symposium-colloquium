@@ -263,7 +263,7 @@ const DocumentView = () => {
                             {/* Comments */}
                             <Grid item xs={4}>
                                 <CommentList comments={comments}/>
-                                <Button color="primary" variant="contained" fullWidth="true">
+                                <Button color="primary" variant="contained" fullWidth={true}>
                                     Add Comment
                                 </Button>
                             </Grid>

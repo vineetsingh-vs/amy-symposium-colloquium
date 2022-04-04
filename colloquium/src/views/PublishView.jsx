@@ -193,7 +193,7 @@ const PublishView = () => {
                     <Container maxWidth="lg" className={classes.container}>
                         <Grid container spacing={3}>
                             <Grid item xs={12} md={12} lg={12}>
-                                <Button variant="contained" color="primary" href="">
+                                <Button variant="contained" color="primary" href="/upload">
                                     UPLOAD
                                 </Button>
                             </Grid>

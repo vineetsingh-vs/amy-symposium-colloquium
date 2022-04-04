@@ -9,6 +9,9 @@ import SharedView from "./views/SharedView";
 import PublishView from "./views/PublishView";
 import ReviewView from "./views/ReviewView";
 import ProfileView from "./views/ProfileView";
+import UploadView from "./views/UploadView";
+import ReuploadView from "./views/ReuploadView";
+
 import "./App.css";
 import { ThemeProvider, StyledEngineProvider, createTheme } from "@mui/material/styles";
 
@@ -43,8 +46,8 @@ function App() {
 
                         {/* "Popup screens" */}
                         <Route exact path="/1/share" component={SharingView} />
-                        {/* <Route exact path="/1/reupload" component={ReuploadView} /> */}
-                        {/* <Route exact path="/upload" component={UploadPaperView} /> */}
+                        <Route exact path="/1/reupload" component={ReuploadView} />
+                        <Route exact path="/upload" component={UploadView} />
 
                         <Route path="*" component={PageNotFound} />
 

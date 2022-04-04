@@ -44,7 +44,7 @@ export const mainListItems = (
       <ListItemIcon>
         <AssignmentIcon />
       </ListItemIcon>
-      <Link href="/" underline="hover">
+      <Link href="/1/reupload" underline="hover">
         ReUpload
       </Link>
     </ListItem>
