@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
-import CustomPDFRenderer from "../renderers/CustomPDFRenderer";
 import clsx from "clsx";
-import makeStyles from '@mui/styles/makeStyles';
+import {makeStyles} from "@material-ui/core/styles";
 import {
     Button,
     CssBaseline,
@@ -18,11 +17,12 @@ import {
     IconButton,
     Container,
     Grid,
-} from "@mui/material"
-import MenuIcon from "@mui/icons-material/Menu";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import PersonIcon from "@mui/icons-material/Person";
+} from "@material-ui/core"
+import MenuIcon from "@material-ui/icons/Menu";
+import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import PersonIcon from "@material-ui/icons/Person";
 import CommentList from "../components/CommentList";
+import DocIFrame from "../components/DocIFrame.jsx";
 import { mainListItems } from "./listItems";
 import Copyright from '../components/Copyright'
 
@@ -188,7 +188,7 @@ const DocumentView = () => {
                                 classes.menuButton,
                                 open && classes.menuButtonHidden
                             )}
-                            size="large">
+                        >
                             <MenuIcon />
                         </IconButton>
                         <Typography
@@ -218,7 +218,7 @@ const DocumentView = () => {
                     open={open}
                 >
                     <div className={classes.toolbarIcon}>
-                        <IconButton onClick={handleDrawerClose} size="large">
+                        <IconButton onClick={handleDrawerClose}>
                             <ChevronLeftIcon />
                         </IconButton>
                     </div>
@@ -243,7 +243,7 @@ const DocumentView = () => {
                             {/* Document */}
                             <Grid item xs={8}>
                                 <DocViewer 
-                                    pluginRenderers={[CustomPDFRenderer]}
+                                    pluginRenderers={DocViewerRenderers} 
                                     documents={docs} 
                                     config={{
                                         header: {

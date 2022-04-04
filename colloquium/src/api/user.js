@@ -12,13 +12,23 @@ const userApi = {
             .get(`${apiUrl}/${resource}/${userId}`)
             .then((response) => response.data);
     },
-    update: async (userId) => {
+    // update a user with userInfo => { firstName, lastName, affiliation, email, username, password }
+    update: async (userId, userInfo) => {
         return await axios
-            .put(`${apiUrl}/${resource}/${userId}`)
+            .put(`${apiUrl}/${resource}/${userId}`, userInfo)
             .then((response) => response.data);
     },
-    create: async (email, password) => {
-        return await axios.post(`${apiUrl}/${resource}`).then((response) => response.data);
+    // signup with userInfo => { firstName, lastName, affiliation, email, username, password }
+    signUp: async (userInfo) => {
+        return await axios
+            .post(`${apiUrl}/${resource}`, userInfo)
+            .then((response) => response.data);
+    },
+    // signin a user with email and password
+    signIn: async (email, password) => {
+        return await axios
+            .post(`${apiUrl}/${resource}`, { email: email, password: password })
+            .then((response) => response.data);
     },
     delete: async (userId) => {
         return await axios
