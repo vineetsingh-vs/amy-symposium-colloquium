@@ -165,7 +165,7 @@ const MyPapersView = () => {
                     </IconButton>
                 </div>
                 <Divider />
-                <List component="paperViews">
+                <List>
                     <ListItem button>
                         <ListItemIcon onClick={handleDrawerOpen}>
                             <People />
@@ -202,7 +202,7 @@ const MyPapersView = () => {
                                 </Button>
                             </Grid>
                             <Grid item xs={12} md={12} lg={12}>
-                                <Table component="PublishedPapers">
+                                <Table>
                                     <TableHead>
                                         <TableRow>
                                             <TableCell>My Papers</TableCell>

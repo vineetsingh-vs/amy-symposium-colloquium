@@ -161,7 +161,7 @@ const SharedView = () => {
                     </IconButton>
                 </div>
                 <Divider />
-                <List component="paperViews">
+                <List>
                     <ListItem button>
                         <ListItemIcon onClick={handleDrawerOpen}>
                             <People />
@@ -198,7 +198,7 @@ const SharedView = () => {
                                 </Button>
                             </Grid>
                             <Grid item xs={12} md={12} lg={12}>
-                                <Table component="publishedPapers">
+                                <Table>
                                     <TableHead>
                                         <TableRow>
                                             <TableCell>Shared Paper</TableCell>
