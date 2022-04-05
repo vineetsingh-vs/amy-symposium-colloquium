@@ -122,10 +122,24 @@ const UploadPaperView = () => {
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
     const [username, setUsername] = React.useState("Default Username");
     
+    const [title, setTitle] = React.useState(true);
+    const handleTitle = () => {
+        setTitle(false);
+    }
+    const [shared, setShared] = React.useState(true);
+    const handleShared = () => {
+        setShared(false);
+    }
+    const [authors, setAuthors] = React.useState(true);
+    const handleAuthors = () => {
+      setAuthors(false);
+    }
+
     const [upload, setUpload] = React.useState(true);
     const handleUpload = () => {
         setUpload(false);
     }
+
 
     return (
         <div className={classes.root}>
@@ -176,9 +190,9 @@ const UploadPaperView = () => {
                         <Grid container spacing={3}>
 
                             <Grid item xs={12} md={12} lg={12}>
-                                <TextField id="docTitle" required label="Document Title" variant="outlined" />  
-                                <TextField id="sharedWith" required label="Share With" variant="outlined"/>
-                                <TextField id="authors" required label="Author(s)" variant="outlined" /> 
+                                <TextField id="docTitle" required label="Document Title" variant="outlined" onChange={handleTitle}/>  
+                                <TextField id="sharedWith" required label="Share With" variant="outlined" onChange={handleShared}/>
+                                <TextField id="authors" required label="Author(s)" variant="outlined" onChange={handleAuthors}/> 
                             </Grid>
                         
                             <Grid item xs={12} md={12} lg={12}>
@@ -189,7 +203,7 @@ const UploadPaperView = () => {
                             </Grid>
 
                             <Grid item xs={12} md={12} lg={12}>
-                                <Button color="primary" variant="contained" component="span" disabled={upload}>
+                                <Button color="primary" variant="contained" href="/1" disabled={title || shared || authors || upload}>
                                     Submit
                                 </Button>
                             </Grid>
