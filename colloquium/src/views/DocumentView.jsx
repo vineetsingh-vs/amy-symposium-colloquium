@@ -30,7 +30,10 @@ import Copyright from '../components/Copyright'
 import { PDFContext } from "react-doc-viewer/build/plugins/pdf/state/index"
 
 const drawerWidth = 240;
-const currentDocumentPage = 1;
+const pageContext = {
+    currentPage: 1,
+    version: "1"
+};
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -112,10 +115,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ChangeCurrentPage = (page) => {
-    currentDocumentPage = page
+    pageContext.currentPage = page
 }
 
-
+const ChangeCurrentVersion = (version) => {
+    pageContext.version = version
+}
 
 const DocumentView = () => {
     const classes = useStyles();
@@ -171,9 +176,9 @@ const DocumentView = () => {
     useEffect(() => {
         console.log("[CommentList] mount");
         let isMounted = true;
-        // if(isMounted) setIsFetching(true);
+        setIsFetching(true);
         listComments();
-        // if(isMounted) setIsFetching(false);
+        setIsFetching(false);
     }, []);
 
     // Adds comment to specific paperId/pageId
@@ -224,7 +229,7 @@ const DocumentView = () => {
                             noWrap
                             className={classes.title}
                         >
-                            {docuemntTitle}
+                            {documentTitle}
                         </Typography>
                         <Button
                             variant="link"
@@ -301,5 +306,6 @@ const DocumentView = () => {
 
 export{
     DocumentView,
-    ChangeCurrentPage
+    ChangeCurrentPage,
+    ChangeCurrentVersion
 };

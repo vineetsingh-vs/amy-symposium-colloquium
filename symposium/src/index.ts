@@ -6,13 +6,20 @@ import logger from "./loaders/logger";
 import authRoutes from "./routes/auth";
 import userRoutes from "./routes/user";
 import paperRoutes from "./routes/paper";
-import tagRoutes from "./routes/tag";
 import commentRoutes from "./routes/comment";
 import reviewRoutes from "./routes/review";
 import config from "./utils/config";
 import connectDB from "./utils/db";
+import { existsSync, mkdirSync } from "fs";
 
 const main = async () => {
+    if (!existsSync(config.tmpFolder)) {
+        mkdirSync(config.tmpFolder, { recursive: true });
+    }
+    if (!existsSync(config.uploadFolder)) {
+        mkdirSync(config.uploadFolder, { recursive: true });
+    }
+
     //
     // database connection
     connectDB();
@@ -34,7 +41,6 @@ const main = async () => {
     app.use("/auth", authRoutes);
     app.use("/v1/users", userRoutes);
     app.use("/v1/papers", paperRoutes);
-    app.use("/v1/tags", tagRoutes);
     app.use("/v1/comments", commentRoutes);
     app.use("/v1/reviews", reviewRoutes);
 

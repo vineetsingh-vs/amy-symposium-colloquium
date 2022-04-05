@@ -4,16 +4,11 @@ const httpClient = fetchUtils.fetchJson;
 
 // used by react-api to perform actions on backend
 const dataProvider = {
-    getList: async (resource) => {
-        const url = `${apiUrl}/${resource}`;
-
-        return httpClient(url).then(({ headers, json }) => {
-            return {
-                data: json,
-                total: parseInt(headers.get("Content-Range").split("/").pop(), 10),
-            };
-        });
-    },
+    getList: async (resource) =>
+        httpClient(`${apiUrl}/${resource}`).then(({ json }) => ({
+            data: json,
+            total: 20,
+        })),
 
     getOne: (resource, params) =>
         httpClient(`${apiUrl}/${resource}/${params.id}`).then(({ json }) => ({
