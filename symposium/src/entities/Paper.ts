@@ -39,14 +39,6 @@ export class Paper extends BaseEntity {
     @Column("boolean", { default: true })
     isPublished: boolean = false;
 
-    @OneToMany("Extra", (extra: Extra) => extra.paper, {
-        onDelete: "CASCADE",
-        onUpdate: "CASCADE",
-        eager: true,
-    })
-    @JoinColumn()
-    extras: Extra[];
-
     @CreateDateColumn()
     createdAt: Date;
 
@@ -57,7 +49,7 @@ export class Paper extends BaseEntity {
     versionNumber: number;
 
     /**One Paper has many versions */
-    @OneToMany(() => Version, (version) => version.parentid)
+    @OneToMany(() => Version, (version) => version.paper)
     versions: Version[];
 
     /**One Paper has many reviews */
