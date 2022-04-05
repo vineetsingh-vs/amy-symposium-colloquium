@@ -6,7 +6,11 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
     VersionColumn,
+    OneToMany
 } from "typeorm";
+import { Version } from "./Version"
+import { Review } from "./Review";
+
 
 @Entity()
 export class Paper extends BaseEntity {
@@ -42,4 +46,10 @@ export class Paper extends BaseEntity {
 
     @VersionColumn()
     versionNumber: number
+
+    @OneToMany(() => Version, (version) => version.parentid)
+    versions: Version[]
+
+    @OneToMany(() => Review, (review) => review.paper_id)
+    reviews: Review[]
 }

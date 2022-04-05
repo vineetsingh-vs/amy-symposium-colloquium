@@ -5,14 +5,18 @@ import {
     UpdateDateColumn,
     Column,
     BaseEntity,
+    ManyToOne,
+    OneToMany,
 } from "typeorm";
+import { Paper } from "./Paper";
+import { Comment } from "./Comment";
 
 @Entity()
 export class Review extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     id!: string;
 
-    @Column()
+    @ManyToOne(() => Paper, (paper_id) => paper_id.reviews)
     paper_id!: number;
 
     @Column()
@@ -24,8 +28,8 @@ export class Review extends BaseEntity {
     @Column()
     user!: number;
 
-    @Column("text", { array: true })
-    comments!: string[];
+    @OneToMany(() => Comment, (comment) => comment.paper_id)
+    comments: Comment[];
 
     @CreateDateColumn()
     created_at: Date;
