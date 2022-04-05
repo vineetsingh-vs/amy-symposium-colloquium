@@ -9,6 +9,8 @@ import {
     OneToMany,
     JoinColumn,
 } from "typeorm";
+import { Version } from "./Version";
+import { Review } from "./Review";
 import { Extra } from "./Extra";
 
 @Entity()
@@ -29,18 +31,18 @@ export class Paper extends BaseEntity {
     authors: string[];
 
     @Column("text", { array: true })
-    tags: string[]
+    tags: string[];
 
     @Column("text", { array: true })
     revisions: string[];
-    
+
     @Column("boolean", { default: true })
     isPublished: boolean = false;
 
-    @OneToMany('Extra', (extra: Extra) => extra.paper, {
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
-        eager: true
+    @OneToMany("Extra", (extra: Extra) => extra.paper, {
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+        eager: true,
     })
     @JoinColumn()
     extras: Extra[];
@@ -52,5 +54,13 @@ export class Paper extends BaseEntity {
     updatedAt: Date;
 
     @VersionColumn()
-    versionNumber: number
+    versionNumber: number;
+
+    /**One Paper has many versions */
+    @OneToMany(() => Version, (version) => version.parentid)
+    versions: Version[];
+
+    /**One Paper has many reviews */
+    @OneToMany(() => Review, (review) => review.paper_id)
+    reviews: Review[];
 }

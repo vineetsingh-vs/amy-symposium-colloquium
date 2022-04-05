@@ -2,12 +2,11 @@ import config from "./config";
 import { Comment } from "../entities/Comment";
 import { Review } from "../entities/Review";
 import { User } from "../entities/User";
+import { Version } from "../entities/Version";
 import "reflect-metadata";
 import { createConnection } from "typeorm";
 import { Extra } from "../entities/Extra";
 import { Paper } from "../entities/Paper";
-import { Tag } from "../entities/Tag";
-import { Version } from "../entities/Version";
 
 export default async () => {
     try {

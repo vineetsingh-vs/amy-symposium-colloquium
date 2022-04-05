@@ -2,8 +2,8 @@ import { Request, Response } from "express";
 import { Fields, Files, IncomingForm } from "formidable";
 import fs from "fs";
 import { Extra } from "../entities/Extra";
-import { Paper } from "../entities/Paper"
-import config from "../utils/config"
+import { Paper } from "../entities/Paper";
+import config from "../utils/config";
 
 export const getPaperList = async (req: Request, res: Response) => {
     const { filter, userId } = req.query;
@@ -47,27 +47,9 @@ export const getPaperMetaData = async (req: Request, res: Response) => {
     }
 };
 
-export const getPaperFileById = async(req: Request, res: Response) => {
-    console.log("[paperController] getPaperFileById");
-    const { paperid } = req.params;
-    console.log("Our id is: ")
-    console.log(paperid);
+export const createPaper = async (req: Request, res: Response) => {
+    console.log("[paperController] createPaper");
 
-    let paper = await Paper.findOne({ where: { id: paperid } });
-
-    if (paper) {
-        res.status(200).download(paper.filepath);
-    } else {
-        res.status(400).json({ message: "Could not find Paper" });
-    }
-};
-
-export const getPaperVersionById = async(req: Request, res: Response) => {};
-
-export const createPaper = async(req: Request, res: Response) => {
-
-    console.log("[paperController] addPaper");
-    
     let form = new IncomingForm({ multiples: true, uploadDir: config.tmpFolder });
     form.parse(req, async (err, fields: Fields, files: Files) => {
         if (err) {
@@ -79,15 +61,14 @@ export const createPaper = async(req: Request, res: Response) => {
         }
         if (!Array.isArray(files.files)) {
             let file = files.files;
-            console.log(files)
+            console.log(files);
             try {
                 var oldPath = file.filepath;
                 // TODO: Where we would either save file to AWS or local storage
                 var newPath = config.uploadFolder + "/" + file.originalFilename;
                 fields.filepath = newPath;
                 fs.writeFileSync(newPath, fs.readFileSync(oldPath));
-
-            } catch(e) {
+            } catch (e) {
                 console.log("Error writing file", e);
                 res.status(400).json({
                     message: "File couldn't be saved",
@@ -116,7 +97,7 @@ export const createPaper = async(req: Request, res: Response) => {
             isPublished: newPaper.isPublished,
             createdAt: newPaper.createdAt,
             updatedAt: newPaper.updatedAt,
-            versionNumber: newPaper.versionNumber
+            versionNumber: newPaper.versionNumber,
         });
     });
 };
@@ -156,7 +137,7 @@ export const updatePaperMetaData = async (req: Request, res: Response) => {
     }
 };
 
-export const deletePaper = async(req: Request, res: Response) => {
+export const deletePaper = async (req: Request, res: Response) => {
     console.log("[paperController] deletePaper");
     const { paperid } = req.params;
 
@@ -195,13 +176,12 @@ export const addExtra = async (req: Request, res: Response) => {
             extras: paper.extras,
             createdAt: paper.createdAt,
             updatedAt: paper.updatedAt,
-            versionNumber: paper.versionNumber
+            versionNumber: paper.versionNumber,
         });
     } else {
         res.status(400).json({ message: "Paper not found" });
     }
 };
-
 
 //
 // ======== TODO >>>>

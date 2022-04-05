@@ -3,7 +3,7 @@ import AdminDashboard from "./views/AdminDashboard";
 import PageNotFound from "./views/PageNotFound";
 import LoginView from "./views/LoginView";
 import SharingView from "./views/SharingView";
-import {DocumentView} from "./views/DocumentView";
+import DocumentView from "./views/DocumentView";
 import MyPapersView from "./views/MyPapersView";
 import SharedView from "./views/SharedView";
 import PublishView from "./views/PublishView";
@@ -11,7 +11,7 @@ import ReviewView from "./views/ReviewView";
 import ProfileView from "./views/ProfileView";
 import UploadView from "./views/UploadView";
 import ReuploadView from "./views/ReuploadView";
-
+import SignUp from "./views/SignUpView"
 import "./App.css";
 import { ThemeProvider, StyledEngineProvider, createTheme } from "@mui/material/styles";
 
@@ -28,8 +28,9 @@ function App() {
                         <Route exact path="/admin" component={AdminDashboard} />
                         <Route exact path="/userprofile" component={ProfileView} />
 
-                        {/* Log in Page */}
-                        <Route exact path="/" component={LoginView} />
+                    {/* Log in Page */}
+                    <Route exact path="/" component={LoginView} />
+                    <Route exact path="/signup" component={SignUp} />
 
                         {/* Document and Comments */}
                         <Route exact path="/1" component={DocumentView} />
