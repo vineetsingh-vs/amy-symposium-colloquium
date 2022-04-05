@@ -1,11 +1,15 @@
 import {
     Entity,
+    ManyToMany,
+    JoinTable,
     PrimaryGeneratedColumn,
     CreateDateColumn,
     UpdateDateColumn,
     Column,
     BaseEntity,
 } from "typeorm";
+
+import { Paper } from "./Paper";
 
 @Entity()
 export class User extends BaseEntity {
@@ -33,10 +37,9 @@ export class User extends BaseEntity {
     @Column("text", { array: true })
     roles!: string[];
 
-    // TODO:
-    // col for papers (oneToMany)
-    // col for comments (oneToMany)
-    // col for reviews (oneToMany)
+    @ManyToMany(() => Paper)
+    @JoinTable()
+    papers: Paper[];
 
     @CreateDateColumn()
     createdAt: Date;
@@ -44,18 +47,3 @@ export class User extends BaseEntity {
     @UpdateDateColumn()
     updatedAt: Date;
 }
-
-// model User {
-// affiliation String?
-// comments    Comment[]
-// createdAt   DateTime  @default(now())
-// firstName   String?
-// id          String    @id @default(cuid())
-// lastName    String?
-// papers      Paper[]
-// password    String
-// reviews     Review[]
-// roles       String[]
-// updatedAt   DateTime  @updatedAt
-// username    String    @unique
-// }
