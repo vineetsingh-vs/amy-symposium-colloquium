@@ -125,7 +125,7 @@ const ReviewView = () => {
         comments.push(createComment(comments.length, username, value, []));
         listComments();
         console.log(comments);
-
+        setValue("");
     }
     
     const createComment = (id, name, body, replies) => {
@@ -235,7 +235,7 @@ const ReviewView = () => {
                     <Grid item xs={12}>
                     <CommentList comments={comments}/>
                         <TextField variant="outlined" multiline placeholder="Enter Review Here" fullWidth={true} value={value} onChange={handleType}></TextField>
-                        <Button color="primary" variant="contained" fullWidth="true" onClick={handleClick}>
+                        <Button color="primary" variant="contained" fullWidth="true" disabled={value == ""} onClick={handleClick}>
                             Add Review
                         </Button>
                     </Grid>

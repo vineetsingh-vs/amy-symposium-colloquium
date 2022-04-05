@@ -43,7 +43,7 @@ const Comment = ({ comment }) => {
         replies.push(createReply(comments.length, username, value));
         listReplies();
         console.log(replies);
-
+        setValue("");
     }
     
     const createReply = (id, name, body) => {
@@ -99,7 +99,7 @@ const Comment = ({ comment }) => {
             </Button>
             {hidden && (<TextField multiline variant="outlined" fullWidth={true} value={value} onChange={handleType}></TextField>)}
             
-            {hidden && (<Button color="secondary" variant="contained" onClick={handleClick}>Add Reply</Button>)}
+            {hidden && (<Button color="secondary" variant="contained" disabled={value == ""} onClick={handleClick}>Add Reply</Button>)}
             <ReplyList reply={replies}/>
 
             <Divider />

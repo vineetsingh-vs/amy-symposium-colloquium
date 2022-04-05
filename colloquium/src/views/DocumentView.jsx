@@ -140,7 +140,7 @@ const DocumentView = () => {
         console.log(`typed => ${value}`);
         comments.push(createComment(comments.length, username, value));
         listComments();
-
+        setValue("");
     }
     
     const createComment = (id, name, body) => {
@@ -289,7 +289,7 @@ const DocumentView = () => {
                             <Grid item xs={4}>
                                 <CommentList comments={comments}/>
                                 <TextField variant="outlined" multiline placeholder="Enter Comment Here" fullWidth={true} value={value} onChange={handleType}></TextField>
-                                <Button color="primary" variant="contained" fullWidth={true} onClick={handleClick}>
+                                <Button color="primary" variant="contained" fullWidth={true} disabled={value == ""} onClick={handleClick}>
                                     Add Comment
                                 </Button>
                             </Grid>

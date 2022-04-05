@@ -3,6 +3,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import {
     List,
     ListItem,
+    ListItemIcon,
     Divider,
     ListItemText,
     ListItemAvatar,
@@ -11,6 +12,8 @@ import {
     Button,
     TextField
 } from "@mui/material";
+
+import SubdirectoryArrowRightIcon from '@mui/icons-material/SubdirectoryArrowRight';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -27,15 +30,13 @@ const useStyles = makeStyles((theme) => ({
 
 const Reply = ({ reply }) => {
     const classes = useStyles();
-    const [hidden, setHidden] = useState(false);
-
-    const addReply = () => {
-        setHidden(!hidden);
-    }
     
     return (
         <div className={`reply ${reply.id}`}>
             <ListItem key={reply.id} alignItems="flex-start">
+                <ListItemIcon>
+                    <SubdirectoryArrowRightIcon />
+                </ListItemIcon>
                 <ListItemAvatar>
                     <Avatar alt="avatar" />
                 </ListItemAvatar>
@@ -55,12 +56,6 @@ const Reply = ({ reply }) => {
                     }
                 />
             </ListItem>
-            {/* <Button color="secondary" variant="contained" onClick={addReply}>
-                Reply
-            </Button> */}
-            {hidden && (<TextField multiline variant="outlined" fullWidth={true}></TextField>)}
-
-            {hidden && (<Button color="secondary" variant="contained">Add Reply</Button>)}
             <Divider />
         </div>
     );
