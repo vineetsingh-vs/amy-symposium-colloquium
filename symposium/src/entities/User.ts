@@ -8,7 +8,6 @@ import {
     Column,
     BaseEntity,
 } from "typeorm";
-import { Paper } from "./Paper";
 
 @Entity()
 export class User extends BaseEntity {
