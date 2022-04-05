@@ -28,6 +28,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Person from '@mui/icons-material/Person';
 import { dashboardItems } from '../components/listItems';
 import Copyright from '../components/Copyright'
+import paperApi from '../api/paper';
 
 const drawerWidth = 240;
 
@@ -105,19 +106,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-//Creating fake data so the 
-const createData = (id, paperLink, uploader, date, published) => {
-    return { id, paperLink, uploader, date, published };
-}
-
-const rows = [
-    createData(0, 'My Paper1', 'Me', '3/25/2022', true),
-    createData(1, 'My Paper2', 'Me', '3/26/2022', false),
-    createData(2, 'My Paper3', 'Me', '3/27/2022', true),
-];
-
 const MyPapersView = () => {
-  const [username, setUsername] = useState("Default Username");
+    const [listDocuments, setListDocuments] = useState([]);
+    const [username, setUsername] = useState("Default Username");
+    const [userID, setUserID] = useState(1);
     const classes = useStyles();
     const [open, setOpen] = useState(true);
 
@@ -129,10 +121,7 @@ const MyPapersView = () => {
         setOpen(false);
     };
 
-    // const [publish, setPublished] = React.useState(false);
-    const handlePublishedClick = (id, paperLink, uploader, date, published) => {
-        rows[id] = createData(id, paperLink, uploader, date, published);
-    }
+    setListDocuments(paperApi.getList(userID, "all"))
 
     return (
         <div className={classes.root}>
@@ -196,25 +185,28 @@ const MyPapersView = () => {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {rows.map((row) => (
+                                        {listDocuments.map((row) => (
                                             <TableRow key={row.id}>
                                                 <TableCell>
-                                                    <Link href="/1" underline="hover">
-                                                        {row.paperLink}
+                                                    <Link href={"/" + row.id} underline="hover">
+                                                        {row.title}
                                                     </Link>
                                                 </TableCell>
                                                 <TableCell>
-                                                    {row.uploader}
+                                                  <React.Fragment>
+                                                    {row.authors.forEach(author => {
+                                                      <li>author</li>
+                                                    })}
+                                                  </React.Fragment>
                                                 </TableCell>
                                                 <TableCell>
-                                                    {row.date}
+                                                    {row.updatedAt}
                                                 </TableCell>
                                                 <TableCell>
                                                         <FormControlLabel
                                                             control={
                                                             <Switch
                                                                 checked={row.published}
-                                                                onChange={handlePublishedClick(row.id, row.paperLink, row.uploader, row.date, row.published)}
                                                                 color="primary"
                                                             />
                                                             }

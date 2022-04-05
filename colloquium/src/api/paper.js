@@ -42,10 +42,10 @@ const paperApi = {
             .then((response) => response.data);
     },
     // update a paper's file version
-    updateFileVersion: async (paperId, versionId, fileData) => {
+    updateFileVersion: async (paperId, versionId, formData) => {
         // TODO add file upload
         return await axios
-            .get(`${apiUrl}/${resource}/${paperId}/${versionId}`)
+            .get(`${apiUrl}/${resource}/${paperId}/${versionId}`, formData)
             .then((response) => response.data);
     },
     // start sharing paper (paperId) with user (userId) and set permissions
