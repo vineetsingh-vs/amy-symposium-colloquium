@@ -16,6 +16,7 @@ export class Review extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     id!: string;
 
+    /**Many Reviews has one paper */
     @ManyToOne(() => Paper, (paper_id) => paper_id.reviews)
     paper_id!: number;
 
@@ -28,6 +29,7 @@ export class Review extends BaseEntity {
     @Column()
     user!: number;
 
+    /**One Review has many comments */
     @OneToMany(() => Comment, (comment) => comment.paper_id)
     comments: Comment[];
 

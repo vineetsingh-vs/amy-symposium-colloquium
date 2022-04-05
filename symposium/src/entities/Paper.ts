@@ -47,9 +47,11 @@ export class Paper extends BaseEntity {
     @VersionColumn()
     versionNumber: number
 
+    /**One Paper has many versions */
     @OneToMany(() => Version, (version) => version.parentid)
     versions: Version[]
 
+    /**One Paper has many reviews */
     @OneToMany(() => Review, (review) => review.paper_id)
     reviews: Review[]
 }
