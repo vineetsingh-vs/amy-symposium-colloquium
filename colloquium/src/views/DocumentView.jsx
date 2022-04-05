@@ -126,7 +126,6 @@ const DocumentView = () => {
     const [username, setUsername] = useState("Default Username");
     const [comments, setComments] = useState([]);
     const [isFetching, setIsFetching] = useState(false);
-    const [version, setVersion] = useState("");
 
     const listComments = () => {
         const url = "https://jsonplaceholder.typicode.com/posts/1/comments";
