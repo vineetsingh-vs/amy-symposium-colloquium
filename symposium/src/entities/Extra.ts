@@ -13,8 +13,9 @@ export class Extra extends BaseEntity {
     value!: string;
 
     @ManyToOne(() => Paper, (paper: Paper) => paper.extras, {
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
     })
     paper: Paper;
 }
+

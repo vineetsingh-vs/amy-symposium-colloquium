@@ -5,7 +5,10 @@ import {
     UpdateDateColumn,
     Column,
     BaseEntity,
+    ManyToOne,
 } from "typeorm";
+import { Version } from "./Version";
+import { Review } from "./Review";
 
 @Entity()
 export class Comment extends BaseEntity {
@@ -15,17 +18,19 @@ export class Comment extends BaseEntity {
     @Column()
     paper_id!: number;
 
-    @Column()
-    paper_version!: number;
+    /**Many Comments have one version */
+    @ManyToOne(() => Version, (paper_version) => paper_version.comments)
+    paper_version: number;
 
-    @Column()
-    review!: string;
+    /**Many Comments have one Review */
+    @ManyToOne(() => Review, (review) => review.comments)
+    review!: number;
 
     @Column()
     content!: string;
 
     @Column()
-    parent!: string
+    parent!: string;
 
     @Column()
     user!: number;
@@ -36,3 +41,4 @@ export class Comment extends BaseEntity {
     @UpdateDateColumn()
     updated_at: Date;
 }
+
