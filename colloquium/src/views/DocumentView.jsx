@@ -18,6 +18,8 @@ import {
     IconButton,
     Container,
     Grid,
+    TextField,
+    Input
 } from "@mui/material"
 import Menu from "@mui/icons-material/Menu";
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
@@ -113,6 +115,8 @@ const ChangeCurrentPage = (page) => {
     currentDocumentPage = page
 }
 
+
+
 const DocumentView = () => {
     const classes = useStyles();
     const [open, setOpen] = useState(false);
@@ -121,16 +125,32 @@ const DocumentView = () => {
     const [comments, setComments] = useState([]);
     const [isFetching, setIsFetching] = useState(false);
     const [version, setVersion] = useState("");
+    const [value, setValue] = useState("");
+
+    const handleType = (text) => {
+        setValue(text.target.value);
+    }
+
+    const handleClick = () => {
+        console.log(`typed => ${value}`);
+        comments.push(createComment(comments.length, username, value));
+        listComments();
+
+    }
+    
+    const createComment = (id, name, body) => {
+        return { id, name,  body};
+    }
 
     const listComments = () => {
-        const url = "https://jsonplaceholder.typicode.com/posts/1/comments";
-        fetch(url)
-            .then((response) => response.json())
-            .then((comments) => {
-                let commentList = comments.slice(0, 10);
+        // const url = "https://jsonplaceholder.typicode.com/posts/1/comments";
+        // fetch(url)
+        //     .then((response) => response.json())
+        //     .then((comments) => {
+                let commentList = comments.slice();
                 setComments(commentList);
                 console.log("[CommentList] got comments");
-            });
+        //     });
     };
 
     const handleDrawerOpen = () => {
@@ -150,9 +170,10 @@ const DocumentView = () => {
 
     useEffect(() => {
         console.log("[CommentList] mount");
-        setIsFetching(true);
+        let isMounted = true;
+        // if(isMounted) setIsFetching(true);
         listComments();
-        setIsFetching(false);
+        // if(isMounted) setIsFetching(false);
     }, []);
 
     // Adds comment to specific paperId/pageId
@@ -262,7 +283,8 @@ const DocumentView = () => {
                             {/* Comments */}
                             <Grid item xs={4}>
                                 <CommentList comments={comments}/>
-                                <Button color="primary" variant="contained" fullWidth={true}>
+                                <TextField variant="outlined" multiline placeholder="Enter Comment Here" fullWidth={true} value={value} onChange={handleType}></TextField>
+                                <Button color="primary" variant="contained" fullWidth={true} onClick={handleClick}>
                                     Add Comment
                                 </Button>
                             </Grid>

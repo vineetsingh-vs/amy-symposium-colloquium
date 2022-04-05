@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import clsx from "clsx";
 import {
     AppBar,
@@ -15,6 +15,7 @@ import {
     List,
     Toolbar,
     Typography,
+    TextField
 } from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
 import MenuIcon from "@mui/icons-material/Menu";
@@ -112,7 +113,42 @@ const ReviewView = () => {
     const [documentTitle, setDocumentTitle] = useState("Document Title");
     const [username, setUsername] = useState("Default Username");
     const [comments, setComments] = useState([]);
+    const [isFetching, setIsFetching] = useState(false);
     const [version, setVersion] = useState("");
+    const [value, setValue] = useState("");
+
+    const handleType = (text) => {
+        setValue(text.target.value);
+    }
+
+    const handleClick = () => {
+        comments.push(createComment(comments.length, username, value, []));
+        listComments();
+        console.log(comments);
+
+    }
+    
+    const createComment = (id, name, body, replies) => {
+        return { id, name,  body, replies};
+    }
+
+    const listComments = () => {
+        // const url = "https://jsonplaceholder.typicode.com/posts/1/comments";
+        // fetch(url)
+        //     .then((response) => response.json())
+        //     .then((comments) => {
+                let commentList = comments.slice();
+                setComments(commentList);
+                console.log("[CommentList] got comments");
+        //     });
+    };
+
+    useEffect(() => {
+        console.log("[CommentList] mount");
+        setIsFetching(true);
+        listComments();
+        setIsFetching(false);
+    }, []);  
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -197,8 +233,9 @@ const ReviewView = () => {
                 <Container maxWidth="lg" className={classes.container}>
                     {/* Reviews */}
                     <Grid item xs={12}>
-                        <CommentList comments={comments} />
-                        <Button color="primary" variant="contained" fullWidth="true">
+                    <CommentList comments={comments}/>
+                        <TextField variant="outlined" multiline placeholder="Enter Review Here" fullWidth={true} value={value} onChange={handleType}></TextField>
+                        <Button color="primary" variant="contained" fullWidth="true" onClick={handleClick}>
                             Add Review
                         </Button>
                     </Grid>

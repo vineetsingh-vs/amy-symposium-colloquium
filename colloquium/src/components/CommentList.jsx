@@ -1,5 +1,7 @@
 import React, { Fragment, useState, useEffect } from "react";
 import makeStyles from '@mui/styles/makeStyles';
+import ReplyList from "../components/ReplyList";
+
 import {
     List,
     ListItem,
@@ -9,6 +11,7 @@ import {
     Avatar,
     Typography,
     Button,
+    TextField
 } from "@mui/material";
 
 const useStyles = makeStyles((theme) => ({
@@ -26,6 +29,49 @@ const useStyles = makeStyles((theme) => ({
 
 const Comment = ({ comment }) => {
     const classes = useStyles();
+    const [hidden, setHidden] = useState(false);const [comments, setComments] = useState([]);
+    const [username, setUsername] = useState("Default Username");
+    const [replies, setReplies] = useState([]);
+    const [isFetching, setIsFetching] = useState(false);
+    const [value, setValue] = useState("");
+
+    const handleType = (text) => {
+        setValue(text.target.value);
+    }
+
+    const handleClick = () => {
+        replies.push(createReply(comments.length, username, value));
+        listReplies();
+        console.log(replies);
+
+    }
+    
+    const createReply = (id, name, body) => {
+        return { id, name,  body};
+    }
+
+    const listReplies = () => {
+        // const url = "https://jsonplaceholder.typicode.com/posts/1/comments";
+        // fetch(url)
+        //     .then((response) => response.json())
+        //     .then((comments) => {
+                let replyList = replies.slice();
+                setReplies(replyList);
+                console.log("[ReplyList] got replies");
+        //     });
+    };
+
+    useEffect(() => {
+        console.log("[ReplyList] mount");
+        setIsFetching(true);
+        listReplies();
+        setIsFetching(false);
+    }, []);  
+
+    const addReply = () => {
+        setHidden(!hidden);
+        console.log(hidden);
+    }
     return (
         <div className={`comment ${comment.id}`}>
             <ListItem key={comment.id} alignItems="flex-start">
@@ -42,16 +88,20 @@ const Comment = ({ comment }) => {
                                 className={classes.inline}
                                 color="textPrimary"
                             >
-                                {comment.email}
                             </Typography>
-                            {` - ${comment.body}`}
+                            {`${comment.body}`}
                         </>
                     }
                 />
             </ListItem>
-            <Button color="secondary" variant="contained">
+            <Button color="secondary" variant="contained" onClick={addReply}>
                 Reply
             </Button>
+            {hidden && (<TextField multiline variant="outlined" fullWidth={true} value={value} onChange={handleType}></TextField>)}
+            
+            {hidden && (<Button color="secondary" variant="contained" onClick={handleClick}>Add Reply</Button>)}
+            <ReplyList reply={replies}/>
+
             <Divider />
         </div>
     );
