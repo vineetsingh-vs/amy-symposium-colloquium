@@ -45,8 +45,6 @@ export const getPaperMetaData = async (req: Request, res: Response) => {
     }
 };
 
-export const getPaperFileVersion = async (req: Request, res: Response) => {};
-
 export const createPaper = async (req: Request, res: Response) => {
     console.log("[paperController] createPaper");
     console.log(req.body);
@@ -136,8 +134,6 @@ export const updatePaperMetaData = async (req: Request, res: Response) => {
     }
 };
 
-export const updatePaperFileVersion = async (req: Request, res: Response) => {};
-
 export const deletePaper = async (req: Request, res: Response) => {
     console.log("[paperController] deletePaper");
     const { paperid } = req.params;
@@ -152,4 +148,16 @@ export const deletePaper = async (req: Request, res: Response) => {
     }
 };
 
+//
+// ======== TODO >>>>
+
+// get a version of a paper (file and version metadata)
+export const getPaperFileVersion = async (req: Request, res: Response) => {};
+// delete a version of a paper (file and version metadata)
 export const deletePaperVersion = async (req: Request, res: Response) => {};
+// update a version of a paper (file and version metadata)
+export const updatePaperFileVersion = async (req: Request, res: Response) => {};
+// share a paper with another user
+export const sharePaper = async (req: Request, res: Response) => {};
+// stop sharing a paper with another user
+export const stopSharingPaper = async (req: Request, res: Response) => {};

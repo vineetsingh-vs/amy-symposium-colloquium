@@ -35,16 +35,23 @@ const paperApi = {
             .get(`${apiUrl}/${resource}/${paperId}/${versionId}`)
             .then((response) => response.data);
     },
-    updateMetadata: async (paperId) => {
+    // update a paper metadata with paperInfo => {[authors], isPublished, creatorId, title}
+    updateMetadata: async (paperId, paperInfo) => {
         return await axios
-            .put(`${apiUrl}/${resource}/${paperId}`)
+            .put(`${apiUrl}/${resource}/${paperId}`, paperInfo)
             .then((response) => response.data);
     },
-    updateFileVersion: async (paperId, versionId) => {
+    // update a paper's file version
+    updateFileVersion: async (paperId, versionId, fileData) => {
+        // TODO add file upload
         return await axios
             .get(`${apiUrl}/${resource}/${paperId}/${versionId}`)
             .then((response) => response.data);
     },
+    // start sharing paper (paperId) with user (userId) and set permissions
+    sharePaper: async (userId, paperId, permissions) => {},
+    // stop sharing paper (paperId) with user (userId)
+    stopSharingPaper: async (userId, paperId) => {},
     create: async (paperId) => {
         return await axios
             .post(`${apiUrl}/${resource}/${paperId}`)
