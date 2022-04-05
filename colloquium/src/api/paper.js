@@ -52,9 +52,9 @@ const paperApi = {
     sharePaper: async (userId, paperId, permissions) => {},
     // stop sharing paper (paperId) with user (userId)
     stopSharingPaper: async (userId, paperId) => {},
-    create: async (paperId) => {
+    create: async (formData) => {
         return await axios
-            .post(`${apiUrl}/${resource}/${paperId}`)
+            .post(`${apiUrl}/${resource}`, formData)
             .then((response) => response.data);
     },
     delete: async (paperId) => {
