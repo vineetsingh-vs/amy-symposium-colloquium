@@ -27,6 +27,10 @@ import { documentItems } from "../components/listItems";
 import Copyright from '../components/Copyright'
 
 const drawerWidth = 240;
+const pageContext = {
+    currentPage: 1,
+    version: "1"
+};
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -107,10 +111,18 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+const ChangeCurrentPage = (page) => {
+    pageContext.currentPage = page
+}
+
+const ChangeCurrentVersion = (version) => {
+    pageContext.version = version
+}
+
 const DocumentView = () => {
     const classes = useStyles();
     const [open, setOpen] = useState(false);
-    const [docuemntTitle, setDocumentTitle] = useState("Document Title");
+    const [documentTitle, setDocumentTitle] = useState("Document Title");
     const [username, setUsername] = useState("Default Username");
     const [comments, setComments] = useState([]);
     const [isFetching, setIsFetching] = useState(false);
@@ -134,12 +146,6 @@ const DocumentView = () => {
     const handleDrawerClose = () => {
         setOpen(false);
     };
-
-    const handleChange = (event) => {
-        setVersion(event.target.value);
-    };
-
-    const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
     const docs = [{ uri: "https://api.printnode.com/static/test/pdf/multipage.pdf" }];
 
@@ -198,7 +204,7 @@ const DocumentView = () => {
                             noWrap
                             className={classes.title}
                         >
-                            {docuemntTitle}
+                            {documentTitle}
                         </Typography>
                         <Button
                             variant="link"
@@ -224,17 +230,6 @@ const DocumentView = () => {
                     </div>
                     <Divider />
                     {documentItems}
-                    <Select
-                        labelId="Version Select Label"
-                        id="Version Select"
-                        label="Version"
-                        value={version}
-                        onChange={handleChange}
-                    >
-                        <MenuItem value={1}>Version 1</MenuItem>
-                        <MenuItem value={2}>Version 2</MenuItem>
-                        <MenuItem value={3}>Version 3</MenuItem>
-                    </Select>
                 </Drawer>
                 <main className={classes.content}>
                     <div className={classes.appBarSpacer} />
@@ -253,12 +248,6 @@ const DocumentView = () => {
                                         }
                                     }}
                                 />
-                                {/* <DocIFrame
-                                    source={
-                                        "https://www.ets.org/Media/Tests/GRE/pdf/gre_research_validity_data.pdf"
-                                    }
-                                /> */}
-                                {/* <FileDisplay /> */}
                             </Grid>
                             {/* Comments */}
                             <Grid item xs={4}>
@@ -278,4 +267,8 @@ const DocumentView = () => {
     }
 };
 
-export default DocumentView;
+export{
+    DocumentView,
+    ChangeCurrentPage,
+    ChangeCurrentVersion
+};
