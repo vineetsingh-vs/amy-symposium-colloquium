@@ -125,7 +125,7 @@ const ChangeCurrentVersion = (version) => {
 const DocumentView = () => {
     const classes = useStyles();
     const [open, setOpen] = useState(false);
-    const [docuemntTitle, setDocumentTitle] = useState("Document Title");
+    const [documentTitle, setDocumentTitle] = useState("Document Title");
     const [username, setUsername] = useState("Default Username");
     const [comments, setComments] = useState([]);
     const [isFetching, setIsFetching] = useState(false);
