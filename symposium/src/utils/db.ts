@@ -16,7 +16,7 @@ export default async () => {
             username: config.postgresUser,
             password: config.postgresPass,
             database: config.postgresDB,
-            entities: [User, Paper, Review, Comment, Extra],
+            entities: [User, Paper, Review, Comment, Extra, Version],
             synchronize: true,
         });
         console.log("database connected");
