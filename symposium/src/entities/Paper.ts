@@ -49,7 +49,7 @@ export class Paper extends BaseEntity {
     versionNumber: number;
 
     /**One Paper has many versions */
-    @OneToMany(() => Version, (version) => version.paper)
+    @OneToMany(() => Version, (version) => version.id)
     versions: Version[];
 
     /**One Paper has many reviews */

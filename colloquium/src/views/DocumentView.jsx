@@ -25,6 +25,7 @@ import Person from "@mui/icons-material/Person";
 import CommentList from "../components/CommentList";
 import { documentItems } from "../components/listItems";
 import Copyright from '../components/Copyright'
+import paperApi from "../api/paper";
 
 const drawerWidth = 240;
 const pageContext = {
@@ -115,28 +116,24 @@ const ChangeCurrentPage = (page) => {
     pageContext.currentPage = page
 }
 
-const ChangeCurrentVersion = (version) => {
-    pageContext.version = version
-}
-
 const DocumentView = () => {
+    const {paperId, versionId} = React.useParams()
+    ChangeCurrentVersion(versionId)
     const classes = useStyles();
     const [open, setOpen] = useState(false);
     const [documentTitle, setDocumentTitle] = useState("Document Title");
     const [username, setUsername] = useState("Default Username");
     const [comments, setComments] = useState([]);
     const [isFetching, setIsFetching] = useState(false);
+    const [docs, setDocs] = useState([{ uri: paperApi.getDocumentURI(paperId, pageContext.version)}])
 
-    const listComments = () => {
-        const url = "https://jsonplaceholder.typicode.com/posts/1/comments";
-        fetch(url)
-            .then((response) => response.json())
-            .then((comments) => {
-                let commentList = comments.slice(0, 10);
-                setComments(commentList);
-                console.log("[CommentList] got comments");
-            });
-    };
+    const ChangeCurrentVersion = (version) => {
+        if(version){
+            pageContext.version = version
+            // Change docs to different version
+            setDocs([{ uri: paperApi.getDocumentURI(paperId, version)}]);
+        }
+    }
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -146,32 +143,12 @@ const DocumentView = () => {
         setOpen(false);
     };
 
-    const docs = [{ uri: "https://api.printnode.com/static/test/pdf/multipage.pdf" }];
-
     useEffect(() => {
         console.log("[CommentList] mount");
         setIsFetching(true);
         listComments();
         setIsFetching(false);
     }, []);
-
-    // Adds comment to specific paperId/pageId
-    // const addComment = (paperId, pageId, commentId) => {}
-
-    // // Adds reply to a previous parent comment
-    // const addReplyComment = (paperId, pageId, parentCommentId, commentId) => {}
-
-    // // Page to reupload document for the next version
-    // const reupload = (paperId, versionId) => {}
-
-    // // Adding or Deleting people allowed to view paper
-    // const handleShare = (paperId) => {}
-
-    // // Update version number and "clear" comments / reviews
-    // const handleVersion = (paperId) => {}
-
-    // // Views: Review, Documents, Comments, or Document and Comments
-    // const handleViewChange = (paperId) => {}
 
     if (isFetching) {
         return "Loading...";
@@ -229,6 +206,18 @@ const DocumentView = () => {
                     </div>
                     <Divider />
                     {documentItems}
+                    <h3>Version</h3>
+                    <Select
+                        labelId="Version Select Label"
+                        id="Version Select"
+                        label="Version"
+                        value={version}
+                        onChange={(event) => ChangeCurrentVersion(event.target.value)}
+                    >
+                        <MenuItem value={1}>1</MenuItem>
+                        <MenuItem value={2}>2</MenuItem>
+                        <MenuItem value={3}>3</MenuItem>
+                    </Select>
                 </Drawer>
                 <main className={classes.content}>
                     <div className={classes.appBarSpacer} />

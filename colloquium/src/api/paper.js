@@ -30,6 +30,10 @@ const paperApi = {
             .get(`${apiUrl}/${resource}/${paperId}`)
             .then((response) => response.data);
     },
+    // Gets the document URI that is needed to display the document
+    getDocumentURI: async (paperId, versionId) => {
+        return `${apiUrl}/${resource}/${paperId}/${versionId}`;
+    },
     getFileVersionById: async (paperId, versionId) => {
         return await axios
             .get(`${apiUrl}/${resource}/${paperId}/${versionId}`)

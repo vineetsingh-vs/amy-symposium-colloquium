@@ -2,9 +2,7 @@ import React, {useState, useContext} from "react";
 import styled from "@emotion/styled";
 import { PDFContext } from "react-doc-viewer/build/plugins/pdf/state/index"
 import PDFPagination from "react-doc-viewer/build/plugins/pdf/components/PDFPagination"
-import { ChangeCurrentPage, ChangeCurrentVersion } from "../../views/DocumentView";
-import { MenuItem } from "@mui/material";
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { ChangeCurrentPage } from "../../views/DocumentView";
 
 const Container = styled.div({
     display: "flex",
@@ -19,14 +17,7 @@ const Container = styled.div({
 
 
 const PDFCustomControls = () => {
-    const context = useContext(PDFContext)
-    const [version, setVersion] = useState("1")
-
-    const handleChange = (event: SelectChangeEvent) => {
-        setVersion(event.target.value as string);
-        ChangeCurrentVersion(event.target.value);
-      };
-    
+    const context = useContext(PDFContext)     
 
     return (
         <Container id="pdf-controls" >
@@ -34,18 +25,6 @@ const PDFCustomControls = () => {
             {
                 ChangeCurrentPage(context.state.currentPage) != null
             }
-            <h3>Version</h3>
-            <Select
-                labelId="Version Select Label"
-                id="Version Select"
-                label="Version"
-                value={version}
-                onChange={(event) => handleChange(event)}
-            >
-                <MenuItem value={1}>1</MenuItem>
-                <MenuItem value={2}>2</MenuItem>
-                <MenuItem value={3}>3</MenuItem>
-            </Select>
         </Container>
     )
 }

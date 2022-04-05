@@ -134,7 +134,7 @@ const UploadPaperView = () => {
         setFiles(event.target.files);
     }
 
-    // Submitting the 
+    // Submitting the document through a form
     const handleSubmission = async () => {
       const form = new FormData();
       form.append("title", documentTitle);

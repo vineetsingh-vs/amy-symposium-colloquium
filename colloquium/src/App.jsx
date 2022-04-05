@@ -28,15 +28,16 @@ function App() {
                         <Route exact path="/admin" component={AdminDashboard} />
                         <Route exact path="/userprofile" component={ProfileView} />
 
-                    {/* Log in Page */}
-                    <Route exact path="/" component={LoginView} />
-                    <Route exact path="/signup" component={SignUp} />
+                        {/* Log in Page */}
+                        <Route exact path="/" component={LoginView} />
+                        <Route exact path="/signup" component={SignUp} />
 
                         {/* Document and Comments */}
-                        <Route exact path="/1" component={DocumentView} />
+                        {/* <Route exact path="/:paperId" component={DocumentView} /> */}
+                        <Route exact path="/:paperId/:versionId" component={DocumentView} />
 
                         {/* Review Page containing all Comments + overall Reviews */}
-                        <Route exact path="/1/reviews" component={ReviewView} />
+                        <Route exact path="/:paperId/reviews" component={ReviewView} />
 
                         {/* <Route exact path="/:paperId/comments" component={CommentView} /> */}
 
@@ -46,8 +47,8 @@ function App() {
                         <Route exact path="/mypapers" component={MyPapersView} />
 
                         {/* "Popup screens" */}
-                        <Route exact path="/1/share" component={SharingView} />
-                        <Route exact path="/1/reupload" component={ReuploadView} />
+                        <Route exact path="/:paperId/share" component={SharingView} />
+                        <Route exact path="/:paperId/reupload" component={ReuploadView} />
                         <Route exact path="/upload" component={UploadView} />
 
                         <Route path="*" component={PageNotFound} />

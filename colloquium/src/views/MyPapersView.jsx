@@ -121,7 +121,7 @@ const MyPapersView = () => {
         setOpen(false);
     };
 
-    setListDocuments(paperApi.getList(userID, "all"))
+    setListDocuments(paperApi.getList(userID, "all"));
 
     return (
         <div className={classes.root}>
@@ -188,7 +188,7 @@ const MyPapersView = () => {
                                         {listDocuments.map((row) => (
                                             <TableRow key={row.id}>
                                                 <TableCell>
-                                                    <Link href={"/" + row.id} underline="hover">
+                                                    <Link href={"/" + row.id + "/" + row.versionNumber} underline="hover">
                                                         {row.title}
                                                     </Link>
                                                 </TableCell>
