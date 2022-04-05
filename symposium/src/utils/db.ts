@@ -4,9 +4,10 @@ import { Review } from "../entities/Review";
 import { User } from "../entities/User";
 import "reflect-metadata";
 import { createConnection } from "typeorm";
+import { Extra } from "../entities/Extra";
 import { Paper } from "../entities/Paper";
 import { Tag } from "../entities/Tag";
-import { Extra } from "../entities/Extra";
+import { Version } from "../entities/Version";
 
 export default async () => {
     try {
@@ -16,7 +17,7 @@ export default async () => {
             username: config.postgresUser,
             password: config.postgresPass,
             database: config.postgresDB,
-            entities: [User, Paper, Tag, Review, Comment, Extra],
+            entities: [User, Paper, Review, Comment, Extra, Version],
             synchronize: true,
         });
         console.log("database connected");

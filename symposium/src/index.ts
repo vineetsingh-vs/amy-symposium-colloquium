@@ -11,8 +11,16 @@ import commentRoutes from "./routes/comment";
 import reviewRoutes from "./routes/review";
 import config from "./utils/config";
 import connectDB from "./utils/db";
+import { existsSync, mkdirSync } from "fs";
 
 const main = async () => {
+    if (!existsSync(config.tmpFolder)) {
+        mkdirSync(config.tmpFolder, { recursive: true });
+    }
+    if (!existsSync(config.uploadFolder)) {
+        mkdirSync(config.uploadFolder, { recursive: true });
+    }
+
     //
     // database connection
     connectDB();

@@ -5,17 +5,25 @@ import { Extra } from "../entities/Extra";
 import { Paper } from "../entities/Paper"
 import config from "../utils/config"
 
-export const getAllPapers = async (req: Request, res: Response) => {
-    console.log("[paperController] getAllPapers");
-    const papers = await Paper.find();
-    res.status(200).send(papers);
+export const getPaperList = async (req: Request, res: Response) => {
+    const { filter, userId } = req.query;
+    console.log("[paperController] getPaperList");
+
+    let paperList;
+    if (filter === "shared") {
+    } else if (filter === "uploaded") {
+    } else {
+        // if user admin return all papers
+        // else return papers shared with or associated with
+        paperList = await Paper.find();
+    }
+
+    res.status(200).send(paperList);
 };
 
-export const getPaperById = async(req: Request, res: Response) => {
-    console.log("[paperController] getPaperById");
+export const getPaperMetaData = async (req: Request, res: Response) => {
+    console.log("[paperController] getPaperMetaData");
     const { paperid } = req.params;
-    console.log("Our id is: ")
-    console.log(paperid);
 
     let paper = await Paper.findOne({ where: { id: paperid } });
 
@@ -32,8 +40,8 @@ export const getPaperById = async(req: Request, res: Response) => {
             extras: paper.extras,
             createdAt: paper.createdAt,
             updatedAt: paper.updatedAt,
-            versionNumber: paper.versionNumber
-        }).download(paper.filepath);
+            versionNumber: paper.versionNumber,
+        });
     } else {
         res.status(400).json({ message: "Could not find Paper" });
     }
@@ -56,7 +64,7 @@ export const getPaperFileById = async(req: Request, res: Response) => {
 
 export const getPaperVersionById = async(req: Request, res: Response) => {};
 
-export const addPaper = async(req: Request, res: Response) => {
+export const createPaper = async(req: Request, res: Response) => {
 
     console.log("[paperController] addPaper");
     
@@ -113,14 +121,13 @@ export const addPaper = async(req: Request, res: Response) => {
     });
 };
 
-export const updatePaper = async(req: Request, res: Response) => {
-    console.log("[paperController] updatePaper");
+export const updatePaperMetaData = async (req: Request, res: Response) => {
+    console.log("[paperController] updatePaperMetaData");
     const { paperid } = req.params;
     const { title, creator_id, filepath, authors, tags, revisions, isPublished } = req.body;
 
     let paper = await Paper.findOne({ where: { id: paperid } });
     if (paper) {
-        
         paper.title = title || paper.title;
         paper.creator_id = creator_id || paper.creator_id;
         paper.filepath = filepath || paper.filepath;
@@ -128,7 +135,6 @@ export const updatePaper = async(req: Request, res: Response) => {
         paper.tags = tags || paper.tags;
         paper.revisions = revisions || paper.revisions;
         paper.isPublished = isPublished || paper.isPublished;
-
 
         await paper.save();
         res.status(200).json({
@@ -143,7 +149,7 @@ export const updatePaper = async(req: Request, res: Response) => {
             extras: paper.extras,
             createdAt: paper.createdAt,
             updatedAt: paper.updatedAt,
-            versionNumber: paper.versionNumber
+            versionNumber: paper.versionNumber,
         });
     } else {
         res.status(400).json({ message: "Paper not found" });
@@ -163,8 +169,6 @@ export const deletePaper = async(req: Request, res: Response) => {
         res.status(400).json({ message: "Paper not found" });
     }
 };
-
-export const deletePaperVersion = async(req: Request, res: Response) => {};
 
 export const addExtra = async (req: Request, res: Response) => {
     console.log("[paperController] addExtra");
@@ -197,3 +201,18 @@ export const addExtra = async (req: Request, res: Response) => {
         res.status(400).json({ message: "Paper not found" });
     }
 };
+
+
+//
+// ======== TODO >>>>
+
+// get a version of a paper (file and version metadata)
+export const getPaperFileVersion = async (req: Request, res: Response) => {};
+// delete a version of a paper (file and version metadata)
+export const deletePaperVersion = async (req: Request, res: Response) => {};
+// update a version of a paper (file and version metadata)
+export const updatePaperFileVersion = async (req: Request, res: Response) => {};
+// share a paper with another user
+export const sharePaper = async (req: Request, res: Response) => {};
+// stop sharing a paper with another user
+export const stopSharingPaper = async (req: Request, res: Response) => {};
