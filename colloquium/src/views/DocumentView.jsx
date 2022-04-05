@@ -25,8 +25,10 @@ import Person from "@mui/icons-material/Person";
 import CommentList from "../components/CommentList";
 import { documentItems } from "../components/listItems";
 import Copyright from '../components/Copyright'
+import { PDFContext } from "react-doc-viewer/build/plugins/pdf/state/index"
 
 const drawerWidth = 240;
+const currentDocumentPage = 1;
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -107,6 +109,10 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+const ChangeCurrentPage = (page) => {
+    currentDocumentPage = page
+}
+
 const DocumentView = () => {
     const classes = useStyles();
     const [open, setOpen] = useState(false);
@@ -139,7 +145,6 @@ const DocumentView = () => {
         setVersion(event.target.value);
     };
 
-    const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
     const docs = [{ uri: "https://api.printnode.com/static/test/pdf/multipage.pdf" }];
 
@@ -253,12 +258,6 @@ const DocumentView = () => {
                                         }
                                     }}
                                 />
-                                {/* <DocIFrame
-                                    source={
-                                        "https://www.ets.org/Media/Tests/GRE/pdf/gre_research_validity_data.pdf"
-                                    }
-                                /> */}
-                                {/* <FileDisplay /> */}
                             </Grid>
                             {/* Comments */}
                             <Grid item xs={4}>
@@ -278,4 +277,7 @@ const DocumentView = () => {
     }
 };
 
-export default DocumentView;
+export{
+    DocumentView,
+    ChangeCurrentPage
+};

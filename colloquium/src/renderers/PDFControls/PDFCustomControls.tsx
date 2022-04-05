@@ -2,6 +2,7 @@ import React, {useContext} from "react";
 import styled from "@emotion/styled";
 import { PDFContext } from "react-doc-viewer/build/plugins/pdf/state/index"
 import PDFPagination from "react-doc-viewer/build/plugins/pdf/components/PDFPagination"
+import { ChangeCurrentPage } from "../../views/DocumentView";
 
 const Container = styled.div({
     display: "flex",
@@ -14,10 +15,10 @@ const Container = styled.div({
     boxShadow:"0px 2px 3px #00000033",
 });
 
+
 const PDFCustomControls = () => {
     // Can get current page number from here!!!!
     const context = useContext(PDFContext)
-
     return (
         <Container id="pdf-controls">
             {context?.state?.numPages > 1 && <PDFPagination />}
