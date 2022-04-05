@@ -18,11 +18,9 @@ export class Comment extends BaseEntity {
     @Column()
     paper_id!: number;
 
-    /**Many Comments have one version */
-    @ManyToOne(() => Version, (paper_version) => paper_version.comments)
-    paper_version: number;
+    @ManyToOne(() => Version, (version) => version.comments)
+    version: Version;
 
-    /**Many Comments have one Review */
     @ManyToOne(() => Review, (review) => review.comments)
     review!: number;
 

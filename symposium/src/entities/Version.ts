@@ -29,6 +29,6 @@ export class Version {
     paper: Paper;
 
     /**One Version has many comments */
-    @OneToMany(() => Comment, (comment) => comment.paper_version)
+    @OneToMany(() => Comment, (comment) => comment.version)
     comments: Comment[];
 }
