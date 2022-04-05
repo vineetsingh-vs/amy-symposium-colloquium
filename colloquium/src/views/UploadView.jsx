@@ -128,6 +128,18 @@ const UploadPaperView = () => {
     const [shared, setShared] = React.useState([]);
     const [files, setFiles] = useState();
     
+    const [title, setTitle] = React.useState(true);
+    const handleTitle = () => {
+        setTitle(false);
+    }
+    const handleShared = () => {
+        setShared(false);
+    }
+    const [authors, setAuthors] = React.useState(true);
+    const handleAuthors = () => {
+      setAuthors(false);
+    }
+
     const [upload, setUpload] = React.useState(true);
     const handleUpload = (event) => {
         setUpload(false);

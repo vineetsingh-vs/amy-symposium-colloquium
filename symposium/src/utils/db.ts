@@ -5,8 +5,8 @@ import { Review } from "../entities/Review";
 import { User } from "../entities/User";
 import { Version } from "../entities/Version";
 import { createConnection } from "typeorm";
-import { Paper } from "../entities/Paper";
 import { Extra } from "../entities/Extra";
+import { Paper } from "../entities/Paper";
 
 export default async () => {
     try {
@@ -16,7 +16,7 @@ export default async () => {
             username: config.postgresUser,
             password: config.postgresPass,
             database: config.postgresDB,
-            entities: [User, Paper, Version, Review, Comment, Extra],
+            entities: [User, Paper, Review, Comment, Extra, Version],
             synchronize: true,
         });
         console.log("database connected");
