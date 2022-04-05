@@ -25,10 +25,12 @@ import Person from "@mui/icons-material/Person";
 import CommentList from "../components/CommentList";
 import { documentItems } from "../components/listItems";
 import Copyright from '../components/Copyright'
-import { PDFContext } from "react-doc-viewer/build/plugins/pdf/state/index"
 
 const drawerWidth = 240;
-const currentDocumentPage = 1;
+const pageContext = {
+    currentPage: 1,
+    version: "1"
+};
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -110,13 +112,17 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ChangeCurrentPage = (page) => {
-    currentDocumentPage = page
+    pageContext.currentPage = page
+}
+
+const ChangeCurrentVersion = (version) => {
+    pageContext.version = version
 }
 
 const DocumentView = () => {
     const classes = useStyles();
     const [open, setOpen] = useState(false);
-    const [docuemntTitle, setDocumentTitle] = useState("Document Title");
+    const [documentTitle, setDocumentTitle] = useState("Document Title");
     const [username, setUsername] = useState("Default Username");
     const [comments, setComments] = useState([]);
     const [isFetching, setIsFetching] = useState(false);
@@ -140,11 +146,6 @@ const DocumentView = () => {
     const handleDrawerClose = () => {
         setOpen(false);
     };
-
-    const handleChange = (event) => {
-        setVersion(event.target.value);
-    };
-
 
     const docs = [{ uri: "https://api.printnode.com/static/test/pdf/multipage.pdf" }];
 
@@ -203,7 +204,7 @@ const DocumentView = () => {
                             noWrap
                             className={classes.title}
                         >
-                            {docuemntTitle}
+                            {documentTitle}
                         </Typography>
                         <Button
                             variant="link"
@@ -229,17 +230,6 @@ const DocumentView = () => {
                     </div>
                     <Divider />
                     {documentItems}
-                    <Select
-                        labelId="Version Select Label"
-                        id="Version Select"
-                        label="Version"
-                        value={version}
-                        onChange={handleChange}
-                    >
-                        <MenuItem value={1}>Version 1</MenuItem>
-                        <MenuItem value={2}>Version 2</MenuItem>
-                        <MenuItem value={3}>Version 3</MenuItem>
-                    </Select>
                 </Drawer>
                 <main className={classes.content}>
                     <div className={classes.appBarSpacer} />
@@ -279,5 +269,6 @@ const DocumentView = () => {
 
 export{
     DocumentView,
-    ChangeCurrentPage
+    ChangeCurrentPage,
+    ChangeCurrentVersion
 };

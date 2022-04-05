@@ -10,7 +10,7 @@ import List from '@mui/material/List';
 
 export const documentItems = (
   <List>
-    <ListItem button >
+    <ListItem>
       <ListItemIcon>
         <Dashboard />
       </ListItemIcon>
@@ -18,7 +18,7 @@ export const documentItems = (
         Dashboard
       </Link>
     </ListItem>
-    <ListItem button>
+    <ListItem>
       <ListItemIcon>
         <Assignment />
       </ListItemIcon>
@@ -26,7 +26,7 @@ export const documentItems = (
         Document
       </Link>
     </ListItem>
-    <ListItem button>
+    <ListItem>
       <ListItemIcon>
         <People />
       </ListItemIcon>
@@ -34,7 +34,7 @@ export const documentItems = (
         Reviews
       </Link>
     </ListItem>
-    <ListItem button>
+    <ListItem>
       <ListItemIcon>
         <People />
       </ListItemIcon>
@@ -42,7 +42,7 @@ export const documentItems = (
         Share With
       </Link>
     </ListItem>
-    <ListItem button>
+    <ListItem>
       <ListItemIcon>
         <Assignment />
       </ListItemIcon>
@@ -55,7 +55,7 @@ export const documentItems = (
 
 export const secondaryListItems = (
   <List>
-    <ListItem button >
+    <ListItem>
       <ListItemIcon>
         <Dashboard />
       </ListItemIcon>
@@ -68,7 +68,7 @@ export const secondaryListItems = (
 
 export const dashboardItems = (
   <List>
-      <ListItem button>
+      <ListItem>
           <ListItemIcon>
               <Assignment />
           </ListItemIcon>
@@ -76,7 +76,7 @@ export const dashboardItems = (
               Published
           </Link>
       </ListItem>
-      <ListItem button>
+      <ListItem>
           <ListItemIcon>
               <People />
           </ListItemIcon>
@@ -84,7 +84,7 @@ export const dashboardItems = (
               Shared With Me
           </Link>
       </ListItem>
-      <ListItem button>
+      <ListItem>
           <ListItemIcon>
               <Person />
           </ListItemIcon>
