@@ -39,4 +39,3 @@ export class Review extends BaseEntity {
     @UpdateDateColumn()
     updated_at: Date;
 }
-

@@ -64,4 +64,3 @@ export class Paper extends BaseEntity {
     @OneToMany(() => Review, (review) => review.paper_id)
     reviews: Review[];
 }
-
