@@ -16,11 +16,11 @@ let logger = (req: Request, res: Response, next: NextFunction) => {
         (currentDT.getMonth() + 1) +
         "-" +
         currentDT.getDate() +
-        "-" +
+        " " +
         currentDT.getHours() +
-        "-" +
+        ":" +
         currentDT.getMinutes() +
-        "-" +
+        ":" +
         currentDT.getSeconds();
     const start = process.hrtime();
     const durMilliseconds = getActualRequestDurationInMilliseconds(start);

@@ -18,8 +18,10 @@ export default async () => {
             entities: [User, Paper, Review, Comment, Version],
             synchronize: true,
         });
-        console.log("database connected");
+        console.log("Database connected");
+        return true;
     } catch (error) {
         console.log(error);
+        return false;
     }
 };

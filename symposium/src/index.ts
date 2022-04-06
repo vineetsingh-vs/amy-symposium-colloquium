@@ -19,10 +19,10 @@ const main = async () => {
     if (!existsSync(config.uploadFolder)) {
         mkdirSync(config.uploadFolder, { recursive: true });
     }
-
+    console.log("Connecting to database");
     //
     // database connection
-    connectDB();
+    while(!await connectDB());
 
     //
     // express app setup and middleware
@@ -65,7 +65,7 @@ const main = async () => {
     const port = 4000;
 
     app.listen(port, "0.0.0.0", () => {
-        console.log("server listening on " + port);
+        console.log("Server listening on " + port);
     });
 };
 
