@@ -3,6 +3,7 @@ import {
     PrimaryGeneratedColumn,
     CreateDateColumn,
     UpdateDateColumn,
+    OneToMany,
     Column,
     BaseEntity,
     ManyToOne,
@@ -17,15 +18,17 @@ export class Comment extends BaseEntity {
     @Column()
     paper_id!: number;
 
-    // many comments have one version
     @ManyToOne(() => Version, (version) => version.comments)
     version: Version;
 
-    @Column()
-    content!: string;
+    @ManyToOne(() => Comment, (comment) => comment.replies)
+    parent: Comment;
+
+    @OneToMany(() => Comment, (comment) => comment.parent)
+    replies: Comment[];
 
     @Column()
-    parent!: string;
+    content!: string;
 
     @Column()
     user!: number;

@@ -2,11 +2,13 @@ import {
     Entity,
     BaseEntity,
     Column,
+    JoinTable,
     PrimaryGeneratedColumn,
     CreateDateColumn,
     UpdateDateColumn,
     VersionColumn,
     OneToMany,
+    ManyToMany,
     ManyToOne,
 } from "typeorm";
 import { Version } from "./Version";
@@ -23,13 +25,13 @@ export class Paper extends BaseEntity {
     @ManyToOne(() => User, (user) => user.papers)
     creator: User;
 
-    // TODO: create ManyToMany sharing with users
-    // @Column("text", { array: true })
-    // shared: User[];
+    @ManyToMany(() => User)
+    @JoinTable()
+    authors: User[];
 
-    // TODO: create ManyToMany authors and papers
-    // @Column("text", { array: true })
-    // authors: User[];
+    @ManyToMany(() => User)
+    @JoinTable()
+    sharedWith: User[];
 
     @Column("boolean", { default: true })
     isPublished: boolean = false;
@@ -43,7 +45,6 @@ export class Paper extends BaseEntity {
     @VersionColumn()
     versionNumber: number;
 
-    /**One Paper has many versions */
     @OneToMany(() => Version, (version) => version.paper)
     versions: Version[];
 }

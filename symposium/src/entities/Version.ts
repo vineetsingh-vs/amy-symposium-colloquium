@@ -24,11 +24,9 @@ export class Version {
     @UpdateDateColumn()
     updatedAt: Date;
 
-    /**Many versions have one paper */
     @ManyToOne(() => Paper, (paper) => paper.versions)
     paper: Paper;
 
-    /**One Version has many comments */
     @OneToMany(() => Comment, (comment) => comment.version)
     comments: Comment[];
 }
