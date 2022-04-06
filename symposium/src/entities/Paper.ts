@@ -25,9 +25,8 @@ export class Paper extends BaseEntity {
     @ManyToOne(() => User, (user) => user.papers)
     creator: User;
 
-    @ManyToMany(() => User)
-    @JoinTable()
-    authors: User[];
+    @Column("text", { array: true })
+    authors: string[];
 
     @ManyToMany(() => User)
     @JoinTable()
