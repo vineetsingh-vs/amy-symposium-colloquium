@@ -22,10 +22,15 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import PersonIcon from "@mui/icons-material/Person";
 import CommentList from "../components/CommentList";
-import { documentItems } from "../components/listItems";
+import { DocumentItems } from "../components/listItems";
 import Copyright from "../components/Copyright";
+import {useParams} from "react-router-dom";
 
 const drawerWidth = 240;
+const pageContext = {
+    currentPage: 1,
+    version: "1"
+};
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -108,45 +113,45 @@ const useStyles = makeStyles((theme) => ({
 
 const ReviewView = () => {
     const classes = useStyles();
-
+    let {paperId, versionId} = useParams();
+    pageContext.version = versionId;
     const [open, setOpen] = useState(false);
     const [documentTitle, setDocumentTitle] = useState("Document Title");
     const [username, setUsername] = useState("Default Username");
-    const [comments, setComments] = useState([]);
+    const [reviews, setReviews] = useState([]);
     const [isFetching, setIsFetching] = useState(false);
     const [version, setVersion] = useState("");
     const [value, setValue] = useState("");
+
+    const ChangeCurrentVersion = (version) => {
+        pageContext.version = version
+    }
 
     const handleType = (text) => {
         setValue(text.target.value);
     }
 
     const handleClick = () => {
-        comments.push(createComment(comments.length, username, value, []));
-        listComments();
-        console.log(comments);
+        reviews.push(createReviews(reviews.length, username, value, []));
+        listReviews();
+        console.log(reviews);
         setValue("");
     }
     
-    const createComment = (id, name, body, replies) => {
+    const createReviews = (id, name, body, replies) => {
         return { id, name,  body, replies};
     }
 
-    const listComments = () => {
-        // const url = "https://jsonplaceholder.typicode.com/posts/1/comments";
-        // fetch(url)
-        //     .then((response) => response.json())
-        //     .then((comments) => {
-                let commentList = comments.slice();
-                setComments(commentList);
-                console.log("[CommentList] got comments");
-        //     });
+    const listReviews = () => {
+        let reviewList = reviews.slice();
+        setReviews(reviewList);
+        console.log("[ReviewList] got reviews");
     };
 
     useEffect(() => {
-        console.log("[CommentList] mount");
+        console.log("[ReviewList] mount");
         setIsFetching(true);
-        listComments();
+        listReviews();
         setIsFetching(false);
     }, []);  
 
@@ -157,10 +162,6 @@ const ReviewView = () => {
     const handleDrawerClose = () => {
         setOpen(false);
     };
-
-    const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-
-    const docs = [{ uri: require("../TestingData/test.pdf") }];
 
     const handleChange = (event) => {
         setVersion(event.target.value);
@@ -215,17 +216,18 @@ const ReviewView = () => {
                     </IconButton>
                 </div>
                 <Divider />
-                {documentItems}
+                <DocumentItems versionId={pageContext.version}/>
+                <h3>Version</h3>
                 <Select
                     labelId="Version Select Label"
                     id="Version Select"
                     label="Version"
-                    value={version}
-                    onChange={handleChange}
+                    value={pageContext.version}
+                    onChange={(event) => ChangeCurrentVersion(event.target.value)}
                 >
-                    <MenuItem value={1}>Version 1</MenuItem>
-                    <MenuItem value={2}>Version 2</MenuItem>
-                    <MenuItem value={3}>Version 3</MenuItem>
+                    <MenuItem value={1}>1</MenuItem>
+                    <MenuItem value={2}>2</MenuItem>
+                    <MenuItem value={3}>3</MenuItem>
                 </Select>
             </Drawer>
             <main className={classes.content}>
@@ -233,9 +235,9 @@ const ReviewView = () => {
                 <Container maxWidth="lg" className={classes.container}>
                     {/* Reviews */}
                     <Grid item xs={12}>
-                    <CommentList comments={comments}/>
+                        <CommentList comments={reviews}/>
                         <TextField variant="outlined" multiline placeholder="Enter Review Here" fullWidth={true} value={value} onChange={handleType}></TextField>
-                        <Button color="primary" variant="contained" fullWidth="true" disabled={value == ""} onClick={handleClick}>
+                        <Button color="primary" variant="contained" fullWidth={true} disabled={value == ""} onClick={handleClick}>
                             Add Review
                         </Button>
                     </Grid>

@@ -25,7 +25,7 @@ import Menu from "@mui/icons-material/Menu";
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import Person from "@mui/icons-material/Person";
 import CommentList from "../components/CommentList";
-import { documentItems } from "../components/listItems";
+import { DocumentItems } from "../components/listItems";
 import Copyright from '../components/Copyright'
 import paperApi from "../api/paper";
 import {useParams} from "react-router-dom";
@@ -120,7 +120,8 @@ const ChangeCurrentPage = (page) => {
 }
 
 const DocumentView = () => {
-    let {paperId, versionId} = useParams()
+    let {paperId, versionId} = useParams();
+    pageContext.version = versionId;
     const classes = useStyles();
     const [open, setOpen] = useState(false);
     const [documentTitle, setDocumentTitle] = useState("Document Title");
@@ -130,13 +131,35 @@ const DocumentView = () => {
     const [docs, setDocs] = useState([{ uri: paperApi.getDocumentURI(paperId, versionId)}])
     const [currentComment, setCurrentComment] = useState("");
 
-    const ChangeCurrentVersion = (version) => {
-        if(version){
-            pageContext.version = version
-            // Change docs to different version
-            setDocs([{ uri: paperApi.getDocumentURI(paperId, pageContext.version)}]);
-        }
+    // Set the document view to a new version page
+    const ChangeCurrentVersion = (event) => {
+        pageContext.version = event.target.value
+        // Change docs to different version
+        setDocs([{ uri: paperApi.getDocumentURI(paperId, pageContext.version)}]);
+        let isMounted = true
     }
+
+    const handleType = (text) => {
+        setCurrentComment(text.target.currentComment);
+    }
+
+    const handleClick = () => {
+        comments.push(createComment(comments.length, username, currentComment, []));
+        listComments();
+        console.log(comments);
+        setCurrentComment("");
+    }
+    
+    const createComment = (id, name, body, replies) => {
+        // Push a comment thing here to backend
+        return { id, name,  body, replies};
+    }
+
+    const listComments = () => {
+        let commentList = comments.slice();
+        setComments(commentList);
+        console.log("[CommentList] got comments");
+    };
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -148,9 +171,10 @@ const DocumentView = () => {
 
     useEffect(() => {
         console.log("[CommentList] mount");
-        let isMounted = true;
         setIsFetching(true);
+        // Get Comments for paperId and versionId
         setIsFetching(false);
+        let isMounted = true
     }, []);
 
     if (isFetching) {
@@ -208,14 +232,14 @@ const DocumentView = () => {
                         </IconButton>
                     </div>
                     <Divider />
-                    {documentItems}
+                    <DocumentItems versionId={pageContext.version}/>
                     <h3>Version</h3>
                     <Select
                         labelId="Version Select Label"
                         id="Version Select"
                         label="Version"
                         value={pageContext.version}
-                        onChange={(event) => ChangeCurrentVersion(event.target.value)}
+                        onChange={ChangeCurrentVersion}
                     >
                         <MenuItem value={1}>1</MenuItem>
                         <MenuItem value={2}>2</MenuItem>

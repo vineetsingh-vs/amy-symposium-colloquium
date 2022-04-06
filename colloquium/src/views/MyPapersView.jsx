@@ -26,7 +26,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Person from '@mui/icons-material/Person';
-import { dashboardItems } from '../components/listItems';
+import { DashboardItems } from '../components/listItems';
 import Copyright from '../components/Copyright'
 import paperApi from '../api/paper';
 
@@ -108,7 +108,6 @@ const useStyles = makeStyles((theme) => ({
 const MyPapersView = () => {
     const [username, setUsername] = useState("Default Username");
     const [userID, setUserID] = useState(1);
-    const listDocuments = paperApi.getList(userID, "all");
     const classes = useStyles();
     const [open, setOpen] = useState(true);
     const [list, setList] = useState([]);
@@ -166,7 +165,7 @@ const MyPapersView = () => {
                     </IconButton>
                 </div>
                 <Divider />
-                {dashboardItems}
+                <DashboardItems/>
             </Drawer>
             <main className={classes.content}>
                 <div className={classes.appBarSpacer}>

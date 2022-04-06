@@ -30,7 +30,7 @@ import {
     Person,
     Assignment
 } from "@mui/icons-material"
-import { dashboardItems } from '../components/listItems';
+import { DashboardItems } from '../components/listItems';
 import Copyright from "../components/Copyright";
 
 
@@ -198,7 +198,7 @@ const UploadPaperView = () => {
                   </IconButton>
               </div>
               <Divider />
-              {dashboardItems}
+              <DashboardItems/>
           </Drawer>
           <main className = {classes.content}>
               <div className={classes.appBarSpacer} >

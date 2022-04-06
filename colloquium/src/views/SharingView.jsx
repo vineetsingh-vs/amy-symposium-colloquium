@@ -1,6 +1,6 @@
-import React from "react";
+import React, {useState} from "react";
 import clsx from 'clsx';
-import { documentItems } from '../components/listItems';
+import { DocumentItems } from '../components/listItems';
 import makeStyles from '@mui/styles/makeStyles';
 
 import {
@@ -36,20 +36,13 @@ import {
 } from "@mui/icons-material"
 
 import Copyright from "../components/Copyright";
+import {useParams} from "react-router-dom";
 
 const drawerWidth = 240;
-
-
-//Creating fake data so the 
-function createData(id, shareName) {
-    return { id, shareName };
-}
-  
-const rows = [
-    createData(0, 'John'),
-    createData(1, 'Jacob'),
-    createData(2, 'Julia'),
-];
+const pageContext = {
+  currentPage: 1,
+  version: "1"
+};
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -126,15 +119,19 @@ const useStyles = makeStyles((theme) => ({
 
 const SharingView = () => {
     const classes = useStyles();
-    const [open, setOpen] = React.useState(true);
+    let {paperId, versionId} = useParams()
+    pageContext.version = versionId;
+    const [open, setOpen] = useState(true);
+    const [rows, setRows] = useState([]);
+
     const handleDrawerOpen = () => {
         setOpen(true);
     };
     const handleDrawerClose = () => {
         setOpen(false);
     };
-    const [username, setUsername] = React.useState("Default Username");
-    const [docuemntTitle, setDocumentTitle] = React.useState("Document Title");
+    const [username, setUsername] = useState("Default Username");
+    const [docuemntTitle, setDocumentTitle] = useState("Document Title");
 
 
 
@@ -178,7 +175,7 @@ const SharingView = () => {
                 </IconButton>
             </div>
             <Divider />
-            {documentItems}
+            <DocumentItems versionId={pageContext.version}/>
         </Drawer>
         <main className={classes.content}>
             <div className={classes.appBarSpacer}>
@@ -191,7 +188,7 @@ const SharingView = () => {
                             </Button>
                         </Grid>
                         <Grid item xs={12} md={12} lg={12}>
-                            <Table component="sharingView">
+                            <Table>
                                 <TableHead>
                                     <TableRow>
                                         <TableCell>Shared With</TableCell>

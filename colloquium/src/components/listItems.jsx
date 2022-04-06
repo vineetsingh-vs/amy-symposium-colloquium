@@ -7,8 +7,11 @@ import People from '@mui/icons-material/People';
 import Person from '@mui/icons-material/Person';
 import Assignment from '@mui/icons-material/Assignment';
 import List from '@mui/material/List';
+import {useParams} from "react-router-dom";
 
-export const documentItems = (
+const DocumentItems = (versionId) => {
+  let {paperId} = useParams()
+  return (
   <List>
     <ListItem>
       <ListItemIcon>
@@ -22,7 +25,7 @@ export const documentItems = (
       <ListItemIcon>
         <Assignment />
       </ListItemIcon>
-      <Link href="/1" underline="hover">
+      <Link href={"/" + paperId + "/" + versionId.versionId} underline="hover">
         Document
       </Link>
     </ListItem>
@@ -30,7 +33,7 @@ export const documentItems = (
       <ListItemIcon>
         <People />
       </ListItemIcon>
-      <Link href="/1/reviews" underline="hover">
+      <Link href={"/" + paperId + "/" + versionId.versionId + "/reviews"} underline="hover">
         Reviews
       </Link>
     </ListItem>
@@ -38,7 +41,7 @@ export const documentItems = (
       <ListItemIcon>
         <People />
       </ListItemIcon>
-      <Link href="/1/share" underline="hover">
+      <Link href={"/" + paperId + "/" + versionId.versionId + "/share"} underline="hover">
         Share With
       </Link>
     </ListItem>
@@ -46,14 +49,15 @@ export const documentItems = (
       <ListItemIcon>
         <Assignment />
       </ListItemIcon>
-      <Link href="/1/reupload" underline="hover">
+      <Link href={"/" + paperId + "/" + versionId.versionId + "/reupload"} underline="hover">
         ReUpload
       </Link>
     </ListItem>
   </List>
-);
+)};
 
-export const secondaryListItems = (
+const SecondaryListItems = () => {
+  return(
   <List>
     <ListItem>
       <ListItemIcon>
@@ -64,15 +68,16 @@ export const secondaryListItems = (
       </Link>
     </ListItem>
   </List>
-);
+)};
 
-export const dashboardItems = (
+const DashboardItems = () => {
+  return (
   <List>
       <ListItem>
           <ListItemIcon>
               <Assignment />
           </ListItemIcon>
-          <Link href="./published" underline="hover">
+          <Link href="/published" underline="hover">
               Published
           </Link>
       </ListItem>
@@ -80,7 +85,7 @@ export const dashboardItems = (
           <ListItemIcon>
               <People />
           </ListItemIcon>
-          <Link href="./shared" underline="hover">
+          <Link href="/shared" underline="hover">
               Shared With Me
           </Link>
       </ListItem>
@@ -88,9 +93,15 @@ export const dashboardItems = (
           <ListItemIcon>
               <Person />
           </ListItemIcon>
-          <Link href="./mypapers" underline="hover">
+          <Link href="/mypapers" underline="hover">
               My Papers
           </Link>
       </ListItem>
   </List>
-);
+)};
+
+export {
+  DocumentItems,
+  SecondaryListItems,
+  DashboardItems
+};

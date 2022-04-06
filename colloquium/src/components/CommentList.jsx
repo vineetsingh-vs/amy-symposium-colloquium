@@ -51,14 +51,9 @@ const Comment = ({ comment }) => {
     }
 
     const listReplies = () => {
-        // const url = "https://jsonplaceholder.typicode.com/posts/1/comments";
-        // fetch(url)
-        //     .then((response) => response.json())
-        //     .then((comments) => {
-                let replyList = replies.slice();
-                setReplies(replyList);
-                console.log("[ReplyList] got replies");
-        //     });
+        let replyList = replies.slice();
+        setReplies(replyList);
+        console.log("[ReplyList] got replies");
     };
 
     useEffect(() => {

@@ -27,8 +27,15 @@ import {
   Assignment
 } from "@mui/icons-material"
 
-import { documentItems } from '../components/listItems';
+import { DocumentItems } from '../components/listItems';
 import Copyright from "../components/Copyright";
+import {useParams} from "react-router-dom";
+
+
+const pageContext = {
+  currentPage: 1,
+  version: "1"
+};
 
 const ReuploadView = () => {
     const drawerWidth = 240;
@@ -113,6 +120,7 @@ const ReuploadView = () => {
       }));
 
     const classes = useStyles();
+    let {paperId, versionId} = useParams()
 
     const [open, setOpen] = React.useState(false);
     const [docuemntTitle, setDocumentTitle] = React.useState("Document Title");
@@ -121,6 +129,11 @@ const ReuploadView = () => {
     const [comments, setComments] = React.useState([]);
     const [isFetching, setFetching] = React.useState(false);
     const [version, setVersion] = React.useState("");
+
+    const ChangeCurrentVersion = (version) => {
+        pageContext.version = version
+        // Change docs to different version
+  }
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -179,17 +192,18 @@ const ReuploadView = () => {
                     </IconButton>
                 </div>
                 <Divider />
-                {documentItems}
+                <DocumentItems versionId={pageContext.version}/>
+                <h3>Version</h3>
                 <Select
                     labelId="Version Select Label"
                     id="Version Select"
                     label="Version"
-                    value={version}
-                    onChange={handleChange}
+                    value={pageContext.version}
+                    onChange={(event) => ChangeCurrentVersion(event.target.value)}
                 >
-                    <MenuItem value={1}>Version 1</MenuItem>
-                    <MenuItem value={2}>Version 2</MenuItem>
-                    <MenuItem value={3}>Version 3</MenuItem>
+                    <MenuItem value={1}>1</MenuItem>
+                    <MenuItem value={2}>2</MenuItem>
+                    <MenuItem value={3}>3</MenuItem>
                 </Select>
             </Drawer>
             <main className={classes.content}>

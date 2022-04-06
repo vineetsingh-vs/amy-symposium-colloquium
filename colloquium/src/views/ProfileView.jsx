@@ -21,7 +21,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import PersonIcon from "@mui/icons-material/Person";
 import TextField from "@mui/material/TextField";
-import { secondaryListItems } from "../components/listItems";
+import { SecondaryListItems } from "../components/listItems";
 import Copyright from "../components/Copyright";
 
 const ProfileView = () => {
@@ -170,7 +170,7 @@ const ProfileView = () => {
                     </IconButton>
                 </div>
                 <Divider />
-                {secondaryListItems}
+                <SecondaryListItems/>
             </Drawer>
             <main className={classes.content}>
                 <div className={classes.appBarSpacer} />

@@ -26,7 +26,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Person from '@mui/icons-material/Person';
-import { dashboardItems } from '../components/listItems';
+import { DashboardItems } from '../components/listItems';
 import Copyright from "../components/Copyright";
 
 
@@ -170,7 +170,7 @@ const SharedView = () => {
                     </IconButton>
                 </div>
                 <Divider />
-                {dashboardItems}
+                <DashboardItems/>
             </Drawer>
             <main className={classes.content}>
                 <div className={classes.appBarSpacer}>

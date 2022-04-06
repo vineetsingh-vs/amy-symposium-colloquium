@@ -32,24 +32,24 @@ function App() {
                         <Route exact path="/" component={LoginView} />
                         <Route exact path="/signup" component={SignUp} />
 
-                        {/* Document and Comments */}
-                        {/* <Route exact path="/:paperId" component={DocumentView} /> */}
-                        <Route exact path="/:paperId/:versionId" component={DocumentView} />
-
-                        {/* Review Page containing all Comments + overall Reviews */}
-                        <Route exact path="/:paperId/reviews" component={ReviewView} />
-
-                        {/* <Route exact path="/:paperId/comments" component={CommentView} /> */}
+                        {/* <Route exact path="/:paperId/:versionId/comments" component={CommentView} /> */}
 
                         {/* Main User Screens */}
                         <Route exact path="/published" component={PublishView} />
                         <Route exact path="/shared" component={SharedView} />
                         <Route exact path="/mypapers" component={MyPapersView} />
 
-                        {/* "Popup screens" */}
-                        <Route exact path="/:paperId/share" component={SharingView} />
-                        <Route exact path="/:paperId/reupload" component={ReuploadView} />
+                        {/* Document Addition Views */}
+                        <Route exact path="/:paperId/:versionId/share" component={SharingView} />
+                        <Route exact path="/:paperId/:versionId/reupload" component={ReuploadView} />
                         <Route exact path="/upload" component={UploadView} />
+
+                        {/* Review Page containing all Comments + overall Reviews */}
+                        <Route exact path="/:paperId/:versionId/reviews" component={ReviewView} />
+
+                        {/* Document and Comments */}
+                        {/* <Route exact path="/:paperId" component={DocumentView} /> */}
+                        <Route exact path="/:paperId/:versionId" component={DocumentView} />
 
                         <Route path="*" component={PageNotFound} />
 
