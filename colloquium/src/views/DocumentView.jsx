@@ -26,6 +26,7 @@ import CommentList from "../components/CommentList";
 import { documentItems } from "../components/listItems";
 import Copyright from '../components/Copyright'
 import paperApi from "../api/paper";
+import {useParams} from "react-router-dom";
 
 const drawerWidth = 240;
 const pageContext = {
@@ -117,15 +118,14 @@ const ChangeCurrentPage = (page) => {
 }
 
 const DocumentView = () => {
-    const {paperId, versionId} = React.useParams()
-    ChangeCurrentVersion(versionId)
+    let {paperId, versionId} = useParams()
     const classes = useStyles();
     const [open, setOpen] = useState(false);
     const [documentTitle, setDocumentTitle] = useState("Document Title");
     const [username, setUsername] = useState("Default Username");
     const [comments, setComments] = useState([]);
     const [isFetching, setIsFetching] = useState(false);
-    const [docs, setDocs] = useState([{ uri: paperApi.getDocumentURI(paperId, pageContext.version)}])
+    const [docs, setDocs] = useState([{ uri: paperApi.getDocumentURI(paperId, versionId)}])
 
     const ChangeCurrentVersion = (version) => {
         if(version){
@@ -146,7 +146,6 @@ const DocumentView = () => {
     useEffect(() => {
         console.log("[CommentList] mount");
         setIsFetching(true);
-        listComments();
         setIsFetching(false);
     }, []);
 
@@ -211,7 +210,7 @@ const DocumentView = () => {
                         labelId="Version Select Label"
                         id="Version Select"
                         label="Version"
-                        value={version}
+                        value={versionId}
                         onChange={(event) => ChangeCurrentVersion(event.target.value)}
                     >
                         <MenuItem value={1}>1</MenuItem>
@@ -257,6 +256,5 @@ const DocumentView = () => {
 
 export{
     DocumentView,
-    ChangeCurrentPage,
-    ChangeCurrentVersion
+    ChangeCurrentPage
 };

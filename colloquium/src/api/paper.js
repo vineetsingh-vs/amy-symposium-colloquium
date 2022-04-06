@@ -1,7 +1,7 @@
 import axios from "axios";
 import { apiUrl } from "./api.config";
 
-const resource = "/papers";
+const resource = "papers";
 
 //
 // get list of
@@ -20,10 +20,11 @@ const paperApi = {
             userId: userId,
             filter: filter,
         };
-
         return await axios
-            .get(`${apiUrl}/${resource}?${JSON.stringify(query)}`)
-            .then((response) => response.data);
+            .get(`${apiUrl}/${resource}?userId=${userId}&filter=${filter}`)
+            .then((response) => {
+                return response.data
+            });
     },
     getMetaDataById: async (paperId) => {
         return await axios
@@ -31,7 +32,7 @@ const paperApi = {
             .then((response) => response.data);
     },
     // Gets the document URI that is needed to display the document
-    getDocumentURI: async (paperId, versionId) => {
+    getDocumentURI: (paperId, versionId) => {
         return `${apiUrl}/${resource}/${paperId}/${versionId}`;
     },
     getFileVersionById: async (paperId, versionId) => {
@@ -58,7 +59,11 @@ const paperApi = {
     stopSharingPaper: async (userId, paperId) => {},
     create: async (formData) => {
         return await axios
-            .post(`${apiUrl}/${resource}`, formData)
+            .post(`${apiUrl}/${resource}`, formData, {
+                headers: {
+                    "content-type" : "multipart/form-data"
+                }
+            })
             .then((response) => response.data);
     },
     delete: async (paperId) => {

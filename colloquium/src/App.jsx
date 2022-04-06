@@ -4,7 +4,7 @@ import PageNotFound from "./views/PageNotFound";
 import LoginView from "./views/LoginView";
 import SharingView from "./views/SharingView";
 import {DocumentView} from "./views/DocumentView";
-import MyPapersView from "./views/MyPapersView";
+import {MyPapersView} from "./views/MyPapersView";
 import SharedView from "./views/SharedView";
 import PublishView from "./views/PublishView";
 import ReviewView from "./views/ReviewView";

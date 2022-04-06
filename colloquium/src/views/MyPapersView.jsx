@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import clsx from 'clsx';
 
 import {
@@ -105,13 +105,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-
 const MyPapersView = () => {
-    const [listDocuments, setListDocuments] = useState([]);
     const [username, setUsername] = useState("Default Username");
     const [userID, setUserID] = useState(1);
+    const listDocuments = paperApi.getList(userID, "all");
     const classes = useStyles();
     const [open, setOpen] = useState(true);
+    const [list, setList] = useState([]);
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -121,7 +121,10 @@ const MyPapersView = () => {
         setOpen(false);
     };
 
-    setListDocuments(paperApi.getList(userID, "all"));
+    useEffect(async () => {
+      const result = await paperApi.getList(userID, "all");
+      setList(result);
+    }, []);
 
     return (
         <div className={classes.root}>
@@ -185,37 +188,35 @@ const MyPapersView = () => {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {listDocuments.map((row) => (
-                                            <TableRow key={row.id}>
-                                                <TableCell>
-                                                    <Link href={"/" + row.id + "/" + row.versionNumber} underline="hover">
-                                                        {row.title}
-                                                    </Link>
-                                                </TableCell>
-                                                <TableCell>
-                                                  <React.Fragment>
-                                                    {row.authors.forEach(author => {
-                                                      <li>author</li>
-                                                    })}
-                                                  </React.Fragment>
-                                                </TableCell>
-                                                <TableCell>
-                                                    {row.updatedAt}
-                                                </TableCell>
-                                                <TableCell>
-                                                        <FormControlLabel
-                                                            control={
-                                                            <Switch
-                                                                checked={row.published}
-                                                                color="primary"
-                                                            />
-                                                            }
-                                                            label = {row.published ? "Published": "Unpublished"}
-                                                        />
-     
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
+                                      {list.map((row) => (
+                                          <TableRow key={row.id}>
+                                              <TableCell>
+                                                  <Link href={"/" + row.id + "/" + row.versionNumber} underline="hover">
+                                                      {row.title}
+                                                  </Link>
+                                              </TableCell>
+                                              <TableCell>
+                                                <React.Fragment>
+                                                  {row.authors}
+                                                </React.Fragment>
+                                              </TableCell>
+                                              <TableCell>
+                                                  {row.updatedAt}
+                                              </TableCell>
+                                              <TableCell>
+                                                      <FormControlLabel
+                                                          control={
+                                                          <Switch
+                                                              checked={row.published}
+                                                              color="primary"
+                                                          />
+                                                          }
+                                                          label = {row.published ? "Published": "Unpublished"}
+                                                      />
+    
+                                              </TableCell>
+                                          </TableRow>
+                                      ))}
                                     </TableBody>
                                 </Table>
                             </Grid>
@@ -230,4 +231,6 @@ const MyPapersView = () => {
     );
 }
 
-export default MyPapersView;
+export{
+  MyPapersView
+};

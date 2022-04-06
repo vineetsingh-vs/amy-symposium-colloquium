@@ -11,7 +11,6 @@ import {
 } from "typeorm";
 import { Version } from "./Version";
 import { Review } from "./Review";
-import { Extra } from "./Extra";
 
 @Entity()
 export class Paper extends BaseEntity {

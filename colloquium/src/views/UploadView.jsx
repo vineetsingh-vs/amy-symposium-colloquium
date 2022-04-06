@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import clsx from 'clsx';
 import makeStyles from '@mui/styles/makeStyles';
 import { 
@@ -18,7 +18,9 @@ import {
     ListItemIcon,
     Toolbar,
     Input,
-    Typography
+    Typography,
+    FormControl,
+    FormGroup
 } from '@mui/material';
 import paperApi from '../api/paper';
 import {
@@ -30,8 +32,6 @@ import {
 } from "@mui/icons-material"
 import { dashboardItems } from '../components/listItems';
 import Copyright from "../components/Copyright";
-
-
 
 
 const drawerWidth = 240;
@@ -123,22 +123,10 @@ const UploadPaperView = () => {
     const [username, setUsername] = React.useState("Default Username");
 
     // Form Data
-    const [author, setAuthor] = React.useState([]);
-    const [documentTitle, setDocumentTitle] = React.useState("Default Document");
-    const [shared, setShared] = React.useState([]);
-    const [files, setFiles] = useState();
-    
-    const [title, setTitle] = React.useState(true);
-    const handleTitle = () => {
-        setTitle(false);
-    }
-    const handleShared = () => {
-        setShared(false);
-    }
-    const [authors, setAuthors] = React.useState(true);
-    const handleAuthors = () => {
-      setAuthors(false);
-    }
+    const [author, setAuthor] = useState("");
+    const [documentTitle, setDocumentTitle] = useState("");
+    const [shared, setShared] = useState([]);
+    const [files, setFiles] = useState([]);
 
     const [upload, setUpload] = React.useState(true);
     const handleUpload = (event) => {
@@ -146,15 +134,28 @@ const UploadPaperView = () => {
         setFiles(event.target.files);
     }
 
+    const clearValues = () => {
+      setDocumentTitle("");
+      setAuthor("");
+  };
+
     // Submitting the document through a form
-    const handleSubmission = async () => {
+    const handleSubmission = async (event) => {
+      event.preventDefault();
       const form = new FormData();
       form.append("title", documentTitle);
-      form.append("author", author);
+      form.append("authors", "{"+author+"}");
+      form.append("creator_id", 1);
+      form.append("tags", "{}");
+      form.append("revisions", "{}");
       for (let i = 0; i < files.length; i++) {
           form.append("files", files[i], files[i].name);
       }
+
       paperApi.create(form);
+      clearValues();
+      window.location.replace("/mypapers");
+
   };
 
   return (
@@ -204,25 +205,29 @@ const UploadPaperView = () => {
                   
                   <Container maxWidth="lg" className={classes.container}>
                       <Grid container spacing={3}>
-
-                          <Grid item xs={12} md={12} lg={12}>
-                              <TextField id="docTitle" required label="Document Title" variant="outlined" onChange={(event) => setDocumentTitle(event.target.value)}/>  
-                              {/* <TextField id="sharedWith" required label="Share With" variant="outlined" onChange={(event) => setShared(event.target.value)}/> */}
-                              <TextField id="authors" required label="Author(s)" variant="outlined" onChange={(event) => setAuthor(event.target.value)}/> 
+                        <Grid item xs={12} md={12} lg={12}>
+                          <FormGroup>
+                              <Input
+                                  type="text"
+                                  placeholder="Document Title"
+                                  value={documentTitle}
+                                  onChange={(e) => setDocumentTitle(e.target.value)}
+                              />
+                              <Input
+                                  type="text"
+                                  placeholder="Author"
+                                  value={author}
+                                  onChange={(e) => setAuthor(e.target.value)}
+                              />
+                              <br />
+                              <Input
+                                  type="file"
+                                  onChange={(e) => setFiles(e.target.files)}
+                              />
+                              <br />
+                              <Input type="submit" onClick={handleSubmission} />
+                          </FormGroup>
                           </Grid>
-                      
-                          <Grid item xs={12} md={12} lg={12}>
-                              <label htmlFor="contained-button-file">
-                                  <Input accept="*" id="contained-button-file" multiple type="file" onChange={(event) => handleUpload(event)}/>
-                              </label>
-                          </Grid>
-
-                          <Grid item xs={12} md={12} lg={12}>
-                              <Button color="primary" variant="contained" component="span" disabled={upload} onClick={handleSubmission()}>
-                                  Submit
-                              </Button>
-                          </Grid>
-
                         </Grid>
                       <Box pt={4}>
                           <Copyright />
