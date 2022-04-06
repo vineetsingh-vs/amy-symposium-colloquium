@@ -1,10 +1,18 @@
 import { Request, Response } from "express";
-import { Comment } from "../entities/Comment"
+import { Comment } from "../entities/Comment";
+
+export const getCommentList = async (req: Request, res: Response) => {
+    console.log("[commentController] getCommentList");
+    const comments = await Comment.find();
+    res.header("Access-Control-Expose-Headers", "Content-Range");
+    res.header("Content-Range", "posts 0-20/20");
+    res.status(200).send(comments);
+};
 
 export const createComment = async (req: Request, res: Response) => {
     console.log("[commentController] createComment");
     console.log(req.body);
-    const { paper_id, paper_version, review, content, parent, user } = req.body;
+    const { paperId, versionId, content, parentId, userId } = req.body;
 
     const newComment = Comment.create({
         paper_id: paper_id,
@@ -29,14 +37,6 @@ export const createComment = async (req: Request, res: Response) => {
         createdAt: newComment.created_at,
         updatedAt: newComment.updated_at,
     });
-};
-
-export const getComments = async (req: Request, res: Response) => {
-    console.log("[commentController] getComments");
-    const comments = await Comment.find();
-    res.header("Access-Control-Expose-Headers", "Content-Range");
-    res.header("Content-Range", "posts 0-20/20");
-    res.status(200).send(comments);
 };
 
 export const getCommentById = async (req: Request, res: Response) => {
@@ -103,4 +103,5 @@ export const updateComment = async (req: Request, res: Response) => {
     } else {
         res.status(400).json({ message: "Comment not found" });
     }
-}
+};
+
