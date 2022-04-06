@@ -49,7 +49,6 @@ const main = async () => {
         app.get("/", (_, res) => {
             res.send("API Running :)");
         });
-        
     }
 
     //

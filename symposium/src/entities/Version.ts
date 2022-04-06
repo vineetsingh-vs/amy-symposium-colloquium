@@ -24,7 +24,7 @@ export class Version {
     @UpdateDateColumn()
     updatedAt: Date;
 
-    /**Many Versions have one paper */
+    /**Many versions have one paper */
     @ManyToOne(() => Paper, (paper) => paper.versions)
     paper: Paper;
 

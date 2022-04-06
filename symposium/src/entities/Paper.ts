@@ -7,11 +7,10 @@ import {
     UpdateDateColumn,
     VersionColumn,
     OneToMany,
-    JoinColumn,
+    ManyToOne,
 } from "typeorm";
 import { Version } from "./Version";
-import { Review } from "./Review";
-import { Extra } from "./Extra";
+import { User } from "./User";
 
 @Entity()
 export class Paper extends BaseEntity {
@@ -21,20 +20,16 @@ export class Paper extends BaseEntity {
     @Column({ type: "varchar", length: 60 })
     title: string;
 
-    @Column("text")
-    creator_id: string;
+    @ManyToOne(() => User, (user) => user.papers)
+    creator: User;
 
-    @Column()
-    filepath: string;
+    // TODO: create ManyToMany sharing with users
+    // @Column("text", { array: true })
+    // shared: User[];
 
-    @Column("text", { array: true })
-    authors: string[];
-
-    @Column("text", { array: true })
-    tags: string[];
-
-    @Column("text", { array: true })
-    revisions: string[];
+    // TODO: create ManyToMany authors and papers
+    // @Column("text", { array: true })
+    // authors: User[];
 
     @Column("boolean", { default: true })
     isPublished: boolean = false;
@@ -51,8 +46,4 @@ export class Paper extends BaseEntity {
     /**One Paper has many versions */
     @OneToMany(() => Version, (version) => version.paper)
     versions: Version[];
-
-    /**One Paper has many reviews */
-    @OneToMany(() => Review, (review) => review.paper_id)
-    reviews: Review[];
 }

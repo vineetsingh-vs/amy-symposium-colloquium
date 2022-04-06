@@ -8,7 +8,6 @@ import {
     ManyToOne,
 } from "typeorm";
 import { Version } from "./Version";
-import { Review } from "./Review";
 
 @Entity()
 export class Comment extends BaseEntity {
@@ -18,11 +17,9 @@ export class Comment extends BaseEntity {
     @Column()
     paper_id!: number;
 
+    // many comments have one version
     @ManyToOne(() => Version, (version) => version.comments)
     version: Version;
-
-    @ManyToOne(() => Review, (review) => review.comments)
-    review!: number;
 
     @Column()
     content!: string;
