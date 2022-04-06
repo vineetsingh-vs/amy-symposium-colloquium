@@ -136,7 +136,7 @@ const DocumentView = ({match, history}) => {
     // Comment Handling
     const [currentComment, setCurrentComment] = useState("");
     const handleType = (text) => {
-        setCurrentComment(text.target.currentComment);
+        setCurrentComment(text.target.value);
     }
 
     const handleClick = () => {

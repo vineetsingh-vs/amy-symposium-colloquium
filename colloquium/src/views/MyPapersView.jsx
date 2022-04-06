@@ -112,12 +112,30 @@ const MyPapersView = () => {
     const [open, setOpen] = useState(true);
     const [list, setList] = useState([]);
 
+    // Side Bar Handling
     const handleDrawerOpen = () => {
         setOpen(true);
     };
 
     const handleDrawerClose = () => {
         setOpen(false);
+    };
+
+    // Making Nice Date Display
+    const convertNiceDate = (badDate) => {
+      let date = new Date(badDate);
+      let year = date.getFullYear();
+      let month = date.getMonth()+1;
+      let dt = date.getDate();
+
+      if (dt < 10) {
+        dt = '0' + dt;
+      }
+      if (month < 10) {
+        month = '0' + month;
+      }
+
+      return (year + '-' + month + '-' + dt);
     };
 
     useEffect(async () => {
@@ -200,7 +218,7 @@ const MyPapersView = () => {
                                                 </React.Fragment>
                                               </TableCell>
                                               <TableCell>
-                                                  {row.updatedAt}
+                                                  {convertNiceDate(row.updatedAt)}
                                               </TableCell>
                                               <TableCell>
                                                       <FormControlLabel

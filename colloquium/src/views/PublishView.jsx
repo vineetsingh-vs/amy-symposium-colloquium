@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import clsx from 'clsx';
 
 import {
@@ -28,6 +28,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Person from '@mui/icons-material/Person';
 import { DashboardItems } from '../components/listItems';
 import Copyright from "../components/Copyright";
+import paperApi from '../api/paper';
 
 const drawerWidth = 240;
 
@@ -104,29 +105,42 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-
-//Creating fake data so the 
-function createData(id, paperLink, uploader, date) {
-    return { id, paperLink, uploader, date };
-}
-
-const rows = [
-    createData(0, 'Published Paper1', 'User 1', '3/25/2022'),
-    createData(1, 'Published Paper2', 'User 2', '3/26/2022'),
-    createData(2, 'Published Paper3', 'User 3', '3/27/2022'),
-];
-
-
 const PublishView = () => {
-  const [username, setUsername] = useState("Default Username");
+    const [username, setUsername] = useState("Default Username");
+    const [userID, setUserID] = useState(1);
     const classes = useStyles();
     const [open, setOpen] = useState(true);
+    const [list, setList] = useState([]);
+
+    // Side Bar Handling
     const handleDrawerOpen = () => {
         setOpen(true);
     };
     const handleDrawerClose = () => {
         setOpen(false);
     };
+
+    // Making Nice Date Display
+    const convertNiceDate = (badDate) => {
+      let date = new Date(badDate);
+      let year = date.getFullYear();
+      let month = date.getMonth()+1;
+      let dt = date.getDate();
+
+      if (dt < 10) {
+        dt = '0' + dt;
+      }
+      if (month < 10) {
+        month = '0' + month;
+      }
+
+      return (year + '-' + month + '-' + dt);
+    };
+
+    useEffect(async () => {
+      const result = await paperApi.getList(userID, "all");
+      setList(result);
+    }, []);
 
     return (
         <div className={classes.root}>
@@ -189,18 +203,18 @@ const PublishView = () => {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {rows.map((row) => (
+                                        {list.map((row) => (
                                             <TableRow key={row.id}>
                                                 <TableCell>
-                                                    <Link href="/1" underline="hover">
-                                                        {row.paperLink}
+                                                    <Link href={"/" + row.id + "/" + row.versionNumber} underline="hover">
+                                                        {row.title}
                                                     </Link>
                                                 </TableCell>
                                                 <TableCell>
-                                                    {row.uploader}
+                                                    {row.authors}
                                                 </TableCell>
                                                 <TableCell>
-                                                    {row.date}
+                                                    {convertNiceDate(row.updatedAt)}
                                                 </TableCell>
                                             </TableRow>
                                         ))}
