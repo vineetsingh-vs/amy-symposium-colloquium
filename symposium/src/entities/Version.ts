@@ -25,11 +25,10 @@ export class Version {
     updatedAt: Date;
 
     /**Many Versions have one paper */
-    @ManyToOne(() => Paper, (parentid) => parentid.versions)
-    parentid: string;
+    @ManyToOne(() => Paper, (paper) => paper.versions)
+    paper: Paper;
 
     /**One Version has many comments */
     @OneToMany(() => Comment, (comment) => comment.paper_version)
     comments: Comment[];
 }
-

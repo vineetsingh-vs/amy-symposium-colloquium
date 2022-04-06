@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import clsx from 'clsx';
 import makeStyles from '@mui/styles/makeStyles';
 import { 
@@ -18,9 +18,11 @@ import {
     ListItemIcon,
     Toolbar,
     Input,
-    Typography
+    Typography,
+    FormControl,
+    FormGroup
 } from '@mui/material';
-
+import paperApi from '../api/paper';
 import {
     Menu,
     ChevronLeft,
@@ -30,8 +32,6 @@ import {
 } from "@mui/icons-material"
 import { dashboardItems } from '../components/listItems';
 import Copyright from "../components/Copyright";
-
-
 
 
 const drawerWidth = 240;
@@ -121,101 +121,121 @@ const UploadPaperView = () => {
     };
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
     const [username, setUsername] = React.useState("Default Username");
-    
-    const [title, setTitle] = React.useState(true);
-    const handleTitle = () => {
-        setTitle(false);
-    }
-    const [shared, setShared] = React.useState(true);
-    const handleShared = () => {
-        setShared(false);
-    }
-    const [authors, setAuthors] = React.useState(true);
-    const handleAuthors = () => {
-      setAuthors(false);
-    }
+
+    // Form Data
+    const [author, setAuthor] = useState("");
+    const [documentTitle, setDocumentTitle] = useState("");
+    const [shared, setShared] = useState([]);
+    const [files, setFiles] = useState([]);
 
     const [upload, setUpload] = React.useState(true);
-    const handleUpload = () => {
+    const handleUpload = (event) => {
         setUpload(false);
+        setFiles(event.target.files);
     }
 
+    const clearValues = () => {
+      setDocumentTitle("");
+      setAuthor("");
+  };
 
-    return (
-        <div className={classes.root}>
-            <CssBaseline />
-            <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
-                <Toolbar className={classes.toolbar}>
-                    <IconButton
-                        edge="start"
-                        color="inherit"
-                        aria-label="open drawer"
-                        onClick={handleDrawerOpen}
-                        className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
-                    >
-                        <Menu />
-                    </IconButton>
-                    <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-                        Upload Documet 
-                    </Typography>
-                    <Button
-                        variant="link"
-                        color="inherit"
-                        startIcon={<Person />}
-                        href="/userprofile"
-                    >
-                        {username}
-                    </Button>
-                </Toolbar>
-            </AppBar>
-            <Drawer
-                variant="permanent"
-                classes={{
-                    paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
-                }}
-                open={open}
-            >
-                <div className={classes.toolbarIcon}>
-                    <IconButton onClick={handleDrawerClose}>
-                        <ChevronLeft />
-                    </IconButton>
-                </div>
-                <Divider />
-                {dashboardItems}
-            </Drawer>
-            <main className = {classes.content}>
-                <div className={classes.appBarSpacer} >
-                    
-                    <Container maxWidth="lg" className={classes.container}>
-                        <Grid container spacing={3}>
+    // Submitting the document through a form
+    const handleSubmission = async (event) => {
+      event.preventDefault();
+      const form = new FormData();
+      form.append("title", documentTitle);
+      form.append("authors", "{"+author+"}");
+      form.append("creator_id", 1);
+      form.append("tags", "{}");
+      form.append("revisions", "{}");
+      for (let i = 0; i < files.length; i++) {
+          form.append("files", files[i], files[i].name);
+      }
 
-                            <Grid item xs={12} md={12} lg={12}>
-                                <TextField id="docTitle" required label="Document Title" variant="outlined" onChange={handleTitle}/>  
-                                <TextField id="sharedWith" required label="Share With" variant="outlined" onChange={handleShared}/>
-                                <TextField id="authors" required label="Author(s)" variant="outlined" onChange={handleAuthors}/> 
-                            </Grid>
-                        
-                            <Grid item xs={12} md={12} lg={12}>
-                                <label htmlFor="contained-button-file">
-                                    <Input accept="*" id="contained-button-file" multiple type="file" onChange={handleUpload}/>
-                                    
-                                </label>
-                            </Grid>
+      paperApi.create(form);
+      clearValues();
+      window.location.replace("/mypapers");
 
-                            <Grid item xs={12} md={12} lg={12}>
-                                <Button color="primary" variant="contained" href="/1" disabled={title || shared || authors || upload}>
-                                    Submit
-                                </Button>
-                            </Grid>
+  };
 
-                         </Grid>
-                        <Box pt={4}>
-                            <Copyright />
-                        </Box>
-                    </Container>
-                </div>
-            </main>
-        </div>
+  return (
+      <div className={classes.root}>
+          <CssBaseline />
+          <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
+              <Toolbar className={classes.toolbar}>
+                  <IconButton
+                      edge="start"
+                      color="inherit"
+                      aria-label="open drawer"
+                      onClick={handleDrawerOpen}
+                      className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
+                  >
+                      <Menu />
+                  </IconButton>
+                  <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
+                      Upload Document 
+                  </Typography>
+                  <Button
+                      variant="link"
+                      color="inherit"
+                      startIcon={<Person />}
+                      href="/userprofile"
+                  >
+                      {username}
+                  </Button>
+              </Toolbar>
+          </AppBar>
+          <Drawer
+              variant="permanent"
+              classes={{
+                  paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
+              }}
+              open={open}
+          >
+              <div className={classes.toolbarIcon}>
+                  <IconButton onClick={handleDrawerClose}>
+                      <ChevronLeft />
+                  </IconButton>
+              </div>
+              <Divider />
+              {dashboardItems}
+          </Drawer>
+          <main className = {classes.content}>
+              <div className={classes.appBarSpacer} >
+                  
+                  <Container maxWidth="lg" className={classes.container}>
+                      <Grid container spacing={3}>
+                        <Grid item xs={12} md={12} lg={12}>
+                          <FormGroup>
+                              <Input
+                                  type="text"
+                                  placeholder="Document Title"
+                                  value={documentTitle}
+                                  onChange={(e) => setDocumentTitle(e.target.value)}
+                              />
+                              <Input
+                                  type="text"
+                                  placeholder="Author"
+                                  value={author}
+                                  onChange={(e) => setAuthor(e.target.value)}
+                              />
+                              <br />
+                              <Input
+                                  type="file"
+                                  onChange={(e) => setFiles(e.target.files)}
+                              />
+                              <br />
+                              <Input type="submit" onClick={handleSubmission} />
+                          </FormGroup>
+                          </Grid>
+                        </Grid>
+                      <Box pt={4}>
+                          <Copyright />
+                      </Box>
+                  </Container>
+              </div>
+          </main>
+      </div>
     )
 }
 

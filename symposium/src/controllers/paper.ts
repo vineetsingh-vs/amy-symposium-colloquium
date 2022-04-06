@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { Fields, Files, IncomingForm } from "formidable";
 import fs from "fs";
-import { Extra } from "../entities/Extra";
 import { Paper } from "../entities/Paper";
 import config from "../utils/config";
 
@@ -53,7 +52,7 @@ export const createPaper = async (req: Request, res: Response) => {
             res.status(500).json({ message: "Backend currently can't handle multiple files" });
             console.log("[paperController] Can't handle multiple files");
         }
-
+        console.log(fields)
         const newPaper = Paper.create(fields);
 
         await newPaper.save();
@@ -92,7 +91,6 @@ export const getPaperMetaData = async (req: Request, res: Response) => {
             tags: paper.tags,
             revisions: paper.revisions,
             isPublished: paper.isPublished,
-            extras: paper.extras,
             createdAt: paper.createdAt,
             updatedAt: paper.updatedAt,
             versionNumber: paper.versionNumber,
@@ -127,7 +125,6 @@ export const updatePaperMetaData = async (req: Request, res: Response) => {
             tags: paper.tags,
             revisions: paper.revisions,
             isPublished: paper.isPublished,
-            extras: paper.extras,
             createdAt: paper.createdAt,
             updatedAt: paper.updatedAt,
             versionNumber: paper.versionNumber,
@@ -173,11 +170,6 @@ export const addExtra = async (req: Request, res: Response) => {
     let paper = await Paper.findOne({ where: { id: paperId } });
 
     if (paper) {
-        const extra = new Extra();
-        extra.name = name;
-        extra.value = value;
-        extra.paper = paper;
-        await extra.save();
         res.status(200).json({
             id: paper.id,
             title: paper.title,
@@ -187,7 +179,6 @@ export const addExtra = async (req: Request, res: Response) => {
             tags: paper.tags,
             revisions: paper.revisions,
             isPublished: paper.isPublished,
-            extras: paper.extras,
             createdAt: paper.createdAt,
             updatedAt: paper.updatedAt,
             versionNumber: paper.versionNumber,

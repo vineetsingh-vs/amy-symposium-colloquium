@@ -27,7 +27,8 @@ import Person from "@mui/icons-material/Person";
 import CommentList from "../components/CommentList";
 import { documentItems } from "../components/listItems";
 import Copyright from '../components/Copyright'
-import { PDFContext } from "react-doc-viewer/build/plugins/pdf/state/index"
+import paperApi from "../api/paper";
+import {useParams} from "react-router-dom";
 
 const drawerWidth = 240;
 const pageContext = {
@@ -118,45 +119,23 @@ const ChangeCurrentPage = (page) => {
     pageContext.currentPage = page
 }
 
-const ChangeCurrentVersion = (version) => {
-    pageContext.version = version
-}
-
 const DocumentView = () => {
+    let {paperId, versionId} = useParams()
     const classes = useStyles();
     const [open, setOpen] = useState(false);
     const [documentTitle, setDocumentTitle] = useState("Document Title");
     const [username, setUsername] = useState("Default Username");
     const [comments, setComments] = useState([]);
     const [isFetching, setIsFetching] = useState(false);
-    const [version, setVersion] = useState("");
-    const [value, setValue] = useState("");
+    const [docs, setDocs] = useState([{ uri: paperApi.getDocumentURI(paperId, versionId)}])
 
-    const handleType = (text) => {
-        setValue(text.target.value);
+    const ChangeCurrentVersion = (version) => {
+        if(version){
+            pageContext.version = version
+            // Change docs to different version
+            setDocs([{ uri: paperApi.getDocumentURI(paperId, version)}]);
+        }
     }
-
-    const handleClick = () => {
-        console.log(`typed => ${value}`);
-        comments.push(createComment(comments.length, username, value));
-        listComments();
-        setValue("");
-    }
-    
-    const createComment = (id, name, body) => {
-        return { id, name,  body};
-    }
-
-    const listComments = () => {
-        // const url = "https://jsonplaceholder.typicode.com/posts/1/comments";
-        // fetch(url)
-        //     .then((response) => response.json())
-        //     .then((comments) => {
-                let commentList = comments.slice();
-                setComments(commentList);
-                console.log("[CommentList] got comments");
-        //     });
-    };
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -166,38 +145,12 @@ const DocumentView = () => {
         setOpen(false);
     };
 
-    const handleChange = (event) => {
-        setVersion(event.target.value);
-    };
-
-
-    const docs = [{ uri: "https://api.printnode.com/static/test/pdf/multipage.pdf" }];
-
     useEffect(() => {
         console.log("[CommentList] mount");
         let isMounted = true;
         setIsFetching(true);
-        listComments();
         setIsFetching(false);
     }, []);
-
-    // Adds comment to specific paperId/pageId
-    // const addComment = (paperId, pageId, commentId) => {}
-
-    // // Adds reply to a previous parent comment
-    // const addReplyComment = (paperId, pageId, parentCommentId, commentId) => {}
-
-    // // Page to reupload document for the next version
-    // const reupload = (paperId, versionId) => {}
-
-    // // Adding or Deleting people allowed to view paper
-    // const handleShare = (paperId) => {}
-
-    // // Update version number and "clear" comments / reviews
-    // const handleVersion = (paperId) => {}
-
-    // // Views: Review, Documents, Comments, or Document and Comments
-    // const handleViewChange = (paperId) => {}
 
     if (isFetching) {
         return "Loading...";
@@ -255,16 +208,17 @@ const DocumentView = () => {
                     </div>
                     <Divider />
                     {documentItems}
+                    <h3>Version</h3>
                     <Select
                         labelId="Version Select Label"
                         id="Version Select"
                         label="Version"
-                        value={version}
-                        onChange={handleChange}
+                        value={versionId}
+                        onChange={(event) => ChangeCurrentVersion(event.target.value)}
                     >
-                        <MenuItem value={1}>Version 1</MenuItem>
-                        <MenuItem value={2}>Version 2</MenuItem>
-                        <MenuItem value={3}>Version 3</MenuItem>
+                        <MenuItem value={1}>1</MenuItem>
+                        <MenuItem value={2}>2</MenuItem>
+                        <MenuItem value={3}>3</MenuItem>
                     </Select>
                 </Drawer>
                 <main className={classes.content}>
@@ -306,6 +260,5 @@ const DocumentView = () => {
 
 export{
     DocumentView,
-    ChangeCurrentPage,
-    ChangeCurrentVersion
+    ChangeCurrentPage
 };

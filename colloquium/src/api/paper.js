@@ -1,7 +1,7 @@
 import axios from "axios";
 import { apiUrl } from "./api.config";
 
-const resource = "/papers";
+const resource = "papers";
 
 //
 // get list of
@@ -20,15 +20,20 @@ const paperApi = {
             userId: userId,
             filter: filter,
         };
-
         return await axios
-            .get(`${apiUrl}/${resource}?${JSON.stringify(query)}`)
-            .then((response) => response.data);
+            .get(`${apiUrl}/${resource}?userId=${userId}&filter=${filter}`)
+            .then((response) => {
+                return response.data
+            });
     },
     getMetaDataById: async (paperId) => {
         return await axios
             .get(`${apiUrl}/${resource}/${paperId}`)
             .then((response) => response.data);
+    },
+    // Gets the document URI that is needed to display the document
+    getDocumentURI: (paperId, versionId) => {
+        return `${apiUrl}/${resource}/${paperId}/${versionId}`;
     },
     getFileVersionById: async (paperId, versionId) => {
         return await axios
@@ -42,19 +47,23 @@ const paperApi = {
             .then((response) => response.data);
     },
     // update a paper's file version
-    updateFileVersion: async (paperId, versionId, fileData) => {
+    updateFileVersion: async (paperId, versionId, formData) => {
         // TODO add file upload
         return await axios
-            .get(`${apiUrl}/${resource}/${paperId}/${versionId}`)
+            .get(`${apiUrl}/${resource}/${paperId}/${versionId}`, formData)
             .then((response) => response.data);
     },
     // start sharing paper (paperId) with user (userId) and set permissions
     sharePaper: async (userId, paperId, permissions) => {},
     // stop sharing paper (paperId) with user (userId)
     stopSharingPaper: async (userId, paperId) => {},
-    create: async (paperId) => {
+    create: async (formData) => {
         return await axios
-            .post(`${apiUrl}/${resource}/${paperId}`)
+            .post(`${apiUrl}/${resource}`, formData, {
+                headers: {
+                    "content-type" : "multipart/form-data"
+                }
+            })
             .then((response) => response.data);
     },
     delete: async (paperId) => {
