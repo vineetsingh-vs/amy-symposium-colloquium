@@ -32,11 +32,12 @@ export const getPaperMetaData = async (req: Request, res: Response) => {
             title: paper.title,
             creator: paper.creator,
             authors: paper.authors,
+            sharedWith: paper.sharedWith,
             isPublished: paper.isPublished,
-            versions: paper.versions,
             createdAt: paper.createdAt,
             updatedAt: paper.updatedAt,
             versionNumber: paper.versionNumber,
+            versions: paper.versions     
         });
     } else {
         res.status(400).json({ message: "Could not find Paper" });
@@ -85,15 +86,14 @@ export const createPaper = async (req: Request, res: Response) => {
         res.status(200).json({
             id: newPaper.id,
             title: newPaper.title,
-            creator_id: newPaper.creator_id,
-            filepath: newPaper.filepath,
+            creator: newPaper.creator,
             authors: newPaper.authors,
-            tags: newPaper.tags,
-            revisions: newPaper.revisions,
+            sharedWith: newPaper.sharedWith,
             isPublished: newPaper.isPublished,
             createdAt: newPaper.createdAt,
             updatedAt: newPaper.updatedAt,
             versionNumber: newPaper.versionNumber,
+            versions: newPaper.versions
         });
     });
 };
@@ -101,31 +101,28 @@ export const createPaper = async (req: Request, res: Response) => {
 export const updatePaperMetaData = async (req: Request, res: Response) => {
     console.log("[paperController] updatePaperMetaData");
     const { paperid } = req.params;
-    const { title, creator_id, filepath, authors, tags, revisions, isPublished } = req.body;
+    const { title, creator, authors, sharedWith, isPublished } = req.body;
 
     let paper = await Paper.findOne({ where: { id: paperid } });
     if (paper) {
         paper.title = title || paper.title;
-        paper.creator_id = creator_id || paper.creator_id;
-        paper.filepath = filepath || paper.filepath;
+        paper.creator = creator || paper.creator;
         paper.authors = authors || paper.authors;
-        paper.tags = tags || paper.tags;
-        paper.revisions = revisions || paper.revisions;
+        paper.sharedWith = sharedWith || paper.sharedWith
         paper.isPublished = isPublished || paper.isPublished;
 
         await paper.save();
         res.status(200).json({
             id: paper.id,
             title: paper.title,
-            creator_id: paper.creator_id,
-            filepath: paper.filepath,
+            creator: paper.creator,
             authors: paper.authors,
-            tags: paper.tags,
-            revisions: paper.revisions,
+            sharedWith: paper.sharedWith,
             isPublished: paper.isPublished,
             createdAt: paper.createdAt,
             updatedAt: paper.updatedAt,
             versionNumber: paper.versionNumber,
+            versions: paper.versions   
         });
     } else {
         res.status(400).json({ message: "Paper not found" });
