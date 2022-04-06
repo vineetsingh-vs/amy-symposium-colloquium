@@ -128,12 +128,13 @@ const DocumentView = () => {
     const [comments, setComments] = useState([]);
     const [isFetching, setIsFetching] = useState(false);
     const [docs, setDocs] = useState([{ uri: paperApi.getDocumentURI(paperId, versionId)}])
+    const [currentComment, setCurrentComment] = useState("");
 
     const ChangeCurrentVersion = (version) => {
         if(version){
             pageContext.version = version
             // Change docs to different version
-            setDocs([{ uri: paperApi.getDocumentURI(paperId, version)}]);
+            setDocs([{ uri: paperApi.getDocumentURI(paperId, pageContext.version)}]);
         }
     }
 
@@ -213,7 +214,7 @@ const DocumentView = () => {
                         labelId="Version Select Label"
                         id="Version Select"
                         label="Version"
-                        value={versionId}
+                        value={pageContext.version}
                         onChange={(event) => ChangeCurrentVersion(event.target.value)}
                     >
                         <MenuItem value={1}>1</MenuItem>
@@ -242,8 +243,8 @@ const DocumentView = () => {
                             {/* Comments */}
                             <Grid item xs={4}>
                                 <CommentList comments={comments}/>
-                                <TextField variant="outlined" multiline placeholder="Enter Comment Here" fullWidth={true} value={value} onChange={handleType}></TextField>
-                                <Button color="primary" variant="contained" fullWidth={true} disabled={value == ""} onClick={handleClick}>
+                                <TextField variant="outlined" multiline placeholder="Enter Comment Here" fullWidth={true} value={currentComment} onChange={handleType}></TextField>
+                                <Button color="primary" variant="contained" fullWidth={true} disabled={currentComment == ""} onClick={handleClick}>
                                     Add Comment
                                 </Button>
                             </Grid>
