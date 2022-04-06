@@ -117,8 +117,6 @@ const rows = [
     createData(2, 'Shared Paper3', 'User 3', '3/27/2022'),
 ];
 
-
-
 const SharedView = () => {
     const classes = useStyles();
     const [username, setUsername] = useState("Default Username");

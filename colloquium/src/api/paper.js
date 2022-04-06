@@ -16,10 +16,6 @@ const paperApi = {
         if (filter !== "shared" && filter !== "uploaded" && filter !== "all")
             return { message: "filter invalid" };
 
-        const query = {
-            userId: userId,
-            filter: filter,
-        };
         return await axios
             .get(`${apiUrl}/${resource}?userId=${userId}&filter=${filter}`)
             .then((response) => {

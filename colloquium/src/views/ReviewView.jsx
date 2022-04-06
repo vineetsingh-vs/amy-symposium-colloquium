@@ -24,12 +24,11 @@ import PersonIcon from "@mui/icons-material/Person";
 import CommentList from "../components/CommentList";
 import { DocumentItems } from "../components/listItems";
 import Copyright from "../components/Copyright";
-import {useParams} from "react-router-dom";
+import paperApi from "../api/paper"
 
 const drawerWidth = 240;
 const pageContext = {
-    currentPage: 1,
-    version: "1"
+    currentPage: 1
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -111,22 +110,28 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const ReviewView = () => {
+const ReviewView = ({match, history}) => {
     const classes = useStyles();
-    let {paperId, versionId} = useParams();
-    pageContext.version = versionId;
+    const paperId = match.params.paperId;
+    let versionId = match.params.versionId;
+
+    // Drawer
     const [open, setOpen] = useState(false);
-    const [documentTitle, setDocumentTitle] = useState("Document Title");
+
+    // Document Info
+    const [documentTitle, setDocumentTitle] = useState("");
     const [username, setUsername] = useState("Default Username");
     const [reviews, setReviews] = useState([]);
-    const [isFetching, setIsFetching] = useState(false);
-    const [version, setVersion] = useState("");
     const [value, setValue] = useState("");
 
-    const ChangeCurrentVersion = (version) => {
-        pageContext.version = version
+    // Version Control
+    const ChangeCurrentVersion = (event) => {
+        versionId = event.target.value;
+
+        window.location.replace("/" + paperId + "/" + versionId + "/reviews");
     }
 
+    // Reviews Handling
     const handleType = (text) => {
         setValue(text.target.value);
     }
@@ -148,23 +153,23 @@ const ReviewView = () => {
         console.log("[ReviewList] got reviews");
     };
 
-    useEffect(() => {
+    useEffect(async() => {
+        const doc = await paperApi.getMetaDataById(paperId);
+        // Getting Document Title
+        setDocumentTitle(doc.title);
+
+        // Fetch Reviews and set to reviews
         console.log("[ReviewList] mount");
-        setIsFetching(true);
         listReviews();
-        setIsFetching(false);
     }, []);  
 
+    // Side Bar Handling
     const handleDrawerOpen = () => {
         setOpen(true);
     };
 
     const handleDrawerClose = () => {
         setOpen(false);
-    };
-
-    const handleChange = (event) => {
-        setVersion(event.target.value);
     };
 
     return (
@@ -216,14 +221,14 @@ const ReviewView = () => {
                     </IconButton>
                 </div>
                 <Divider />
-                <DocumentItems versionId={pageContext.version}/>
+                <DocumentItems versionId={versionId}/>
                 <h3>Version</h3>
                 <Select
                     labelId="Version Select Label"
                     id="Version Select"
                     label="Version"
-                    value={pageContext.version}
-                    onChange={(event) => ChangeCurrentVersion(event.target.value)}
+                    value={versionId}
+                    onChange={(e) => ChangeCurrentVersion(e)}
                 >
                     <MenuItem value={1}>1</MenuItem>
                     <MenuItem value={2}>2</MenuItem>
@@ -237,7 +242,7 @@ const ReviewView = () => {
                     <Grid item xs={12}>
                         <CommentList comments={reviews}/>
                         <TextField variant="outlined" multiline placeholder="Enter Review Here" fullWidth={true} value={value} onChange={handleType}></TextField>
-                        <Button color="primary" variant="contained" fullWidth={true} disabled={value == ""} onClick={handleClick}>
+                        <Button color="primary" variant="contained" fullWidth={true} disabled={value === ""} onClick={handleClick}>
                             Add Review
                         </Button>
                     </Grid>

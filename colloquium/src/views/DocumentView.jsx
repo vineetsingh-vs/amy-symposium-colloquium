@@ -28,12 +28,10 @@ import CommentList from "../components/CommentList";
 import { DocumentItems } from "../components/listItems";
 import Copyright from '../components/Copyright'
 import paperApi from "../api/paper";
-import {useParams} from "react-router-dom";
 
 const drawerWidth = 240;
 const pageContext = {
     currentPage: 1,
-    version: "1"
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -119,26 +117,24 @@ const ChangeCurrentPage = (page) => {
     pageContext.currentPage = page
 }
 
-const DocumentView = () => {
-    let {paperId, versionId} = useParams();
-    pageContext.version = versionId;
+const DocumentView = ({match, history}) => {
     const classes = useStyles();
+    const paperId = match.params.paperId;
+    let versionId = match.params.versionId;
+
+    // Drawer
     const [open, setOpen] = useState(false);
-    const [documentTitle, setDocumentTitle] = useState("Document Title");
+
+    // Displaying Document
     const [username, setUsername] = useState("Default Username");
     const [comments, setComments] = useState([]);
-    const [isFetching, setIsFetching] = useState(false);
     const [docs, setDocs] = useState([{ uri: paperApi.getDocumentURI(paperId, versionId)}])
+    const [documentTitle, setDocumentTitle] = useState("");
+
+    const [isFetching, setIsFetching] = useState(false);
+
+    // Comment Handling
     const [currentComment, setCurrentComment] = useState("");
-
-    // Set the document view to a new version page
-    const ChangeCurrentVersion = (event) => {
-        pageContext.version = event.target.value
-        // Change docs to different version
-        setDocs([{ uri: paperApi.getDocumentURI(paperId, pageContext.version)}]);
-        let isMounted = true
-    }
-
     const handleType = (text) => {
         setCurrentComment(text.target.currentComment);
     }
@@ -161,6 +157,7 @@ const DocumentView = () => {
         console.log("[CommentList] got comments");
     };
 
+    // Side Bar Handling
     const handleDrawerOpen = () => {
         setOpen(true);
     };
@@ -169,12 +166,24 @@ const DocumentView = () => {
         setOpen(false);
     };
 
-    useEffect(() => {
+    // Version Control
+    const ChangeCurrentVersion = (event) => {
+        versionId = event.target.value
+        // Change docs to different version
+        window.location.replace("/" + paperId + "/" + versionId);
+        // setDocs([{ uri: paperApi.getDocumentURI(paperId, versionId)}]);
+    }
+
+    useEffect(async() => {
+        const doc = await paperApi.getMetaDataById(paperId);
+        // Getting Document Title
+        setDocumentTitle(doc.title);
+
+        // Get Comment Information
         console.log("[CommentList] mount");
         setIsFetching(true);
         // Get Comments for paperId and versionId
         setIsFetching(false);
-        let isMounted = true
     }, []);
 
     if (isFetching) {
@@ -232,14 +241,14 @@ const DocumentView = () => {
                         </IconButton>
                     </div>
                     <Divider />
-                    <DocumentItems versionId={pageContext.version}/>
+                    <DocumentItems versionId={versionId}/>
                     <h3>Version</h3>
                     <Select
                         labelId="Version Select Label"
                         id="Version Select"
                         label="Version"
-                        value={pageContext.version}
-                        onChange={ChangeCurrentVersion}
+                        value={versionId}
+                        onChange={(e) => ChangeCurrentVersion(e)}
                     >
                         <MenuItem value={1}>1</MenuItem>
                         <MenuItem value={2}>2</MenuItem>
@@ -268,7 +277,7 @@ const DocumentView = () => {
                             <Grid item xs={4}>
                                 <CommentList comments={comments}/>
                                 <TextField variant="outlined" multiline placeholder="Enter Comment Here" fullWidth={true} value={currentComment} onChange={handleType}></TextField>
-                                <Button color="primary" variant="contained" fullWidth={true} disabled={currentComment == ""} onClick={handleClick}>
+                                <Button color="primary" variant="contained" fullWidth={true} disabled={currentComment === ""} onClick={handleClick}>
                                     Add Comment
                                 </Button>
                             </Grid>

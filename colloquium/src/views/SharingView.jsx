@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import clsx from 'clsx';
 import { DocumentItems } from '../components/listItems';
 import makeStyles from '@mui/styles/makeStyles';
@@ -36,13 +36,9 @@ import {
 } from "@mui/icons-material"
 
 import Copyright from "../components/Copyright";
-import {useParams} from "react-router-dom";
+import paperApi from "../api/paper";
 
 const drawerWidth = 240;
-const pageContext = {
-  currentPage: 1,
-  version: "1"
-};
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -117,23 +113,37 @@ const useStyles = makeStyles((theme) => ({
     },
   }));
 
-const SharingView = () => {
+const SharingView = ({match, history}) => {
     const classes = useStyles();
-    let {paperId, versionId} = useParams()
-    pageContext.version = versionId;
+    const paperId = match.params.paperId;
+    let versionId = match.params.versionId;
+
+    // Drawer
     const [open, setOpen] = useState(true);
+
+    // Who is being shared with
     const [rows, setRows] = useState([]);
 
+    // Document Info
+    const [username, setUsername] = useState("Default Username");
+    const [documentTitle, setDocumentTitle] = useState("");
+
+    // Side Bare Handling
     const handleDrawerOpen = () => {
-        setOpen(true);
+      setOpen(true);
     };
     const handleDrawerClose = () => {
         setOpen(false);
     };
-    const [username, setUsername] = useState("Default Username");
-    const [docuemntTitle, setDocumentTitle] = useState("Document Title");
 
+    useEffect(async() => {
+      const doc = await paperApi.getMetaDataById(paperId);
+      // Getting Document Title
+      setDocumentTitle(doc.title);
 
+      // Get Shared People
+      console.log("[ShareList] mount");
+  }, []);
 
     return (
         <div className={classes.root}>
@@ -150,7 +160,7 @@ const SharingView = () => {
                     <Menu />
                 </IconButton>
                 <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-                    Share {docuemntTitle} With:
+                    Share {documentTitle} With:
                 </Typography>
                 <Button
                         variant="link"
@@ -175,7 +185,7 @@ const SharingView = () => {
                 </IconButton>
             </div>
             <Divider />
-            <DocumentItems versionId={pageContext.version}/>
+            <DocumentItems versionId={versionId}/>
         </Drawer>
         <main className={classes.content}>
             <div className={classes.appBarSpacer}>
@@ -183,7 +193,7 @@ const SharingView = () => {
                     <Grid container spacing={3}>
                         <Grid item xs={12} md={12} lg={12}>
                             <TextField fullWidth label='Please Enter User to Share With'></TextField>
-                            <Button variant="contained" color="primary" href="">
+                            <Button variant="contained" color="primary" href={"/" + paperId + "/" + versionId + "/share"}>
                                 Share With
                             </Button>
                         </Grid>
