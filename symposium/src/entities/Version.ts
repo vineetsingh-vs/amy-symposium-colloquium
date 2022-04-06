@@ -1,5 +1,6 @@
 import {
     Entity,
+    BaseEntity,
     Column,
     PrimaryGeneratedColumn,
     CreateDateColumn,
@@ -11,7 +12,7 @@ import { Paper } from "./Paper";
 import { Comment } from "./Comment";
 
 @Entity()
-export class Version {
+export class Version extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     id!: string;
 
