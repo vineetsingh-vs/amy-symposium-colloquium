@@ -28,6 +28,9 @@ export class Comment extends BaseEntity {
     replies: Comment[];
 
     @Column()
+    pageNum: number;
+
+    @Column()
     content!: string;
 
     @Column()
