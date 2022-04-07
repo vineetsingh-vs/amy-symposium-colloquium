@@ -11,7 +11,7 @@ export const getCommentList = async (req: Request, res: Response) => {
 export const createComment = async (req: Request, res: Response) => {
     console.log("[commentController] createComment");
     console.log(req.body);
-    const { versionId, parentId, content, pageNum, userId } = req.body;
+    const { versionId, parentId, userId, content, pageNum } = req.body;
 
     // TODO: validate inputs
 
@@ -60,6 +60,35 @@ export const getCommentById = async (req: Request, res: Response) => {
         });
     } else {
         res.status(400).json({ message: "Could not find Comment" });
+    }
+};
+
+
+/**Get list of comments for a specific version, given the versionID */
+export const getCommentsByVersionId = async (req: Request, res: Response) => {
+    console.log("[commentController] getCommentsByVersionId");
+    const { versionID } = req.params;
+
+    let comments = await Comment.find({ where: { version: versionID } });
+
+    if (comments) {
+        res.status(200).send(comments);
+    } else {
+        res.status(400).json({ message: "Could not find comments" });
+    }
+};
+
+/**Get list of comments for a specific version and pageNumber, given the versionID and pageNum*/
+export const getCommentsByVersionAndPage = async (req: Request, res: Response) => {
+    console.log("[commentController] getCommentsByVersionAndPage");
+    const { versionID, pageNumber } = req.params;
+
+    let comments = await Comment.find({ where: { version: versionID, pageNum: pageNumber } });
+
+    if (comments) {
+        res.status(200).send(comments);
+    } else {
+        res.status(400).json({ message: "Could not find comments" });
     }
 };
 
