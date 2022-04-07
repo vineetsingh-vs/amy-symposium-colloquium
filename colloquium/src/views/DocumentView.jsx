@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import DocViewer, 
-{ 
+import DocViewer, {
     BMPRenderer,
     HTMLRenderer,
     JPGRenderer,
@@ -8,13 +7,13 @@ import DocViewer,
     PNGRenderer,
     TIFFRenderer,
     TXTRenderer,
-    MSDocRenderer
+    MSDocRenderer,
 } from "react-doc-viewer";
 import CustomXLSXRenderer from "../renderers/CustomXLSXRenderer";
 import CustomPDFRenderer from "../renderers/CustomPDFRenderer";
 import CustomMSDocRenderer from "../renderers/CustomMSDocRenderer";
 import clsx from "clsx";
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles";
 import {
     Button,
     CssBaseline,
@@ -31,14 +30,14 @@ import {
     Container,
     Grid,
     TextField,
-    Input
-} from "@mui/material"
+    Input,
+} from "@mui/material";
 import Menu from "@mui/icons-material/Menu";
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import Person from "@mui/icons-material/Person";
 import CommentList from "../components/CommentList";
 import { DocumentItems } from "../components/listItems";
-import Copyright from '../components/Copyright'
+import Copyright from "../components/Copyright";
 import paperApi from "../api/paper";
 
 const drawerWidth = 240;
@@ -126,10 +125,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ChangeCurrentPage = (page) => {
-    pageContext.currentPage = page
-}
+    pageContext.currentPage = page;
+};
 
-const DocumentView = ({match, history}) => {
+const DocumentView = ({ match, history }) => {
     const classes = useStyles();
     const paperId = match.params.paperId;
     let versionId = match.params.versionId;
@@ -140,7 +139,7 @@ const DocumentView = ({match, history}) => {
     // Displaying Document
     const [username, setUsername] = useState("Default Username");
     const [comments, setComments] = useState([]);
-    const [docs, setDocs] = useState([{ uri: paperApi.getDocumentURI(paperId, versionId)}])
+    const [docUri, setDocUri] = useState([]);
     const [documentTitle, setDocumentTitle] = useState("");
 
     const [isFetching, setIsFetching] = useState(false);
@@ -149,19 +148,19 @@ const DocumentView = ({match, history}) => {
     const [currentComment, setCurrentComment] = useState("");
     const handleType = (text) => {
         setCurrentComment(text.target.value);
-    }
+    };
 
     const handleClick = () => {
         comments.push(createComment(comments.length, username, currentComment, []));
         listComments();
         console.log(comments);
         setCurrentComment("");
-    }
-    
+    };
+
     const createComment = (id, name, body, replies) => {
         // Push a comment thing here to backend
-        return { id, name,  body, replies};
-    }
+        return { id, name, body, replies };
+    };
 
     const listComments = () => {
         let commentList = comments.slice();
@@ -179,23 +178,16 @@ const DocumentView = ({match, history}) => {
     };
 
     // Version Control
-    const ChangeCurrentVersion = (event) => {
-        versionId = event.target.value
+    const handleChangeVersion = (event) => {
+        versionId = event.target.value;
         // Change docs to different version
         window.location.replace("/" + paperId + "/" + versionId);
-        // setDocs([{ uri: paperApi.getDocumentURI(paperId, versionId)}]);
-    }
+    };
 
-    useEffect(async() => {
-        const doc = await paperApi.getMetaDataById(paperId);
-        // Getting Document Title
-        setDocumentTitle(doc.title);
-
-        // Get Comment Information
-        console.log("[CommentList] mount");
-        setIsFetching(true);
-        // Get Comments for paperId and versionId
-        setIsFetching(false);
+    useEffect(() => {
+        // load document metadata and file version
+        paperApi.getMetaDataById(paperId).then((metadata) => setDocumentTitle(metadata.title));
+        setDocUri([{ uri: paperApi.getDocumentURI(paperId, versionId) }]);
     }, []);
 
     if (isFetching) {
@@ -218,7 +210,8 @@ const DocumentView = ({match, history}) => {
                                 classes.menuButton,
                                 open && classes.menuButtonHidden
                             )}
-                            size="large">
+                            size="large"
+                        >
                             <Menu />
                         </IconButton>
                         <Typography
@@ -253,14 +246,14 @@ const DocumentView = ({match, history}) => {
                         </IconButton>
                     </div>
                     <Divider />
-                    <DocumentItems versionId={versionId}/>
+                    <DocumentItems versionId={versionId} />
                     <h3>Version</h3>
                     <Select
                         labelId="Version Select Label"
                         id="Version Select"
                         label="Version"
                         value={versionId}
-                        onChange={(e) => ChangeCurrentVersion(e)}
+                        onChange={(e) => handleChangeVersion(e)}
                     >
                         <MenuItem value={1}>1</MenuItem>
                         <MenuItem value={2}>2</MenuItem>
@@ -273,9 +266,8 @@ const DocumentView = ({match, history}) => {
                         <Grid container spacing={5}>
                             {/* Document */}
                             <Grid item xs={8}>
-                                <DocViewer 
-                                    pluginRenderers=
-                                    {[
+                                <DocViewer
+                                    pluginRenderers={[
                                         CustomPDFRenderer,
                                         MSDocRenderer,
                                         HTMLRenderer,
@@ -283,21 +275,34 @@ const DocumentView = ({match, history}) => {
                                         PNGRenderer,
                                         TXTRenderer,
                                     ]}
-                                    documents={docs} 
+                                    documents={docUri}
                                     config={{
                                         header: {
                                             disableFileName: true,
                                             disableHeader: true,
-                                            retainURLParams: false
-                                        }
+                                            retainURLParams: false,
+                                        },
                                     }}
                                 />
                             </Grid>
                             {/* Comments */}
                             <Grid item xs={4}>
-                                <CommentList comments={comments}/>
-                                <TextField variant="outlined" multiline placeholder="Enter Comment Here" fullWidth={true} value={currentComment} onChange={handleType}></TextField>
-                                <Button color="primary" variant="contained" fullWidth={true} disabled={currentComment === ""} onClick={handleClick}>
+                                <CommentList comments={comments} />
+                                <TextField
+                                    variant="outlined"
+                                    multiline
+                                    placeholder="Enter Comment Here"
+                                    fullWidth={true}
+                                    value={currentComment}
+                                    onChange={handleType}
+                                ></TextField>
+                                <Button
+                                    color="primary"
+                                    variant="contained"
+                                    fullWidth={true}
+                                    disabled={currentComment === ""}
+                                    onClick={handleClick}
+                                >
                                     Add Comment
                                 </Button>
                             </Grid>
@@ -312,7 +317,4 @@ const DocumentView = ({match, history}) => {
     }
 };
 
-export{
-    DocumentView,
-    ChangeCurrentPage
-};
+export { DocumentView, ChangeCurrentPage };

@@ -11,8 +11,6 @@ import {
 } from "typeorm";
 import { Paper } from "./Paper";
 
-import { Paper } from "./Paper";
-
 @Entity()
 export class User extends BaseEntity {
     @PrimaryGeneratedColumn()

@@ -138,9 +138,10 @@ const MyPapersView = () => {
       return (year + '-' + month + '-' + dt);
     };
 
-    useEffect(async () => {
-      const result = await paperApi.getList(userID, "all");
-      setList(result);
+    useEffect(() => {
+        paperApi.getList(userID, "all").then((paperList) => {
+            setList(paperList)
+        })
     }, []);
 
     return (
