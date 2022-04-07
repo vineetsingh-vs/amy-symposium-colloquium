@@ -3,34 +3,32 @@ import {
     PrimaryGeneratedColumn,
     CreateDateColumn,
     UpdateDateColumn,
+    OneToMany,
     Column,
     BaseEntity,
     ManyToOne,
 } from "typeorm";
 import { Version } from "./Version";
-import { Review } from "./Review";
 
 @Entity()
 export class Comment extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     id!: string;
 
+    @ManyToOne(() => Version, (version) => version.comments)
+    version: Version;
+
+    @ManyToOne(() => Comment, (comment) => comment.replies)
+    parent: Comment;
+
+    @OneToMany(() => Comment, (comment) => comment.parent)
+    replies: Comment[];
+
     @Column()
-    paper_id!: number;
-
-    /**Many Comments have one version */
-    @ManyToOne(() => Version, (paper_version) => paper_version.comments)
-    paper_version: number;
-
-    /**Many Comments have one Review */
-    @ManyToOne(() => Review, (review) => review.comments)
-    review!: number;
+    pageNum: number;
 
     @Column()
     content!: string;
-
-    @Column()
-    parent!: string;
 
     @Column()
     user!: number;

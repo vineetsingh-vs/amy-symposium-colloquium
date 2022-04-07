@@ -1,5 +1,6 @@
 import {
     Entity,
+    BaseEntity,
     Column,
     PrimaryGeneratedColumn,
     CreateDateColumn,
@@ -11,7 +12,7 @@ import { Paper } from "./Paper";
 import { Comment } from "./Comment";
 
 @Entity()
-export class Version {
+export class Version extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     id!: string;
 
@@ -24,11 +25,9 @@ export class Version {
     @UpdateDateColumn()
     updatedAt: Date;
 
-    /**Many Versions have one paper */
     @ManyToOne(() => Paper, (paper) => paper.versions)
     paper: Paper;
 
-    /**One Version has many comments */
-    @OneToMany(() => Comment, (comment) => comment.paper_version)
+    @OneToMany(() => Comment, (comment) => comment.version)
     comments: Comment[];
 }

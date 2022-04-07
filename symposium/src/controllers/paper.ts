@@ -20,6 +20,30 @@ export const getPaperList = async (req: Request, res: Response) => {
     res.status(200).send(paperList);
 };
 
+export const getPaperMetaData = async (req: Request, res: Response) => {
+    console.log("[paperController] getPaperMetaData");
+    const { paperid } = req.params;
+
+    let paper = await Paper.findOne({ where: { id: paperid } });
+
+    if (paper) {
+        res.status(200).json({
+            id: paper.id,
+            title: paper.title,
+            creator: paper.creator,
+            authors: paper.authors,
+            sharedWith: paper.sharedWith,
+            isPublished: paper.isPublished,
+            createdAt: paper.createdAt,
+            updatedAt: paper.updatedAt,
+            versionNumber: paper.versionNumber,
+            versions: paper.versions,
+        });
+    } else {
+        res.status(400).json({ message: "Could not find Paper" });
+    }
+};
+
 export const createPaper = async (req: Request, res: Response) => {
     console.log("[paperController] createPaper");
 
@@ -39,7 +63,6 @@ export const createPaper = async (req: Request, res: Response) => {
                 var oldPath = file.filepath;
                 // TODO: Where we would either save file to AWS or local storage
                 var newPath = config.uploadFolder + "/" + file.originalFilename;
-                fields.filepath = newPath;
                 fs.writeFileSync(newPath, fs.readFileSync(oldPath));
             } catch (e) {
                 console.log("Error writing file", e);
@@ -62,15 +85,14 @@ export const createPaper = async (req: Request, res: Response) => {
         res.status(200).json({
             id: newPaper.id,
             title: newPaper.title,
-            creator_id: newPaper.creator_id,
-            filepath: newPaper.filepath,
+            creator: newPaper.creator,
             authors: newPaper.authors,
-            tags: newPaper.tags,
-            revisions: newPaper.revisions,
+            sharedWith: newPaper.sharedWith,
             isPublished: newPaper.isPublished,
             createdAt: newPaper.createdAt,
             updatedAt: newPaper.updatedAt,
             versionNumber: newPaper.versionNumber,
+            versions: newPaper.versions,
         });
     });
 };
@@ -102,51 +124,47 @@ export const getPaperMetaData = async (req: Request, res: Response) => {
 
 export const updatePaperMetaData = async (req: Request, res: Response) => {
     console.log("[paperController] updatePaperMetaData");
-    const { paperId } = req.params;
-    const { title, creator_id, filepath, authors, tags, revisions, isPublished } = req.body;
+    const { paperid } = req.params;
+    const { title, creator, authors, isPublished } = req.body;
 
     let paper = await Paper.findOne({ where: { id: paperId } });
     if (paper) {
         paper.title = title || paper.title;
-        paper.creator_id = creator_id || paper.creator_id;
-        paper.filepath = filepath || paper.filepath;
+        paper.creator = creator || paper.creator;
         paper.authors = authors || paper.authors;
-        paper.tags = tags || paper.tags;
-        paper.revisions = revisions || paper.revisions;
         paper.isPublished = isPublished || paper.isPublished;
 
         await paper.save();
         res.status(200).json({
             id: paper.id,
             title: paper.title,
-            creator_id: paper.creator_id,
-            filepath: paper.filepath,
+            creator: paper.creator,
             authors: paper.authors,
-            tags: paper.tags,
-            revisions: paper.revisions,
+            sharedWith: paper.sharedWith,
             isPublished: paper.isPublished,
             createdAt: paper.createdAt,
             updatedAt: paper.updatedAt,
             versionNumber: paper.versionNumber,
+            versions: paper.versions,
         });
     } else {
         res.status(400).json({ message: "Paper not found" });
     }
 };
 
-export const getPaperFileVersion = async (req: Request, res: Response) => {
-    console.log("[paperController] getPaperFileVersion");
-    const { paperId } = req.params;
+// export const getPaperFileVersion = async (req: Request, res: Response) => {
+// console.log("[paperController] getPaperFileVersion");
+// const { paperId } = req.params;
 
-    let paper = await Paper.findOne({ where: { id: paperId } });
+// let paper = await Paper.findOne({ where: { id: paperId } });
 
-    if (paper) {
-        console.log(process.cwd() + "\/" + paper.filepath)
-        res.status(200).sendFile(process.cwd() + "\/" + paper.filepath);
-    } else {
-        res.status(400).json({ message: "Paper not found" });
-    }
-};
+// if (paper) {
+// console.log(process.cwd() + "/" + paper.filepath);
+// res.status(200).sendFile(process.cwd() + "/" + paper.filepath);
+// } else {
+// res.status(400).json({ message: "Paper not found" });
+// }
+// };
 
 export const deletePaper = async (req: Request, res: Response) => {
     console.log("[paperController] deletePaper");
@@ -162,36 +180,9 @@ export const deletePaper = async (req: Request, res: Response) => {
     }
 };
 
-export const addExtra = async (req: Request, res: Response) => {
-    console.log("[paperController] addExtra");
-    const { paperId } = req.params;
-    const { name, value } = req.body;
-
-    let paper = await Paper.findOne({ where: { id: paperId } });
-
-    if (paper) {
-        res.status(200).json({
-            id: paper.id,
-            title: paper.title,
-            creator_id: paper.creator_id,
-            filepath: paper.filepath,
-            authors: paper.authors,
-            tags: paper.tags,
-            revisions: paper.revisions,
-            isPublished: paper.isPublished,
-            createdAt: paper.createdAt,
-            updatedAt: paper.updatedAt,
-            versionNumber: paper.versionNumber,
-        });
-    } else {
-        res.status(400).json({ message: "Paper not found" });
-    }
-};
-
 //
 // ======== TODO >>>>
 
-// get a version of a paper (file and version metadata)
 // delete a version of a paper (file and version metadata)
 export const deletePaperVersion = async (req: Request, res: Response) => {};
 // update a version of a paper (file and version metadata)

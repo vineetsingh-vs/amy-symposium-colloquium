@@ -1,6 +1,7 @@
 import {
     Entity,
     ManyToMany,
+    OneToMany,
     JoinTable,
     PrimaryGeneratedColumn,
     CreateDateColumn,
@@ -8,6 +9,8 @@ import {
     Column,
     BaseEntity,
 } from "typeorm";
+import { Paper } from "./Paper";
+
 import { Paper } from "./Paper";
 
 @Entity()
@@ -36,9 +39,12 @@ export class User extends BaseEntity {
     @Column("text", { array: true })
     roles!: string[];
 
+    @OneToMany(() => Paper, (paper) => paper.creator)
+    papers: Paper[];
+
     @ManyToMany(() => Paper)
     @JoinTable()
-    papers: Paper[];
+    sharedWithMe: Paper[];
 
     @CreateDateColumn()
     createdAt: Date;

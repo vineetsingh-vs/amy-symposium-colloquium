@@ -19,7 +19,7 @@ const paperApi = {
         return await axios
             .get(`${apiUrl}/${resource}?userId=${userId}&filter=${filter}`)
             .then((response) => {
-                return response.data
+                return response.data;
             });
     },
     getMetaDataById: async (paperId) => {
@@ -54,11 +54,11 @@ const paperApi = {
     // stop sharing paper (paperId) with user (userId)
     stopSharingPaper: async (userId, paperId) => {},
     create: async (formData) => {
-        return await axios
+        return axios
             .post(`${apiUrl}/${resource}`, formData, {
                 headers: {
-                    "content-type" : "multipart/form-data"
-                }
+                    "content-type": "multipart/form-data",
+                },
             })
             .then((response) => response.data);
     },

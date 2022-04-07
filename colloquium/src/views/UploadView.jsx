@@ -150,9 +150,9 @@ const UploadPaperView = () => {
       form.append("revisions", "{}");
       for (let i = 0; i < files.length; i++) {
           form.append("files", files[i], files[i].name);
-      }
-      console.log(form)
-      paperApi.create(form);
+        }
+        console.log(form)
+      await paperApi.create(form);
       clearValues();
       window.location.replace("/mypapers");
 

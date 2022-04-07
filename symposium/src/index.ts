@@ -7,7 +7,6 @@ import authRoutes from "./routes/auth";
 import userRoutes from "./routes/user";
 import paperRoutes from "./routes/paper";
 import commentRoutes from "./routes/comment";
-import reviewRoutes from "./routes/review";
 import config from "./utils/config";
 import connectDB from "./utils/db";
 import { existsSync, mkdirSync } from "fs";
@@ -42,7 +41,6 @@ const main = async () => {
     app.use("/v1/users", userRoutes);
     app.use("/v1/papers", paperRoutes);
     app.use("/v1/comments", commentRoutes);
-    app.use("/v1/reviews", reviewRoutes);
 
     //
     // serve compiled frontend if production
@@ -57,7 +55,6 @@ const main = async () => {
         app.get("/", (_, res) => {
             res.send("API Running :)");
         });
-        
     }
 
     //
