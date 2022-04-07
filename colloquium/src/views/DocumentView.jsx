@@ -1,6 +1,18 @@
 import React, { useEffect, useState } from "react";
-import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
+import DocViewer, 
+{ 
+    BMPRenderer,
+    HTMLRenderer,
+    JPGRenderer,
+    MSGRenderer,
+    PNGRenderer,
+    TIFFRenderer,
+    TXTRenderer,
+    MSDocRenderer
+} from "react-doc-viewer";
+import CustomXLSXRenderer from "../renderers/CustomXLSXRenderer";
 import CustomPDFRenderer from "../renderers/CustomPDFRenderer";
+import CustomMSDocRenderer from "../renderers/CustomMSDocRenderer";
 import clsx from "clsx";
 import makeStyles from '@mui/styles/makeStyles';
 import {
@@ -262,7 +274,15 @@ const DocumentView = ({match, history}) => {
                             {/* Document */}
                             <Grid item xs={8}>
                                 <DocViewer 
-                                    pluginRenderers={[CustomPDFRenderer]}
+                                    pluginRenderers=
+                                    {[
+                                        CustomPDFRenderer,
+                                        MSDocRenderer,
+                                        HTMLRenderer,
+                                        JPGRenderer,
+                                        PNGRenderer,
+                                        TXTRenderer,
+                                    ]}
                                     documents={docs} 
                                     config={{
                                         header: {
