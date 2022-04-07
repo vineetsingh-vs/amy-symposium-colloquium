@@ -146,7 +146,7 @@ export const getPaperFileVersion = async (req: Request, res: Response) => {
     console.log("[paperController] getPaperFileVersion");
     const { paperId } = req.params;
 
-    let version = await Version.findOne({ where: { paperId: paperId } });
+    let version = await Version.findOne({ where: { paper: paperId } });
     if (version) {
         console.log(process.cwd() + "/" + version.filePath);
         res.status(200).sendFile(process.cwd() + "/" + version.filePath);
