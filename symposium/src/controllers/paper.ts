@@ -37,7 +37,7 @@ export const getPaperMetaData = async (req: Request, res: Response) => {
             createdAt: paper.createdAt,
             updatedAt: paper.updatedAt,
             versionNumber: paper.versionNumber,
-            versions: paper.versions     
+            versions: paper.versions,
         });
     } else {
         res.status(400).json({ message: "Could not find Paper" });
@@ -63,7 +63,6 @@ export const createPaper = async (req: Request, res: Response) => {
                 var oldPath = file.filepath;
                 // TODO: Where we would either save file to AWS or local storage
                 var newPath = config.uploadFolder + "/" + file.originalFilename;
-                fields.filepath = newPath;
                 fs.writeFileSync(newPath, fs.readFileSync(oldPath));
             } catch (e) {
                 console.log("Error writing file", e);
@@ -93,7 +92,7 @@ export const createPaper = async (req: Request, res: Response) => {
             createdAt: newPaper.createdAt,
             updatedAt: newPaper.updatedAt,
             versionNumber: newPaper.versionNumber,
-            versions: newPaper.versions
+            versions: newPaper.versions,
         });
     });
 };
@@ -101,14 +100,13 @@ export const createPaper = async (req: Request, res: Response) => {
 export const updatePaperMetaData = async (req: Request, res: Response) => {
     console.log("[paperController] updatePaperMetaData");
     const { paperid } = req.params;
-    const { title, creator, authors, sharedWith, isPublished } = req.body;
+    const { title, creator, authors, isPublished } = req.body;
 
     let paper = await Paper.findOne({ where: { id: paperid } });
     if (paper) {
         paper.title = title || paper.title;
         paper.creator = creator || paper.creator;
         paper.authors = authors || paper.authors;
-        paper.sharedWith = sharedWith || paper.sharedWith
         paper.isPublished = isPublished || paper.isPublished;
 
         await paper.save();
@@ -122,26 +120,26 @@ export const updatePaperMetaData = async (req: Request, res: Response) => {
             createdAt: paper.createdAt,
             updatedAt: paper.updatedAt,
             versionNumber: paper.versionNumber,
-            versions: paper.versions   
+            versions: paper.versions,
         });
     } else {
         res.status(400).json({ message: "Paper not found" });
     }
 };
 
-export const getPaperFileVersion = async (req: Request, res: Response) => {
-    console.log("[paperController] getPaperFileVersion");
-    const { paperId } = req.params;
+// export const getPaperFileVersion = async (req: Request, res: Response) => {
+// console.log("[paperController] getPaperFileVersion");
+// const { paperId } = req.params;
 
-    let paper = await Paper.findOne({ where: { id: paperId } });
+// let paper = await Paper.findOne({ where: { id: paperId } });
 
-    if (paper) {
-        console.log(process.cwd() + "/" + paper.filepath);
-        res.status(200).sendFile(process.cwd() + "/" + paper.filepath);
-    } else {
-        res.status(400).json({ message: "Paper not found" });
-    }
-};
+// if (paper) {
+// console.log(process.cwd() + "/" + paper.filepath);
+// res.status(200).sendFile(process.cwd() + "/" + paper.filepath);
+// } else {
+// res.status(400).json({ message: "Paper not found" });
+// }
+// };
 
 export const deletePaper = async (req: Request, res: Response) => {
     console.log("[paperController] deletePaper");

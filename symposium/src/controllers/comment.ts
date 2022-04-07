@@ -15,15 +15,12 @@ export const createComment = async (req: Request, res: Response) => {
 
     // TODO: validate inputs
 
-    const version = await Version.findOne({ where: { id: versionId } });
-    const parent = await Comment.findOne({ where: { id: parentId } });
-
     const newComment = Comment.create({
-        version: version,
-        parent: parent,
+        version: versionId,
+        parent: parentId,
+        user: userId,
         content: content,
         pageNum: pageNum,
-        user: userId,
     });
 
     await newComment.save();
@@ -83,15 +80,12 @@ export const deleteComment = async (req: Request, res: Response) => {
 export const updateComment = async (req: Request, res: Response) => {
     console.log("[commentController] updateComment");
     const { commentID } = req.params;
-    const { version, parent, pageNum, content } = req.body;
+    const { pageNum, content } = req.body;
 
     let comment = await Comment.findOne({ where: { id: commentID } });
     if (comment) {
-        comment.version = version || comment.version;
-        comment.parent = parent || comment.parent;
         comment.pageNum = pageNum || comment.pageNum;
         comment.content = content || comment.content;
-        comment.user = content || comment.content;
         await comment.save();
         res.status(200).json({
             id: comment.id,
