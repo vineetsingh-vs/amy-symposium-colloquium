@@ -20,7 +20,7 @@ const CustomMSDocRenderer = ({mainState: {currentDocument}}) => {
                 id="msdoc-iframe"
                 title="msdoc-iframe"
                 frameBorder={0}
-                src={`https://view.officeapps.live.com/op/view.aspx?src=[${encodeURIComponent(currentDocument.uri)}]`}
+                src={`https://docs.google.com/gview?url=${encodeURIComponent(currentDocument.uri)}&embedded=true`}
             />
         </Container>
     )

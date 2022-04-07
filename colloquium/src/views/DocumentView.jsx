@@ -277,7 +277,7 @@ const DocumentView = ({match, history}) => {
                                     pluginRenderers=
                                     {[
                                         CustomPDFRenderer,
-                                        MSDocRenderer,
+                                        CustomMSDocRenderer,
                                         HTMLRenderer,
                                         JPGRenderer,
                                         PNGRenderer,
