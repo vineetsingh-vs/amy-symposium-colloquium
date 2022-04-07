@@ -15,9 +15,6 @@ export class Comment extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     id!: string;
 
-    @Column()
-    paper_id!: number;
-
     @ManyToOne(() => Version, (version) => version.comments)
     version: Version;
 

@@ -129,6 +129,20 @@ export const updatePaperMetaData = async (req: Request, res: Response) => {
     }
 };
 
+export const getPaperFileVersion = async (req: Request, res: Response) => {
+    console.log("[paperController] getPaperFileVersion");
+    const { paperId } = req.params;
+
+    let paper = await Paper.findOne({ where: { id: paperId } });
+
+    if (paper) {
+        console.log(process.cwd() + "/" + paper.filepath);
+        res.status(200).sendFile(process.cwd() + "/" + paper.filepath);
+    } else {
+        res.status(400).json({ message: "Paper not found" });
+    }
+};
+
 export const deletePaper = async (req: Request, res: Response) => {
     console.log("[paperController] deletePaper");
     const { paperid } = req.params;
@@ -146,8 +160,6 @@ export const deletePaper = async (req: Request, res: Response) => {
 //
 // ======== TODO >>>>
 
-// get a version of a paper (file and version metadata)
-export const getPaperFileVersion = async (req: Request, res: Response) => {};
 // delete a version of a paper (file and version metadata)
 export const deletePaperVersion = async (req: Request, res: Response) => {};
 // update a version of a paper (file and version metadata)

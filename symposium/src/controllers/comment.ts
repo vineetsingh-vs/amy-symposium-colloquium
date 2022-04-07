@@ -1,44 +1,46 @@
 import { Request, Response } from "express";
-import { PrimaryGeneratedColumn } from "typeorm";
-import { Comment } from "../entities/Comment"
+import { Comment } from "../entities/Comment";
+import { Version } from "../entities/Version";
+
+export const getCommentList = async (req: Request, res: Response) => {
+    console.log("[commentController] getCommentList");
+    const comments = await Comment.find();
+    res.status(200).send(comments);
+};
 
 export const createComment = async (req: Request, res: Response) => {
     console.log("[commentController] createComment");
     console.log(req.body);
-    const { paper_id, version, parent, pageNum, content, user } = req.body;
+    const { versionId, parentId, content, pageNum, userId } = req.body;
+
+    // TODO: validate inputs
+
+    const version = await Version.findOne({ where: { id: versionId } });
+    const parent = await Comment.findOne({ where: { id: parentId } });
 
     const newComment = Comment.create({
-        paper_id: paper_id,
         version: version,
         parent: parent,
-        pageNum: pageNum,
         content: content,
-        user: user,
+        pageNum: pageNum,
+        user: userId,
     });
+
     await newComment.save();
     console.log("saved comment: ");
     console.log(newComment);
 
     res.status(200).json({
         id: newComment.id,
-        paperID: newComment.paper_id,
         version: newComment.version,
+        content: newComment.content,
         parent: newComment.parent,
         replies: newComment.replies,
         pageNum: newComment.pageNum,
-        content: newComment.content,
         user: newComment.user,
-        created_at: newComment.created_at,
-        updated_at: newComment.updated_at
+        createdAt: newComment.created_at,
+        updatedAt: newComment.updated_at,
     });
-};
-
-export const getComments = async (req: Request, res: Response) => {
-    console.log("[commentController] getComments");
-    const comments = await Comment.find();
-    res.header("Access-Control-Expose-Headers", "Content-Range");
-    res.header("Content-Range", "posts 0-20/20");
-    res.status(200).send(comments);
 };
 
 export const getCommentById = async (req: Request, res: Response) => {
@@ -50,15 +52,14 @@ export const getCommentById = async (req: Request, res: Response) => {
     if (comment) {
         res.status(200).json({
             id: comment.id,
-            paperID: comment.paper_id,
             version: comment.version,
+            content: comment.content,
             parent: comment.parent,
             replies: comment.replies,
             pageNum: comment.pageNum,
-            content: comment.content,
             user: comment.user,
-            created_at: comment.created_at,
-            updated_at: comment.updated_at
+            createdAt: comment.created_at,
+            updatedAt: comment.updated_at,
         });
     } else {
         res.status(400).json({ message: "Could not find Comment" });
@@ -82,11 +83,10 @@ export const deleteComment = async (req: Request, res: Response) => {
 export const updateComment = async (req: Request, res: Response) => {
     console.log("[commentController] updateComment");
     const { commentID } = req.params;
-    const { paper_id, version, parent, pageNum, content } = req.body;
+    const { version, parent, pageNum, content } = req.body;
 
     let comment = await Comment.findOne({ where: { id: commentID } });
     if (comment) {
-        comment.paper_id = paper_id || comment.paper_id;
         comment.version = version || comment.version;
         comment.parent = parent || comment.parent;
         comment.pageNum = pageNum || comment.pageNum;
@@ -95,7 +95,6 @@ export const updateComment = async (req: Request, res: Response) => {
         await comment.save();
         res.status(200).json({
             id: comment.id,
-            paperID: comment.paper_id,
             version: comment.version,
             parent: comment.parent,
             replies: comment.replies,
@@ -103,9 +102,9 @@ export const updateComment = async (req: Request, res: Response) => {
             content: comment.content,
             user: comment.user,
             created_at: comment.created_at,
-            updated_at: comment.updated_at
+            updated_at: comment.updated_at,
         });
     } else {
         res.status(400).json({ message: "Comment not found" });
     }
-}
+};
