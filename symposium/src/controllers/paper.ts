@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Fields, Files, IncomingForm } from "formidable";
 import fs from "fs";
 import { Paper } from "../entities/Paper";
+import { Version } from "../entities/Version";
 import config from "../utils/config";
 
 export const getPaperList = async (req: Request, res: Response) => {
@@ -47,7 +48,9 @@ export const getPaperMetaData = async (req: Request, res: Response) => {
 export const createPaper = async (req: Request, res: Response) => {
     console.log("[paperController] createPaper");
 
-    let form = new IncomingForm({ multiples: true, uploadDir: config.tmpFolder });
+    //
+    // create the paper with metadata fields first
+    let form = new IncomingForm({ uploadDir: config.tmpFolder });
     form.parse(req, async (err, fields: Fields, files: Files) => {
         if (err) {
             console.log("Error parsing file");
@@ -56,14 +59,16 @@ export const createPaper = async (req: Request, res: Response) => {
                 error: err,
             });
         }
+
+        let filePath = "/";
         if (!Array.isArray(files.files)) {
             let file = files.files;
             console.log(files);
             try {
                 var oldPath = file.filepath;
                 // TODO: Where we would either save file to AWS or local storage
-                var newPath = config.uploadFolder + "/" + file.originalFilename;
-                fs.writeFileSync(newPath, fs.readFileSync(oldPath));
+                filePath = config.uploadFolder + "/" + file.originalFilename;
+                fs.writeFileSync(filePath, fs.readFileSync(oldPath));
             } catch (e) {
                 console.log("Error writing file", e);
                 res.status(400).json({
@@ -75,12 +80,22 @@ export const createPaper = async (req: Request, res: Response) => {
             res.status(500).json({ message: "Backend currently can't handle multiple files" });
             console.log("[paperController] Can't handle multiple files");
         }
+
         console.log(fields);
         const newPaper = Paper.create(fields);
-
         await newPaper.save();
         console.log("saved paper: ");
         console.log(newPaper);
+
+        //
+        // create a version and version array
+        const newVersion = Version.create({
+            filePath: filePath,
+            paper: newPaper,
+        });
+
+        newPaper.versions = [newVersion];
+        await newPaper.save();
 
         res.status(200).json({
             id: newPaper.id,
@@ -128,15 +143,16 @@ export const updatePaperMetaData = async (req: Request, res: Response) => {
 };
 
 export const getPaperFileVersion = async (req: Request, res: Response) => {
-    // console.log("[paperController] getPaperFileVersion");
-    // const { paperId } = req.params;
-    // let paper = await Paper.findOne({ where: { id: paperId } });
-    // if (paper) {
-    // console.log(process.cwd() + "/" + paper.filepath);
-    // res.status(200).sendFile(process.cwd() + "/" + paper.filepath);
-    // } else {
-    // res.status(400).json({ message: "Paper not found" });
-    // }
+    console.log("[paperController] getPaperFileVersion");
+    const { paperId } = req.params;
+
+    let version = await Version.findOne({ where: { paperId: paperId } });
+    if (version) {
+        console.log(process.cwd() + "/" + version.filePath);
+        res.status(200).sendFile(process.cwd() + "/" + version.filePath);
+    } else {
+        res.status(400).json({ message: "Paper not found" });
+    }
 };
 
 export const deletePaper = async (req: Request, res: Response) => {

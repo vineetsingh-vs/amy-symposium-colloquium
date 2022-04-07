@@ -17,7 +17,7 @@ export class Version extends BaseEntity {
     id!: string;
 
     @Column()
-    filepath: string;
+    filePath!: string;
 
     @CreateDateColumn()
     createdAt: Date;
