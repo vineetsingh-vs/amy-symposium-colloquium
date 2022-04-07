@@ -6,7 +6,6 @@ import { Version } from "../entities/Version";
 import { createConnection } from "typeorm";
 import { Paper } from "../entities/Paper";
 
-
 export default async () => {
     try {
         await createConnection({

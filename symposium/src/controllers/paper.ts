@@ -23,9 +23,9 @@ export const getPaperList = async (req: Request, res: Response) => {
 
 export const getPaperMetaData = async (req: Request, res: Response) => {
     console.log("[paperController] getPaperMetaData");
-    const { paperid } = req.params;
+    const { paperId } = req.params;
 
-    let paper = await Paper.findOne({ where: { id: paperid } });
+    let paper = await Paper.findOne({ where: { id: paperId } });
 
     if (paper) {
         res.status(200).json({
@@ -82,10 +82,12 @@ export const createPaper = async (req: Request, res: Response) => {
         }
 
         console.log(fields);
+
+        fields["versions"] = [];
         const newPaper = Paper.create(fields);
-        await newPaper.save();
-        console.log("saved paper: ");
-        console.log(newPaper);
+        // await newPaper.save();
+        // console.log("saved paper: ");
+        // console.log(newPaper);
 
         //
         // create a version and version array
@@ -93,8 +95,11 @@ export const createPaper = async (req: Request, res: Response) => {
             filePath: filePath,
             paper: newPaper,
         });
+        await newVersion.save();
+        console.log(newVersion);
 
-        newPaper.versions = [newVersion];
+        newPaper.versions.push(newVersion);
+        console.log(newPaper);
         await newPaper.save();
 
         res.status(200).json({
@@ -144,12 +149,17 @@ export const updatePaperMetaData = async (req: Request, res: Response) => {
 
 export const getPaperFileVersion = async (req: Request, res: Response) => {
     console.log("[paperController] getPaperFileVersion");
-    const { paperId } = req.params;
+    const { paperId, versionId } = req.params;
 
-    let version = await Version.findOne({ where: { paperId: paperId } });
-    if (version) {
-        console.log(process.cwd() + "/" + version.filePath);
-        res.status(200).sendFile(process.cwd() + "/" + version.filePath);
+    let paper = await Paper.find();
+    // let paper = await Paper.findOne({ where: { id: paperId } });
+    if (paper) {
+        console.log(paper);
+        // let version = await Version.findOne({ where: { id: paperVersion } });
+        // if (version) {
+        // console.log(process.cwd() + "/" + version.filePath);
+        // res.status(200).sendFile(process.cwd() + "/" + version.filePath);
+        // }
     } else {
         res.status(400).json({ message: "Paper not found" });
     }

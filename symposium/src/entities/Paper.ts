@@ -20,19 +20,19 @@ export class Paper extends BaseEntity {
     id!: string;
 
     @Column({ type: "varchar", length: 60 })
-    title: string;
+    title!: string;
 
     @ManyToOne(() => User, (user) => user.papers)
-    creator: User;
+    creator!: User;
 
     @Column("text", { array: true })
-    authors: string[];
+    authors!: string[];
 
     @ManyToMany(() => User)
     @JoinTable()
     sharedWith: User[];
 
-    @Column("boolean", { default: true })
+    @Column("boolean", { default: false })
     isPublished: boolean = false;
 
     @CreateDateColumn()
@@ -45,5 +45,5 @@ export class Paper extends BaseEntity {
     versionNumber: number;
 
     @OneToMany(() => Version, (version) => version.paper)
-    versions: Version[];
+    versions!: Version[];
 }
