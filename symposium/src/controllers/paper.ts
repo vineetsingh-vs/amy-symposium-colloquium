@@ -87,7 +87,6 @@ export const createPaper = async (req: Request, res: Response) => {
         const newPaper = Paper.create(fields);
         // await newPaper.save();
         // console.log("saved paper: ");
-        // console.log(newPaper);
 
         //
         // create a version and version array
@@ -96,7 +95,7 @@ export const createPaper = async (req: Request, res: Response) => {
             paper: newPaper,
         });
         await newVersion.save();
-        console.log(newVersion);
+        // console.log(newVersion);
 
         newPaper.versions.push(newVersion);
         console.log(newPaper);
@@ -151,15 +150,14 @@ export const getPaperFileVersion = async (req: Request, res: Response) => {
     console.log("[paperController] getPaperFileVersion");
     const { paperId, versionId } = req.params;
 
-    let paper = await Paper.find();
-    // let paper = await Paper.findOne({ where: { id: paperId } });
+    let paper = await Paper.findOne({ where: { id: paperId } });
     if (paper) {
         console.log(paper);
-        // let version = await Version.findOne({ where: { id: paperVersion } });
-        // if (version) {
-        // console.log(process.cwd() + "/" + version.filePath);
-        // res.status(200).sendFile(process.cwd() + "/" + version.filePath);
-        // }
+        let version = await paper.versions[Number(versionId) - 1];
+        if (version) {
+            console.log(process.cwd() + "/" + version.filePath);
+            res.status(200).sendFile(process.cwd() + "/" + version.filePath);
+        }
     } else {
         res.status(400).json({ message: "Paper not found" });
     }

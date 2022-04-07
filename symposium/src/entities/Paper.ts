@@ -44,6 +44,8 @@ export class Paper extends BaseEntity {
     @VersionColumn()
     versionNumber: number;
 
-    @OneToMany(() => Version, (version) => version.paper)
+    @OneToMany(() => Version, (version) => version.paper, {
+        eager: true
+    })
     versions!: Version[];
 }
