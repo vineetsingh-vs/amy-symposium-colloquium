@@ -1,17 +1,18 @@
 import { Request, Response } from "express";
+import { PrimaryGeneratedColumn } from "typeorm";
 import { Comment } from "../entities/Comment"
 
 export const createComment = async (req: Request, res: Response) => {
     console.log("[commentController] createComment");
     console.log(req.body);
-    const { paper_id, paper_version, review, content, parent, user } = req.body;
+    const { paper_id, version, parent, pageNum, content, user } = req.body;
 
     const newComment = Comment.create({
         paper_id: paper_id,
-        paper_version: paper_version,
-        review: review,
-        content: content,
+        version: version,
         parent: parent,
+        pageNum: pageNum,
+        content: content,
         user: user,
     });
     await newComment.save();
@@ -21,13 +22,14 @@ export const createComment = async (req: Request, res: Response) => {
     res.status(200).json({
         id: newComment.id,
         paperID: newComment.paper_id,
-        paperVersion: newComment.paper_version,
-        review: newComment.review,
-        content: newComment.content,
+        version: newComment.version,
         parent: newComment.parent,
+        replies: newComment.replies,
+        pageNum: newComment.pageNum,
+        content: newComment.content,
         user: newComment.user,
-        createdAt: newComment.created_at,
-        updatedAt: newComment.updated_at,
+        created_at: newComment.created_at,
+        updated_at: newComment.updated_at
     });
 };
 
@@ -49,13 +51,14 @@ export const getCommentById = async (req: Request, res: Response) => {
         res.status(200).json({
             id: comment.id,
             paperID: comment.paper_id,
-            paperVersion: comment.paper_version,
-            review: comment.review,
-            content: comment.content,
+            version: comment.version,
             parent: comment.parent,
+            replies: comment.replies,
+            pageNum: comment.pageNum,
+            content: comment.content,
             user: comment.user,
-            createdAt: comment.created_at,
-            updatedAt: comment.updated_at,
+            created_at: comment.created_at,
+            updated_at: comment.updated_at
         });
     } else {
         res.status(400).json({ message: "Could not find Comment" });
@@ -79,26 +82,28 @@ export const deleteComment = async (req: Request, res: Response) => {
 export const updateComment = async (req: Request, res: Response) => {
     console.log("[commentController] updateComment");
     const { commentID } = req.params;
-    const { paperID, paperVersion, review, content, parent } = req.body;
+    const { paper_id, version, parent, pageNum, content } = req.body;
 
     let comment = await Comment.findOne({ where: { id: commentID } });
     if (comment) {
-        comment.paper_id = paperID || comment.paper_id;
-        comment.paper_version = paperVersion || comment.paper_version;
-        comment.review = review || comment.review;
-        comment.content = content || comment.content;
+        comment.paper_id = paper_id || comment.paper_id;
+        comment.version = version || comment.version;
         comment.parent = parent || comment.parent;
+        comment.pageNum = pageNum || comment.pageNum;
+        comment.content = content || comment.content;
+        comment.user = content || comment.content;
         await comment.save();
         res.status(200).json({
             id: comment.id,
             paperID: comment.paper_id,
-            paperVersion: comment.paper_version,
-            review: comment.review,
-            content: comment.content,
+            version: comment.version,
             parent: comment.parent,
+            replies: comment.replies,
+            pageNum: comment.pageNum,
+            content: comment.content,
             user: comment.user,
-            createdAt: comment.created_at,
-            updatedAt: comment.updated_at,
+            created_at: comment.created_at,
+            updated_at: comment.updated_at
         });
     } else {
         res.status(400).json({ message: "Comment not found" });
