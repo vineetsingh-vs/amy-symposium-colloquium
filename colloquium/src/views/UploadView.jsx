@@ -113,6 +113,7 @@ const acceptedDocumentTypes = [
     "text/plain"
 ];
 
+
 const UploadPaperView = () => {
     const classes = useStyles();
     const [open, setOpen] = React.useState(true);
@@ -131,15 +132,9 @@ const UploadPaperView = () => {
     const [shared, setShared] = useState([]);
     const [files, setFiles] = useState([]);
 
-    const [upload, setUpload] = React.useState(true);
-    const handleUpload = (event) => {
-        setUpload(false);
-        setFiles(event.target.files);
-    };
-
     const clearValues = () => {
-        setDocumentTitle("");
-        setAuthor("");
+      setDocumentTitle("");
+      setAuthor("");
     };
 
     // Submitting the document through a form

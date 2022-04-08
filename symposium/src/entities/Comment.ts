@@ -16,7 +16,7 @@ export class Comment extends BaseEntity {
     id!: string;
 
     @ManyToOne(() => Version, (version) => version.comments)
-    version: Version;
+    version!: Version;
 
     @ManyToOne(() => Comment, (comment) => comment.replies)
     parent: Comment;
@@ -30,7 +30,7 @@ export class Comment extends BaseEntity {
     @Column()
     content!: string;
 
-    @Column()
+    @Column({nullable: true})
     user!: number;
 
     @CreateDateColumn()

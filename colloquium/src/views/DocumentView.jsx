@@ -269,7 +269,7 @@ const DocumentView = ({ match, history }) => {
                                 <DocViewer
                                     pluginRenderers={[
                                         CustomPDFRenderer,
-                                        MSDocRenderer,
+                                        CustomMSDocRenderer,
                                         HTMLRenderer,
                                         JPGRenderer,
                                         PNGRenderer,
