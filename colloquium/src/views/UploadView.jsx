@@ -102,6 +102,17 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+// DOES NOT INCLUDE MICROSOFT DOC/XLSX/PPTX
+const acceptedDocumentTypes = [
+    "text/htm",
+    "text/html",
+    "image/jpg",
+    "image/jpeg",
+    "application/pdf",
+    "image/png",
+    "text/plain"
+];
+
 const UploadPaperView = () => {
     const classes = useStyles();
     const [open, setOpen] = React.useState(true);
@@ -133,19 +144,35 @@ const UploadPaperView = () => {
 
     // Submitting the document through a form
     const handleSubmission = async (event) => {
-        event.preventDefault();
+      event.preventDefault();
+      let result = true;
+      for (let i = 0; i < files.length; i++) {
+        result = acceptedDocumentTypes.find((docTypes) => docTypes.includes(files[i].type));
+        if(result) break;
+      }
+
+      if(result){
         const form = new FormData();
         form.append("title", documentTitle);
-        form.append("authors", "{" + author + "}");
-        form.append("creatorId", 1);
+        form.append("authors", "{"+author+"}");
+        form.append("creator_id", 1);
+        form.append("tags", "{}");
+        form.append("revisions", "{}");
         for (let i = 0; i < files.length; i++) {
             form.append("files", files[i], files[i].name);
+            console.log(files[i])
         }
-        console.log(form);
-        await paperApi.create(form);
+
+        const response = await paperApi.create(form);
+        window.location.replace("/mypapers");   
+      }
+      else {
         clearValues();
-        window.location.replace("/mypapers");
-    };
+        return (
+          alert("This document is not supported at this time")
+        );
+      }
+  };
 
     return (
         <div className={classes.root}>
