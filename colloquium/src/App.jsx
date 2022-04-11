@@ -4,9 +4,6 @@ import PageNotFound from "./views/PageNotFound";
 import LoginView from "./views/LoginView";
 import SharingView from "./views/SharingView";
 import { DocumentView } from "./views/DocumentView";
-import { MyPapersView } from "./views/MyPapersView";
-import SharedView from "./views/SharedView";
-import PublishView from "./views/PublishView";
 import PapersView from "./views/PapersView"
 import ReviewView from "./views/ReviewView";
 import ProfileView from "./views/ProfileView";
@@ -29,9 +26,6 @@ function App() {
                             <Route exact path="/userprofile" component={ProfileView} />
                             <Route exact path="/" component={LoginView} />
                             <Route exact path="/signup" component={SignUp} />
-                            { /* <Route exact path="/published" component={PublishView} />
-                            <Route exact path="/shared" component={SharedView} />
-                            <Route exact path="/mypapers" component={MyPapersView} /> */}
                             <Route exact path="/papers" component={PapersView} />
                             <Route
                                 exact

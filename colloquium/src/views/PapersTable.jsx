@@ -4,7 +4,6 @@ import {
     Container,
     Grid,
     Link,
-    Box,
     Table,
     TableBody,
     TableCell,
@@ -14,7 +13,6 @@ import {
     FormControlLabel,
 } from "@mui/material";
 import { usePaperTableStyles } from "../styles/paperViewStyles";
-import Copyright from "../components/Copyright";
 
 const convertNiceDate = (badDate) => {
     let date = new Date(badDate);
@@ -93,9 +91,6 @@ const PapersTable = ({ papers }) => {
                         </Table>
                     </Grid>
                 </Grid>
-                <Box pt={4}>
-                    <Copyright />
-                </Box>
             </Container>
         </div>
     );

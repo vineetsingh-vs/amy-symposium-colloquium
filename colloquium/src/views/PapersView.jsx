@@ -3,8 +3,12 @@ import clsx from "clsx";
 
 import {
     AppBar,
+    Link,
     Button,
     CssBaseline,
+    List,
+    ListItem,
+    ListItemIcon,
     Drawer,
     Divider,
     IconButton,
@@ -12,36 +16,45 @@ import {
     Typography,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import Assignment from "@mui/icons-material/Assignment";
+import People from "@mui/icons-material/People";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import Person from "@mui/icons-material/Person";
-import { DashboardItems } from "../components/listItems";
 import PapersTable from "./PapersTable";
 import paperApi from "../api/paper";
 import { usePaperViewStyles } from "../styles/paperViewStyles";
+import Copyright from "../components/Copyright";
 
 const PapersView = () => {
+    const classes = usePaperViewStyles();
     const [username, setUsername] = useState("Default Username");
     const [userID, setUserID] = useState(1);
-    const classes = usePaperViewStyles();
-    const [toggled, setToggled] = useState(true);
+    const [drawerToggled, setdrawerToggled] = useState(true);
+    const [filter, setFilter] = useState("uploaded")
+    const [title, setTitle] = useState("My Papers")
     const [papers, setPapers] = useState([]);
 
     const handleDrawerToggle = () => {
-        setToggled(!toggled);
+        setdrawerToggled(!drawerToggled);
     };
 
     useEffect(() => {
-        paperApi.getList(userID, "all").then((paperList) => {
+        paperApi.getList(userID, filter).then((paperList) => {
+            console.log(paperList)
             setPapers(paperList);
         });
-    }, []);
+        if (filter === "uploaded") setTitle("My Papers")
+        if (filter === "shared") setTitle("Shared With Me")
+        if (filter === "published") setTitle("Published Papers")
+        console.log(filter)
+    }, [filter]);
 
     return (
         <div className={classes.root}>
             <CssBaseline />
             <AppBar
                 position="absolute"
-                className={clsx(classes.appBar, toggled && classes.appBarShift)}
+                className={clsx(classes.appBar, drawerToggled && classes.appBarShift)}
             >
                 <Toolbar className={classes.toolbar}>
                     <IconButton
@@ -49,7 +62,10 @@ const PapersView = () => {
                         color="inherit"
                         aria-label="open drawer"
                         onClick={handleDrawerToggle}
-                        className={clsx(classes.menuButton, toggled && classes.menuButtonHidden)}
+                        className={clsx(
+                            classes.menuButton,
+                            drawerToggled && classes.menuButtonHidden
+                        )}
                         size="large"
                     >
                         <MenuIcon />
@@ -61,7 +77,7 @@ const PapersView = () => {
                         noWrap
                         className={classes.title}
                     >
-                        My Papers
+                        { title }
                     </Typography>
                     <Button
                         variant="link"
@@ -76,9 +92,12 @@ const PapersView = () => {
             <Drawer
                 variant="permanent"
                 classes={{
-                    paper: clsx(classes.drawerPaper, !toggled && classes.drawerPaperClose),
+                    paper: clsx(
+                        classes.drawerPaper,
+                        !drawerToggled && classes.drawerPaperClose
+                    ),
                 }}
-                open={toggled}
+                open={drawerToggled}
             >
                 <div className={classes.toolbarIcon}>
                     <IconButton onClick={handleDrawerToggle} size="large">
@@ -86,10 +105,38 @@ const PapersView = () => {
                     </IconButton>
                 </div>
                 <Divider />
-                <DashboardItems />
+                <List>
+                    <ListItem>
+                        <ListItemIcon>
+                            <Assignment />
+                        </ListItemIcon>
+                        <Link onClick={() => setFilter("published")} underline="hover">
+                            Published
+                        </Link>
+                    </ListItem>
+                    <ListItem>
+                        <ListItemIcon>
+                            <People />
+                        </ListItemIcon>
+                        <Link onClick={() => setFilter("shared")} underline="hover">
+                            Shared With Me
+                        </Link>
+                    </ListItem>
+                    <ListItem>
+                        <ListItemIcon>
+                            <Person />
+                        </ListItemIcon>
+                        <Link onClick={() => setFilter("uploaded")} underline="hover">
+                            My Papers
+                        </Link>
+                    </ListItem>
+                </List>
             </Drawer>
             <div className={classes.papersTable}>
                 <PapersTable papers={papers} />
+            </div>
+            <div pt={4}>
+                <Copyright />
             </div>
         </div>
     );
