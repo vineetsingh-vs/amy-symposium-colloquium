@@ -6,19 +6,36 @@ const authContext = createContext();
 // Provider hook that creates auth object and handles state
 const useProvideAuth = () => {
     const [user, setUser] = useState(null);
+    const [error, setError] = useState(null);
 
-    const login = (email, password) => {
-        return authApi.login(email, password).then((response) => {
+    const login = async (email, password) => {
+        try {
+            const response = await authApi.login(email, password);
             setUser(response.user);
+            setError(null);
             return response.user;
-        });
+        } catch (error) {
+            const errMsg =
+                error.response && error.response.data.message
+                    ? error.response.data.message
+                    : error.message;
+            setError(errMsg);
+        }
     };
 
-    const signup = (email, password) => {
-        return authApi.signup(email, password).then((response) => {
+    const signup = async (email, password) => {
+        try {
+            const response = await authApi.signup(email, password);
             setUser(response.user);
+            setError(null);
             return response.user;
-        });
+        } catch (error) {
+            const errMsg =
+                error.response && error.response.data.message
+                    ? error.response.data.message
+                    : error.message;
+            setError(errMsg);
+        }
     };
 
     const signout = () => {
@@ -28,6 +45,7 @@ const useProvideAuth = () => {
     // Return the user object and auth methods
     return {
         user,
+        error,
         login,
         signup,
         signout,

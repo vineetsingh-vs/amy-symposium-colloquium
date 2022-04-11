@@ -6,11 +6,11 @@ import { User } from "../entities/User";
 
 export const createUser = async (req: Request, res: Response) => {
     console.log("[userController] createUser");
-    const { firstName, lastName, username, email, affiliation, password } = req.body;
+    const { firstName, lastName, email, affiliation, password } = req.body;
 
-    let userExists = await User.findOne({ where: { email: email } });
+    let user = await User.findOne({ where: { email: email } });
 
-    if (userExists) {
+    if (user) {
         res.status(400);
         console.log("User already exists");
     }
@@ -18,7 +18,6 @@ export const createUser = async (req: Request, res: Response) => {
     //
     // create user from schema and save to db
     const newUser = User.create({
-        username: username,
         firstName: firstName,
         lastName: lastName,
         roles: ["user"],
@@ -38,7 +37,6 @@ export const createUser = async (req: Request, res: Response) => {
     res.status(200).json({
         id: newUser.id,
         email: newUser.email,
-        username: newUser.username,
         firstName: newUser.firstName,
         lastName: newUser.lastName,
         password: newUser.password,
@@ -68,7 +66,6 @@ export const getUserById = async (req: Request, res: Response) => {
         res.status(200).json({
             id: user.id,
             email: user.email,
-            username: user.username,
             firstName: user.firstName,
             lastName: user.lastName,
             password: user.password,
@@ -100,7 +97,7 @@ export const deleteUser = async (req: Request, res: Response) => {
 export const updateUser = async (req: Request, res: Response) => {
     console.log("[userController] updateUser");
     const { userID } = req.params;
-    const { password, firstName, lastName, affiliation, username } = req.body;
+    const { password, firstName, lastName, affiliation } = req.body;
 
     //
     // if user exists, update fields with args from request
@@ -108,14 +105,12 @@ export const updateUser = async (req: Request, res: Response) => {
     if (user) {
         user.firstName = firstName || user.firstName;
         user.lastName = lastName || user.lastName;
-        user.username = username || user.username;
         user.password = password || user.password;
         user.affiliation = affiliation || user.affiliation;
         await user.save();
         res.status(200).json({
             id: user.id,
             email: user.email,
-            username: user.username,
             firstName: user.firstName,
             lastName: user.lastName,
             password: user.password,

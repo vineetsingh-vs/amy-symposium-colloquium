@@ -12,6 +12,7 @@ import Container from "@mui/material/Container";
 import Copyright from "../components/Copyright";
 import {useAuthViewStyles} from "../styles/authViewStyles";
 import { useAuth } from "../useAuth"
+import ErrorMessage from "../components/ErrorMessage.js"
 
 const LoginView = () => {
     const [email, setEmail] = useState("");
@@ -20,11 +21,8 @@ const LoginView = () => {
     const auth = useAuth()
 
     const handleSubmit = (event) => {
-        console.log(email)
-        console.log(password)
-        auth.login(email, password).then((user) => {
-            console.log(user)
-        })
+        event.preventDefault();
+        auth.login(email, password)
     };
 
     return (
@@ -38,6 +36,7 @@ const LoginView = () => {
                     Colloquium Sign in
                 </Typography>
                 <form onSubmit={handleSubmit} className={classes.form} noValidate>
+                    {auth.error && <ErrorMessage message={auth.error} />}
                     <TextField
                         variant="outlined"
                         margin="normal"

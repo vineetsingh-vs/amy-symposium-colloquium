@@ -4,18 +4,17 @@ import bcrypt from "bcrypt";
 
 export const signUp = async (req: Request, res: Response) => {
     console.log("[authController] signUp");
-    const { firstName, lastName, username, email, affiliation, password } = req.body;
+    const { firstName, lastName, email, affiliation, password } = req.body;
 
     //
-    // validate
-    if (firstName.length > 16 || lastName.length > 16) {
-        res.status(400);
-        console.log("first and lastname should be 16 characters maximum.");
+    // TODO: validate
+    if (!firstName || !lastName || !email || !affiliation || !password) {
+        res.status(400).json({ message: "invalid data" });
     }
 
-    let userExists = await User.findOne({ where: { email: email } });
+    let user = await User.findOne({ where: { email: email } });
 
-    if (userExists) {
+    if (user) {
         res.status(400);
         console.log("User already exists");
     }
@@ -26,7 +25,6 @@ export const signUp = async (req: Request, res: Response) => {
     const salted_password = await bcrypt.hash(password, salt);
 
     const newUser = User.create({
-        username: username,
         firstName: firstName,
         lastName: lastName,
         roles: ["user"],
@@ -46,7 +44,6 @@ export const signUp = async (req: Request, res: Response) => {
     res.status(200).json({
         id: newUser.id,
         email: newUser.email,
-        username: newUser.username,
         firstName: newUser.firstName,
         lastName: newUser.lastName,
         password: newUser.password,
@@ -65,7 +62,6 @@ export const login = async (req: Request, res: Response) => {
         res.json({
             id: user.id,
             email: user.email,
-            username: user.username,
             firstName: user.firstName,
             lastName: user.lastName,
             password: user.password,
@@ -74,8 +70,7 @@ export const login = async (req: Request, res: Response) => {
             updatedAt: user.updatedAt,
         });
     } else {
-        res.status(401);
-        throw new Error("Invalid email or password");
+        res.status(401).json({ message: "Invalid email or password" });
     }
 };
 

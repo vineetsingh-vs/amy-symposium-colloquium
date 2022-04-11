@@ -21,7 +21,7 @@ const main = async () => {
     console.log("Connecting to database");
     //
     // database connection
-    while(!await connectDB());
+    while (!(await connectDB()));
 
     //
     // express app setup and middleware
@@ -37,7 +37,7 @@ const main = async () => {
 
     //
     // routes
-    app.use("/auth", authRoutes);
+    app.use("/v1/auth", authRoutes);
     app.use("/v1/users", userRoutes);
     app.use("/v1/papers", paperRoutes);
     app.use("/v1/comments", commentRoutes);

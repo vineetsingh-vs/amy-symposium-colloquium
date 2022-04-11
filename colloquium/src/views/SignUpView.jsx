@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -13,24 +13,21 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Copyright from "../components/Copyright";
-// import UserApi from "../api/user";
+import { useAuth } from "../useAuth";
 
 const theme = createTheme();
 
 export default function SignUp() {
+    const [firstName, setFirstName] = useState("")
+    const [lastName, setLastName] = useState("")
+    const [affiliation, setAffiliation] = useState("")
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const auth = useAuth();
+
     const handleSubmit = (event) => {
         event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        // UserApi.signUp({
-        //     email: data.get("email"),
-        //     firstName: data.get("firstName"),
-        //     lastName: data.get("lastName"),
-        //     password: data.get("password"),
-        // });
-        console.log({
-            email: data.get("email"),
-            password: data.get("password"),
-        });
+        auth.signup(email, password, affiliation, firstName, lastName);
     };
 
     return (
@@ -62,6 +59,7 @@ export default function SignUp() {
                                     id="firstName"
                                     label="First Name"
                                     autoFocus
+                                    onChange={(e) => setFirstName(e.target.value)}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
@@ -72,6 +70,18 @@ export default function SignUp() {
                                     label="Last Name"
                                     name="lastName"
                                     autoComplete="family-name"
+                                    onChange={(e) => setLastName(e.target.value)}
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    id="affiliation"
+                                    label="Affiliation"
+                                    name="affiliation"
+                                    autoComplete="affiliation"
+                                    onChange={(e) => setAffiliation(e.target.value)}
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -82,6 +92,7 @@ export default function SignUp() {
                                     label="Email Address"
                                     name="email"
                                     autoComplete="email"
+                                    onChange={(e) => setEmail(e.target.value)}
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -93,14 +104,7 @@ export default function SignUp() {
                                     type="password"
                                     id="password"
                                     autoComplete="new-password"
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox value="allowExtraEmails" color="primary" />
-                                    }
-                                    label="I want to receive inspiration, marketing promotions and updates via email."
+                                    onChange={(e) => setPassword(e.target.value)}
                                 />
                             </Grid>
                         </Grid>
