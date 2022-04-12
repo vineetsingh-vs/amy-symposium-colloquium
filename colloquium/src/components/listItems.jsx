@@ -61,9 +61,9 @@ const SecondaryListItems = () => {
   <List>
     <ListItem>
       <ListItemIcon>
-        <Dashboard />
-      </ListItemIcon>
-      <Link href="/published" underline="hover">
+                  <Dashboard />
+              </ListItemIcon>
+      <Link href="/papers" underline="hover">
         Dashboard
       </Link>
     </ListItem>

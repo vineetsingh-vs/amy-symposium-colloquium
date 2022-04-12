@@ -22,17 +22,17 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import Person from "@mui/icons-material/Person";
 import PapersTable from "./PapersTable";
 import paperApi from "../api/paper";
-import {usePaperViewStyles} from "../styles/paperViewStyles";
+import { usePaperViewStyles } from "../styles/paperViewStyles";
 import Copyright from "../components/Copyright";
-import { useAuth } from "../useAuth"
+import { useAuth } from "../useAuth";
 
 const PapersView = () => {
     const classes = usePaperViewStyles();
     const [drawerToggled, setDrawerToggled] = useState(false);
-    const [filter, setFilter] = useState("uploaded")
-    const [title, setTitle] = useState("My Papers")
+    const [filter, setFilter] = useState("uploaded");
+    const [title, setTitle] = useState("My Papers");
     const [papers, setPapers] = useState([]);
-    const auth = useAuth()
+    const auth = useAuth();
 
     const handleDrawerToggle = () => {
         setDrawerToggled(!drawerToggled);
@@ -43,10 +43,10 @@ const PapersView = () => {
         paperApi.getList(auth.user.id, filter).then((paperList) => {
             setPapers(paperList);
         });
-        if (filter === "uploaded") setTitle("My Papers")
-        if (filter === "shared") setTitle("Shared With Me")
-        if (filter === "published") setTitle("Published Papers")
-        console.log(filter)
+        if (filter === "uploaded") setTitle("My Papers");
+        if (filter === "shared") setTitle("Shared With Me");
+        if (filter === "published") setTitle("Published Papers");
+        console.log(filter);
     }, [filter]);
 
     return (
@@ -77,7 +77,7 @@ const PapersView = () => {
                         noWrap
                         className={classes.title}
                     >
-                        { title }
+                        {title}
                     </Typography>
                     <Button
                         variant="link"
