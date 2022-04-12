@@ -94,12 +94,14 @@ export const getCommentsByVersionId = async (req: Request, res: Response) => {
 /**Get list of comments for a specific version and pageNumber, given the versionID and pageNum*/
 export const getCommentsByVersionAndPage = async (req: Request, res: Response) => {
     console.log("[commentController] getCommentsByVersionAndPage");
-    const { paperID, versionID, pageNumber } = req.params;
+    const { paperID, versionID, page } = req.params;
 
     let paper = await Paper.findOne({ where: { id: paperID } });
     if (paper) {
         let version = paper.versions[Number(versionID) - 1];
-        let comments = await Comment.find({ where: { version: version, parent: null, pageNum: pageNumber}});
+        console.log(version);
+        console.log(page);
+        let comments = await Comment.find({ relations: ['replies'], where: { version: version, pageNum: page } });
         console.log(comments);
         //let comments = await Comment.find({ where: { version: version, pageNum: pageNumber } });
 
