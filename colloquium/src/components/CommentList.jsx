@@ -48,6 +48,7 @@ const Comment = ({ comment, paperId, versionId, pageNum }) => {
         listReplies();
         console.log(replies);
         setValue("");
+        setHidden(!hidden);
     }
     
     const createReply = (id, name, body) => {
