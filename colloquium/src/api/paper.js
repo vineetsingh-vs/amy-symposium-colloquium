@@ -11,9 +11,9 @@ const resource = "papers";
 const paperApi = {
     //
     // get all papers associated with a user
-    //  filter user uploaded, shared with, or all associated papers
+    //  filter user uploaded, shared with, published papers, or all associated papers
     getList: async (userId, filter) => {
-        if (filter !== "shared" && filter !== "uploaded" && filter !== "all")
+        if (filter !== "shared" && filter !== "uploaded" && filter !== "published" && filter != "all")
             return { message: "filter invalid" };
 
         return axios

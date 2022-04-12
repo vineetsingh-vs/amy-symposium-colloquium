@@ -138,7 +138,7 @@ const PublishView = () => {
     };
 
     useEffect(async () => {
-      const result = await paperApi.getList(userID, "all");
+      const result = await paperApi.getList(userID, "published");
       setList(result);
     }, []);
 
