@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, version } from "react";
 import DocViewer, {
     BMPRenderer,
     HTMLRenderer,
@@ -142,8 +142,11 @@ const DocumentView = ({ match, history }) => {
     const [username, setUsername] = useState("Default Username");
     const [docUri, setDocUri] = useState([]);
     const [documentTitle, setDocumentTitle] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalVersions, setTotalVersions] = useState(1);
 
     const [isFetching, setIsFetching] = useState(false);
+    const [displayVersions, setDisplayVersions] = useState([]);
 
     // Side Bar Handling
     const handleDrawerOpen = () => {
@@ -165,8 +168,16 @@ const DocumentView = ({ match, history }) => {
 
     useEffect(() => {
         // load document metadata and file version
-        paperApi.getMetaDataById(paperId).then((metadata) => setDocumentTitle(metadata.title));
+        paperApi.getMetaDataById(paperId).then((metadata) => {
+            setTotalVersions(metadata.versionNumber);
+            setDocumentTitle(metadata.title)});
         setDocUri([{ uri: paperApi.getDocumentURI(paperId, versionId) }]);
+
+        let temp = []
+        for(let version = 1; version <= totalVersions; version++){
+            temp.push(version);
+        }
+        setDisplayVersions(temp);
     }, []);
 
     if (isFetching) {
@@ -234,9 +245,13 @@ const DocumentView = ({ match, history }) => {
                         value={versionId}
                         onChange={(e) => handleChangeVersion(e)}
                     >
-                        <MenuItem value={1}>1</MenuItem>
-                        <MenuItem value={2}>2</MenuItem>
-                        <MenuItem value={3}>3</MenuItem>
+                        {displayVersions.map((version) => (
+                            <MenuItem
+                                value={version}
+                            >
+                                {version}
+                            </MenuItem>
+                        ))}
                     </Select>
                 </Drawer>
                 <main className={classes.content}>
