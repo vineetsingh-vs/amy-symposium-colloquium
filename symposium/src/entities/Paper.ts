@@ -41,7 +41,7 @@ export class Paper extends BaseEntity {
     @UpdateDateColumn()
     updatedAt: Date;
 
-    @VersionColumn()
+    @Column("int", { default: 1 })
     versionNumber: number;
 
     @OneToMany(() => Version, (version) => version.paper, {
