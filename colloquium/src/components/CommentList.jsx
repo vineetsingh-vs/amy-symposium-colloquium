@@ -13,6 +13,7 @@ import {
     ListItemAvatar,
     Avatar,
     Typography,
+    Grid,
     Button,
     TextField,
 } from "@mui/material";
@@ -27,6 +28,7 @@ const Comment = ({ comment }) => {
     const [value, setValue] = useState("");
 
     const handleType = (text) => {
+        text.preventDefault();
         setValue(text.target.value);
     };
 
@@ -85,7 +87,7 @@ const Comment = ({ comment }) => {
             <Button color="secondary" variant="contained" onClick={addReply}>
                 Reply
             </Button>
-            {hidden && (<TextField multiline variant="outlined" fullWidth={true} value={value} onChange={handleType}></TextField>)}
+            {hidden && (<TextField multiline variant="outlined" fullWidth={true} onChange={handleType} value={value} ></TextField>)}
             
             {hidden && (<Button color="secondary" variant="contained" disabled={value == ""} onClick={handleClick}>Add Reply</Button>)}
             
@@ -111,19 +113,62 @@ const Comment = ({ comment }) => {
 const CommentList = ({ paperId, versionId }) => {
     const [comments, setComments] = useState([]);
     const classes = useCommentListStyles();
+    // Comment Handling
+    const [currentComment, setCurrentComment] = useState("");
+    const handleType = (text) => {
+        setCurrentComment(text.target.value);
+    };
+
+    const handleClick = () => {
+        comments.push(createComment(comments.length, 1, currentComment, []));
+        listComments();
+        console.log(comments);
+        setCurrentComment("");
+    };
+
+    const createComment = (id, name, body, replies) => {
+        // Push a comment thing here to backend
+        commentApi.createComment(paperId, versionId, null,  1, body, PageStore.getState().currentPage);
+        return { id, name, body, replies };
+    };
+
+    const listComments = () => {
+        let commentList = comments.slice();
+        setComments(commentList);
+        console.log("[CommentList] got comments");
+    };
 
     useEffect(() => {
         PageStore.subscribe(() => {
             commentApi.getCommentsByPage(paperId, versionId, PageStore.getState().currentPage).then((comments) => setComments(comments));
         });
-    }, [PageStore.getState().currentPage]);
+    }, []);
 
     return (
-        <List className={classes.root}>
-            {comments.map((comment) => (
-                <Comment comment={comment} pageNum={PageStore.getState().currentPage} />
-            ))}
-        </List>
+        <Grid item xs={4}>
+            <List className={classes.root}>
+                {comments.map((comment) => (
+                    <Comment comment={comment} pageNum={PageStore.getState().currentPage} />
+                ))}
+            </List>
+            <TextField
+                variant="outlined"
+                multiline
+                placeholder="Enter Comment Here"
+                fullWidth={true}
+                value={currentComment}
+                onChange={handleType}
+            ></TextField>
+            <Button
+                color="primary"
+                variant="contained"
+                fullWidth={true}
+                disabled={currentComment === ""}
+                onClick={handleClick}
+            >
+                Add Comment
+            </Button>
+        </Grid>
     );
 };
 

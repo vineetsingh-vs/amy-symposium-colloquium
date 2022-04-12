@@ -60,35 +60,7 @@ const DocumentView = () => {
     const [comments, setComments] = useState([]);
     const [docUri, setDocUri] = useState([]);
     const [documentTitle, setDocumentTitle] = useState("");
-    const [currentPage, setCurrentPage] = useState(1);
     const [isFetching, setIsFetching] = useState(false);
-    const [currentComment, setCurrentComment] = useState("");
-    const handleType = (text) => {
-        setCurrentComment(text.target.value);
-    };
-
-    const handleClick = () => {
-        //comments.push(createComment(comments.length, username, currentComment, []));
-        listComments();
-        console.log(comments);
-        setCurrentComment("");
-    };
-
-    const createComment = (id, name, body, replies) => {
-        // Push a comment thing here to backend
-        commentApi.createComment(paperId, versionId, 1, body, currentPage);
-        return { id, name, body, replies };
-    };
-
-    const listComments = () => {
-        let commentList = comments.slice();
-        setComments(commentList);
-        console.log("[CommentList] got comments");
-    };
-
-    const handleDrawerToggle = () => {
-        setDrawerToggled(!drawerToggled);
-    };
 
     const handleChangeVersion = (event) => {
         const versionId = event.target.value;
@@ -199,26 +171,7 @@ const DocumentView = () => {
                                 />
                             </Grid>
                             {/* Comments */}
-                            <Grid item xs={4}>
-                                <CommentList paperId={paperId} versionId={versionId} />
-                                <TextField
-                                    variant="outlined"
-                                    multiline
-                                    placeholder="Enter Comment Here"
-                                    fullWidth={true}
-                                    value={currentComment}
-                                    onChange={handleType}
-                                ></TextField>
-                                <Button
-                                    color="primary"
-                                    variant="contained"
-                                    fullWidth={true}
-                                    disabled={currentComment === ""}
-                                    onClick={handleClick}
-                                >
-                                    Add Comment
-                                </Button>
-                            </Grid>
+                            <CommentList paperId={paperId} versionId={versionId} />
                         </Grid>
                         <Box pt={4}>
                             <Copyright />

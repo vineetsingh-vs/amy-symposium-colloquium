@@ -23,10 +23,10 @@ export class Comment extends BaseEntity {
     @ManyToOne(() => Version, (version) => version.comments)
     version!: Version;
 
-    @TreeParent()
+    @ManyToOne(() => Comment, (comment) => comment.replies)
     parent: Comment;
 
-    @TreeChildren()
+    @OneToMany(() => Comment, (comment) => comment.parent)
     replies: Comment[];
 
     @Column()
