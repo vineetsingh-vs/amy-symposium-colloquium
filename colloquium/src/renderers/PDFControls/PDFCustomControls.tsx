@@ -2,7 +2,7 @@ import React, {useState, useContext} from "react";
 import styled from "@emotion/styled";
 import { PDFContext } from "react-doc-viewer/build/plugins/pdf/state/index"
 import PDFPagination from "react-doc-viewer/build/plugins/pdf/components/PDFPagination"
-import { ChangeCurrentPage } from "../../views/DocumentView";
+import { PageStore } from "../../views/DocumentView";
 
 const Container = styled.div({
     display: "flex",
@@ -23,7 +23,8 @@ const PDFCustomControls = () => {
         <Container id="pdf-controls" >
             {context?.state?.numPages > 1 && <PDFPagination />}
             {
-                ChangeCurrentPage(context.state.currentPage) != null
+                PageStore.dispatch({ type: "Page_Change", newPage: context.state.currentPage }) != null
+                //ChangeCurrentPage(context.state.currentPage) != null
             }
         </Container>
     )

@@ -1,6 +1,8 @@
 import React, { Fragment, useState, useEffect } from "react";
 import makeStyles from '@mui/styles/makeStyles';
 import ReplyList from "../components/ReplyList";
+import {PageStore} from "../views/DocumentView";
+import commentApi from "../api/comment";
 
 import {
     List,
@@ -27,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const Comment = ({ comment }) => {
+const Comment = ({ comment, pageNum }) => {
     const classes = useStyles();
     const [hidden, setHidden] = useState(false);const [comments, setComments] = useState([]);
     const [username, setUsername] = useState("Default Username");
@@ -47,12 +49,14 @@ const Comment = ({ comment }) => {
     }
     
     const createReply = (id, name, body) => {
-        return { id, name,  body};
+        commentApi.createComment(comment.paperId, comment.versionId, comment.id, name, body, pageNum);
+        return { id, pageNum: 0, parentId: comment.id, content: body, user: name };
     }
 
     const listReplies = () => {
-        let replyList = replies.slice();
-        setReplies(replyList);
+        let replyList = comment.replies;
+
+        setReplies(replyList ? replyList : []);
         console.log("[ReplyList] got replies");
     };
 
@@ -74,7 +78,7 @@ const Comment = ({ comment }) => {
                     <Avatar alt="avatar" />
                 </ListItemAvatar>
                 <ListItemText
-                    primary={<Typography className={classes.fonts}>{comment.name}</Typography>}
+                    primary={<Typography className={classes.fonts}>{comment.user}</Typography>}
                     secondary={
                         <>
                             <Typography
@@ -84,7 +88,7 @@ const Comment = ({ comment }) => {
                                 color="textPrimary"
                             >
                             </Typography>
-                            {`${comment.body}`}
+                            {`${comment.content}`}
                         </>
                     }
                 />
@@ -95,22 +99,45 @@ const Comment = ({ comment }) => {
             {hidden && (<TextField multiline variant="outlined" fullWidth={true} value={value} onChange={handleType}></TextField>)}
             
             {hidden && (<Button color="secondary" variant="contained" disabled={value == ""} onClick={handleClick}>Add Reply</Button>)}
-            <ReplyList reply={replies}/>
+            
+            { replies ? <ReplyList reply={replies}/> : <div></div>}
 
             <Divider />
         </div>
     );
 };
 
-const CommentList = ({ comments }) => {
+const CommentList = ({ paperId, versionId }) => {
+    const [comments, setComments] = useState([]);
     const classes = useStyles();
+
+    useEffect(() => {
+        PageStore.subscribe(() => {
+            commentApi.getCommentsByPage(paperId, versionId, PageStore.getState().currentPage).then((comments) => setComments(comments));
+        });
+    }, [PageStore.getState().currentPage]);
+
     return (
         <List className={classes.root}>
             {comments.map((comment) => (
-                <Comment comment={comment} />
+                <Comment comment={comment} pageNum={PageStore.getState().currentPage} />
             ))}
         </List>
     );
 };
 
-export default CommentList;
+const ReviewList = ({ reviews }) => {
+    const classes = useStyles();
+
+    console.log(reviews);
+
+    return (
+        <List className={classes.root}>
+            {reviews.map((review) => (
+                <Comment comment={review} pageNum={0} />
+            ))}
+        </List>
+    );
+};
+
+export { CommentList, ReviewList };

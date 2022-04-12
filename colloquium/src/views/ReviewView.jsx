@@ -12,7 +12,6 @@ import {
     Divider,
     Grid,
     IconButton,
-    List,
     Toolbar,
     Typography,
     TextField
@@ -21,15 +20,13 @@ import makeStyles from '@mui/styles/makeStyles';
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import PersonIcon from "@mui/icons-material/Person";
-import CommentList from "../components/CommentList";
+import { ReviewList } from "../components/CommentList";
 import { DocumentItems } from "../components/listItems";
 import Copyright from "../components/Copyright";
 import paperApi from "../api/paper"
+import commentApi from "../api/comment";
 
 const drawerWidth = 240;
-const pageContext = {
-    currentPage: 1
-};
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -137,14 +134,15 @@ const ReviewView = ({match, history}) => {
     }
 
     const handleClick = () => {
-        reviews.push(createReviews(reviews.length, username, value, []));
+        reviews.push(createReviews(reviews.length, 1, value, []));
         listReviews();
         console.log(reviews);
         setValue("");
     }
     
     const createReviews = (id, name, body, replies) => {
-        return { id, name,  body, replies};
+        commentApi.createComment(paperId, versionId, null, name, body, 0);
+        return { id, pageNum: 0,  content: body, user: name };
     }
 
     const listReviews = () => {
@@ -153,14 +151,15 @@ const ReviewView = ({match, history}) => {
         console.log("[ReviewList] got reviews");
     };
 
-    useEffect(async() => {
-        const doc = await paperApi.getMetaDataById(paperId);
-        // Getting Document Title
-        setDocumentTitle(doc.title);
-
+    useEffect(() => {
+        async function apiCalls() {
+            await paperApi.getMetaDataById(paperId).then((doc) => setDocumentTitle(doc.title));
+            await commentApi.getCommentsByPaperVersion(paperId, versionId).then((reviews) => setReviews(reviews));
+        }
+        apiCalls();
         // Fetch Reviews and set to reviews
         console.log("[ReviewList] mount");
-        listReviews();
+        console.log(reviews)
     }, []);  
 
     // Side Bar Handling
@@ -240,7 +239,7 @@ const ReviewView = ({match, history}) => {
                 <Container maxWidth="lg" className={classes.container}>
                     {/* Reviews */}
                     <Grid item xs={12}>
-                        <CommentList comments={reviews}/>
+                        <ReviewList reviews={reviews}/>
                         <TextField variant="outlined" multiline placeholder="Enter Review Here" fullWidth={true} value={value} onChange={handleType}></TextField>
                         <Button color="primary" variant="contained" fullWidth={true} disabled={value === ""} onClick={handleClick}>
                             Add Review

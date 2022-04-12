@@ -9,14 +9,15 @@ const resource = "comments";
 //  my uploaded papers
 //  all papers
 const commentApi = {
-    createComment: async (id, name, body, replies, paperId, versionId, page) => {
+    createComment: async (paperId, versionId, parentId, name, body, page) => {
         return axios
             .post(`${apiUrl}/${resource}`, {
+                paperId: paperId,
                 versionId: versionId,
-                parentId: null,
+                parentId: parentId,
+                userId: name,
                 content: body,
                 pageNum: page,
-                userId: name,
             })
             .then((response) => response.data);
     },
@@ -24,7 +25,12 @@ const commentApi = {
         return axios
             .get(`${apiUrl}/${resource}/${paperId}/${versionId}/${page}`)
             .then((response) => response.data);
-    }
+    },
+    getCommentsByPaperVersion: async (paperId, versionId) => {
+        return axios
+            .get(`${apiUrl}/${resource}/${paperId}/${versionId}`)
+            .then((response) => response.data);
+    },
 };
 
 export default commentApi;

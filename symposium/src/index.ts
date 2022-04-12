@@ -19,9 +19,12 @@ const main = async () => {
         mkdirSync(config.uploadFolder, { recursive: true });
     }
     console.log("Connecting to database");
+    const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
     //
     // database connection
-    while(!await connectDB());
+    while(!await connectDB()) {
+        await sleep(30000);
+    }
 
     //
     // express app setup and middleware

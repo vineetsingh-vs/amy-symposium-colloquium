@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
+import { Paper } from "../entities/Paper";
 import { Comment } from "../entities/Comment";
 import { Version } from "../entities/Version";
+import { getManager } from "typeorm";
 
 export const getCommentList = async (req: Request, res: Response) => {
     console.log("[commentController] getCommentList");
@@ -11,33 +13,38 @@ export const getCommentList = async (req: Request, res: Response) => {
 export const createComment = async (req: Request, res: Response) => {
     console.log("[commentController] createComment");
     console.log(req.body);
-    const { versionId, parentId, userId, content, pageNum } = req.body;
+    const { paperId, versionId, parentId, userId, content, pageNum } = req.body;
 
     // TODO: validate inputs
+    let paper = await Paper.findOne({ where: { id: paperId } });
+    if (paper) {
+        let version = paper.versions[Number(versionId) - 1]
+        const newComment = Comment.create({
+            version: version,
+            parent: parentId,
+            user: userId,
+            content: content,
+            pageNum: pageNum,
+        });
 
-    const newComment = Comment.create({
-        version: versionId,
-        parent: parentId,
-        user: userId,
-        content: content,
-        pageNum: pageNum,
-    });
+        await newComment.save();
+        console.log("saved comment: ");
+        console.log(newComment);
 
-    await newComment.save();
-    console.log("saved comment: ");
-    console.log(newComment);
-
-    res.status(200).json({
-        id: newComment.id,
-        version: newComment.version,
-        content: newComment.content,
-        parent: newComment.parent,
-        replies: newComment.replies,
-        pageNum: newComment.pageNum,
-        user: newComment.user,
-        createdAt: newComment.created_at,
-        updatedAt: newComment.updated_at,
-    });
+        res.status(200).json({
+            id: newComment.id,
+            version: newComment.version,
+            content: newComment.content,
+            parent: newComment.parent,
+            replies: newComment.replies,
+            pageNum: newComment.pageNum,
+            user: newComment.user,
+            createdAt: newComment.created_at,
+            updatedAt: newComment.updated_at,
+        });
+    } else {
+        res.status(400).json({ message: "Could not find paper" });
+    }
 };
 
 export const getCommentById = async (req: Request, res: Response) => {
@@ -67,28 +74,47 @@ export const getCommentById = async (req: Request, res: Response) => {
 /**Get list of comments for a specific version, given the versionID */
 export const getCommentsByVersionId = async (req: Request, res: Response) => {
     console.log("[commentController] getCommentsByVersionId");
-    const { versionID } = req.params;
-
-    let comments = await Comment.find({ where: { version: versionID } });
-
-    if (comments) {
-        res.status(200).send(comments);
+    const { paperID, versionID } = req.params;
+    let paper = await Paper.findOne({ where: { id: paperID } });
+    if (paper) {
+        let version = paper.versions[Number(versionID) - 1];
+        const manager = getManager();
+        let comments = await manager.getTreeRepository(Comment).createQueryBuilder("comment")
+            .where("comment.version = :version", { version: version}).getMany();
+        console.log(comments);
+        //let comments = await Comment.find({ where: { version: version } });
+        if (comments) {
+            res.status(200).send(comments);
+        } else {
+            res.status(400).json({ message: "Could not find comments" });
+        }
     } else {
-        res.status(400).json({ message: "Could not find comments" });
+        res.status(400).json({ message: "Could not find paper" });
     }
 };
 
 /**Get list of comments for a specific version and pageNumber, given the versionID and pageNum*/
 export const getCommentsByVersionAndPage = async (req: Request, res: Response) => {
     console.log("[commentController] getCommentsByVersionAndPage");
-    const { versionID, pageNumber } = req.params;
+    const { paperID, versionID, pageNumber } = req.params;
 
-    let comments = await Comment.find({ where: { version: versionID, pageNum: pageNumber } });
+    let paper = await Paper.findOne({ where: { id: paperID } });
+    if (paper) {
+        let version = paper.versions[Number(versionID) - 1];
+        const manager = getManager();
+        let comments = await manager.getTreeRepository(Comment).createQueryBuilder("comment")
+            .where("comment.version = :version", { version: version})
+            .andWhere("comment.pageNum = :pageNumber", { pageNumber: pageNumber}).getMany();
+        console.log(comments);
+        //let comments = await Comment.find({ where: { version: version, pageNum: pageNumber } });
 
-    if (comments) {
-        res.status(200).send(comments);
+        if (comments) {
+            res.status(200).send(comments);
+        } else {
+            res.status(400).json({ message: "Could not find comments" });
+        }
     } else {
-        res.status(400).json({ message: "Could not find comments" });
+        res.status(400).json({ message: "Could not find paper" });
     }
 };
 

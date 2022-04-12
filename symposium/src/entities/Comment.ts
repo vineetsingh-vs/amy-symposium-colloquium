@@ -7,10 +7,15 @@ import {
     Column,
     BaseEntity,
     ManyToOne,
+    JoinTable,
+    Tree,
+    TreeChildren,
+    TreeParent,
 } from "typeorm";
 import { Version } from "./Version";
 
 @Entity()
+@Tree("adjacency-list")
 export class Comment extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     id!: string;
@@ -18,10 +23,10 @@ export class Comment extends BaseEntity {
     @ManyToOne(() => Version, (version) => version.comments)
     version!: Version;
 
-    @ManyToOne(() => Comment, (comment) => comment.replies)
+    @TreeParent()
     parent: Comment;
 
-    @OneToMany(() => Comment, (comment) => comment.parent)
+    @TreeChildren()
     replies: Comment[];
 
     @Column()

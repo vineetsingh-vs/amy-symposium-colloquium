@@ -35,10 +35,12 @@ import {
 import Menu from "@mui/icons-material/Menu";
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import Person from "@mui/icons-material/Person";
-import CommentList from "../components/CommentList";
+import { CommentList } from "../components/CommentList";
 import { DocumentItems } from "../components/listItems";
 import Copyright from "../components/Copyright";
 import paperApi from "../api/paper";
+import { createStore } from "redux";
+import commentApi from "../api/comment";
 
 const drawerWidth = 240;
 const pageContext = {
@@ -124,9 +126,16 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const ChangeCurrentPage = (page) => {
-    pageContext.currentPage = page;
-};
+function pageReducer(state = { currentPage: 1 }, action) {
+    switch (action.type) {
+        case "Page_Change":
+            return { currentPage: action.newPage };
+        default:
+            return state;
+    }
+}
+
+const PageStore = createStore(pageReducer)
 
 const DocumentView = ({ match, history }) => {
     const classes = useStyles();
@@ -141,6 +150,7 @@ const DocumentView = ({ match, history }) => {
     const [comments, setComments] = useState([]);
     const [docUri, setDocUri] = useState([]);
     const [documentTitle, setDocumentTitle] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
 
     const [isFetching, setIsFetching] = useState(false);
 
@@ -151,7 +161,7 @@ const DocumentView = ({ match, history }) => {
     };
 
     const handleClick = () => {
-        comments.push(createComment(comments.length, username, currentComment, []));
+        //comments.push(createComment(comments.length, username, currentComment, []));
         listComments();
         console.log(comments);
         setCurrentComment("");
@@ -159,6 +169,7 @@ const DocumentView = ({ match, history }) => {
 
     const createComment = (id, name, body, replies) => {
         // Push a comment thing here to backend
+        commentApi.createComment(paperId, versionId, 1, body, currentPage);
         return { id, name, body, replies };
     };
 
@@ -183,6 +194,8 @@ const DocumentView = ({ match, history }) => {
         // Change docs to different version
         window.location.replace("/" + paperId + "/" + versionId);
     };
+
+    //PageStore.subscribe(() => {if (currentPage !== PageStore.getState().currentPage) setCurrentPage(PageStore.getState().currentPage); });
 
     useEffect(() => {
         // load document metadata and file version
@@ -287,7 +300,7 @@ const DocumentView = ({ match, history }) => {
                             </Grid>
                             {/* Comments */}
                             <Grid item xs={4}>
-                                <CommentList comments={comments} />
+                                <CommentList paperId={paperId} versionId={versionId} />
                                 <TextField
                                     variant="outlined"
                                     multiline
@@ -317,4 +330,4 @@ const DocumentView = ({ match, history }) => {
     }
 };
 
-export { DocumentView, ChangeCurrentPage };
+export { DocumentView, PageStore };
