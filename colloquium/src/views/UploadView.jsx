@@ -1,108 +1,28 @@
 import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 import clsx from "clsx";
-import makeStyles from "@mui/styles/makeStyles";
 import {
     AppBar,
     Button,
     Box,
-    TextField,
     CssBaseline,
     Container,
     Drawer,
     Divider,
     Grid,
     IconButton,
-    Link,
-    List,
-    ListItem,
-    ListItemIcon,
     Toolbar,
     Input,
     Typography,
-    FormControl,
     FormGroup,
 } from "@mui/material";
 import paperApi from "../api/paper";
-import { Menu, ChevronLeft, People, Person, Assignment } from "@mui/icons-material";
+import { Menu, ChevronLeft, Person } from "@mui/icons-material";
 import { DashboardItems } from "../components/listItems";
 import Copyright from "../components/Copyright";
+import { useAuth } from "../useAuth";
+import { usePaperUploadViewStyles } from "../styles/paperUploadViewStyles";
 
-const drawerWidth = 240;
-
-const useStyles = makeStyles((theme) => ({
-    root: {
-        display: "flex",
-    },
-    toolbar: {
-        paddingRight: 24, // keep right padding when drawer closed
-    },
-    toolbarIcon: {
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "flex-end",
-        padding: "0 8px",
-        ...theme.mixins.toolbar,
-    },
-    appBar: {
-        zIndex: theme.zIndex.drawer + 1,
-        transition: theme.transitions.create(["width", "margin"], {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen,
-        }),
-    },
-    appBarShift: {
-        marginLeft: drawerWidth,
-        width: `calc(100% - ${drawerWidth}px)`,
-        transition: theme.transitions.create(["width", "margin"], {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.enteringScreen,
-        }),
-    },
-    menuButton: {
-        marginRight: 36,
-    },
-    menuButtonHidden: {
-        display: "none",
-    },
-    title: {
-        flexGrow: 1,
-    },
-    drawerPaper: {
-        position: "relative",
-        whiteSpace: "nowrap",
-        width: drawerWidth,
-        transition: theme.transitions.create("width", {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.enteringScreen,
-        }),
-    },
-    drawerPaperClose: {
-        overflowX: "hidden",
-        transition: theme.transitions.create("width", {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen,
-        }),
-        width: theme.spacing(7),
-        [theme.breakpoints.up("sm")]: {
-            width: theme.spacing(9),
-        },
-    },
-    appBarSpacer: theme.mixins.toolbar,
-    content: {
-        flexGrow: 1,
-        height: "100vh",
-        overflow: "auto",
-    },
-    container: {
-        paddingTop: theme.spacing(10),
-        paddingBottom: theme.spacing(4),
-    },
-    fixedHeight: {
-        height: 240,
-    },
-}));
-
-// DOES NOT INCLUDE MICROSOFT DOC/XLSX/PPTX
 const acceptedDocumentTypes = [
     "text/htm",
     "text/html",
@@ -110,26 +30,22 @@ const acceptedDocumentTypes = [
     "image/jpeg",
     "application/pdf",
     "image/png",
-    "text/plain"
+    "text/plain",
 ];
 
+const UploadView = () => {
+    const classes = usePaperUploadViewStyles();
+    const {user} = useAuth();
+    const history = useHistory();
+    const [drawerToggled, setDrawerToggled] = useState(false);
 
-const UploadPaperView = () => {
-    const classes = useStyles();
-    const [open, setOpen] = React.useState(true);
-    const handleDrawerOpen = () => {
-        setOpen(true);
+    const handleDrawerToggle = () => {
+        setDrawerToggled(!drawerToggled);
     };
-    const handleDrawerClose = () => {
-        setOpen(false);
-    };
-    const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-    const [username, setUsername] = React.useState("Default Username");
 
     // Form Data
     const [author, setAuthor] = useState("");
     const [documentTitle, setDocumentTitle] = useState("");
-    const [shared, setShared] = useState([]);
     const [files, setFiles] = useState([]);
 
     const clearValues = () => {
@@ -139,50 +55,51 @@ const UploadPaperView = () => {
 
     // Submitting the document through a form
     const handleSubmission = async (event) => {
-      event.preventDefault();
-      let result = true;
-      for (let i = 0; i < files.length; i++) {
-        result = acceptedDocumentTypes.find((docTypes) => docTypes.includes(files[i].type));
-        if(result) break;
-      }
-
-      if(result){
-        const form = new FormData();
-        form.append("title", documentTitle);
-        form.append("authors", "{"+author+"}");
-        form.append("creator_id", 1);
-        form.append("tags", "{}");
-        form.append("revisions", "{}");
+        event.preventDefault();
+        let result = true;
         for (let i = 0; i < files.length; i++) {
-            form.append("files", files[i], files[i].name);
-            console.log(files[i])
+            result = acceptedDocumentTypes.find((docTypes) =>
+                docTypes.includes(files[i].type)
+            );
+            if (result) break;
         }
 
-        const response = await paperApi.create(form);
-        window.location.replace("/mypapers");   
-      }
-      else {
-        clearValues();
-        return (
-          alert("This document is not supported at this time")
-        );
-      }
-  };
+        if (result) {
+            const form = new FormData();
+            form.append("title", documentTitle);
+            form.append("authors", "{" + author + "}");
+            form.append("creatorId", 1);
+            form.append("versions", "{}");
+            for (let i = 0; i < files.length; i++) {
+                form.append("files", files[i], files[i].name);
+                console.log(files[i]);
+            }
+
+            const response = await paperApi.create(form);
+            history.push("papers");
+        } else {
+            clearValues();
+            return alert("This document is not supported at this time");
+        }
+    };
 
     return (
         <div className={classes.root}>
             <CssBaseline />
             <AppBar
                 position="absolute"
-                className={clsx(classes.appBar, open && classes.appBarShift)}
+                className={clsx(classes.appBar, drawerToggled && classes.appBarShift)}
             >
                 <Toolbar className={classes.toolbar}>
                     <IconButton
                         edge="start"
                         color="inherit"
                         aria-label="open drawer"
-                        onClick={handleDrawerOpen}
-                        className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
+                        onClick={handleDrawerToggle}
+                        className={clsx(
+                            classes.menuButton,
+                            drawerToggled && classes.menuButtonHidden
+                        )}
                     >
                         <Menu />
                     </IconButton>
@@ -201,19 +118,22 @@ const UploadPaperView = () => {
                         startIcon={<Person />}
                         href="/userprofile"
                     >
-                        {username}
+                        {user.firstName}
                     </Button>
                 </Toolbar>
             </AppBar>
             <Drawer
                 variant="permanent"
                 classes={{
-                    paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
+                    paper: clsx(
+                        classes.drawerPaper,
+                        !drawerToggled && classes.drawerPaperClose
+                    ),
                 }}
-                open={open}
+                open={drawerToggled}
             >
                 <div className={classes.toolbarIcon}>
-                    <IconButton onClick={handleDrawerClose}>
+                    <IconButton onClick={handleDrawerToggle}>
                         <ChevronLeft />
                     </IconButton>
                 </div>
@@ -258,4 +178,4 @@ const UploadPaperView = () => {
     );
 };
 
-export default UploadPaperView;
+export default UploadView;

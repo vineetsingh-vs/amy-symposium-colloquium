@@ -1,19 +1,14 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { useHistory, useParams } from "react-router-dom"
 import DocViewer, {
-    BMPRenderer,
     HTMLRenderer,
     JPGRenderer,
-    MSGRenderer,
     PNGRenderer,
-    TIFFRenderer,
     TXTRenderer,
-    MSDocRenderer,
 } from "react-doc-viewer";
-import CustomXLSXRenderer from "../renderers/CustomXLSXRenderer";
 import CustomPDFRenderer from "../renderers/CustomPDFRenderer";
 import CustomMSDocRenderer from "../renderers/CustomMSDocRenderer";
 import clsx from "clsx";
-import makeStyles from "@mui/styles/makeStyles";
 import {
     Button,
     CssBaseline,
@@ -21,7 +16,6 @@ import {
     Box,
     AppBar,
     Toolbar,
-    List,
     Typography,
     Select,
     MenuItem,
@@ -30,7 +24,6 @@ import {
     Container,
     Grid,
     TextField,
-    Input,
 } from "@mui/material";
 import Menu from "@mui/icons-material/Menu";
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
@@ -41,90 +34,12 @@ import Copyright from "../components/Copyright";
 import paperApi from "../api/paper";
 import { createStore } from "redux";
 import commentApi from "../api/comment";
+import {useDocumentViewStyles} from "../styles/documentViewStyles";
+import { useAuth } from "../useAuth"
 
-const drawerWidth = 240;
 const pageContext = {
     currentPage: 1,
 };
-
-const useStyles = makeStyles((theme) => ({
-    root: {
-        display: "flex",
-    },
-    toolbar: {
-        paddingRight: 24, // keep right padding when drawer closed
-    },
-    toolbarIcon: {
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "flex-end",
-        padding: "0 8px",
-        ...theme.mixins.toolbar,
-    },
-    appBar: {
-        zIndex: theme.zIndex.drawer + 1,
-        transition: theme.transitions.create(["width", "margin"], {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen,
-        }),
-    },
-    appBarShift: {
-        marginLeft: drawerWidth,
-        width: `calc(100% - ${drawerWidth}px)`,
-        transition: theme.transitions.create(["width", "margin"], {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.enteringScreen,
-        }),
-    },
-    menuButton: {
-        marginRight: 36,
-    },
-    menuButtonHidden: {
-        display: "none",
-    },
-    title: {
-        flexGrow: 1,
-    },
-    drawerPaper: {
-        position: "relative",
-        whiteSpace: "nowrap",
-        width: drawerWidth,
-        transition: theme.transitions.create("width", {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.enteringScreen,
-        }),
-    },
-    drawerPaperClose: {
-        overflowX: "hidden",
-        transition: theme.transitions.create("width", {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen,
-        }),
-        width: theme.spacing(7),
-        [theme.breakpoints.up("sm")]: {
-            width: theme.spacing(9),
-        },
-    },
-    appBarSpacer: theme.mixins.toolbar,
-    content: {
-        flexGrow: 1,
-        height: "100vh",
-        overflow: "auto",
-    },
-    container: {
-        paddingTop: theme.spacing(4),
-        paddingBottom: theme.spacing(4),
-    },
-    paper: {
-        padding: theme.spacing(2),
-        display: "flex",
-        overflow: "auto",
-        flexDirection: "column",
-    },
-    fixedHeight: {
-        height: 240,
-    },
-}));
 
 function pageReducer(state = { currentPage: 1 }, action) {
     switch (action.type) {
@@ -134,27 +49,19 @@ function pageReducer(state = { currentPage: 1 }, action) {
             return state;
     }
 }
+const PageStore = createStore(pageReducer);
 
-const PageStore = createStore(pageReducer)
-
-const DocumentView = ({ match, history }) => {
-    const classes = useStyles();
-    const paperId = match.params.paperId;
-    let versionId = match.params.versionId;
-
-    // Drawer
-    const [open, setOpen] = useState(false);
-
-    // Displaying Document
-    const [username, setUsername] = useState("Default Username");
+const DocumentView = () => {
+    const classes = useDocumentViewStyles();
+    const {paperId, versionId} = useParams();
+    const history = useHistory()
+    const { user } = useAuth()
+    const [drawerToggled, setDrawerToggled] = useState(false);
     const [comments, setComments] = useState([]);
     const [docUri, setDocUri] = useState([]);
     const [documentTitle, setDocumentTitle] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
-
     const [isFetching, setIsFetching] = useState(false);
-
-    // Comment Handling
     const [currentComment, setCurrentComment] = useState("");
     const handleType = (text) => {
         setCurrentComment(text.target.value);
@@ -179,20 +86,13 @@ const DocumentView = ({ match, history }) => {
         console.log("[CommentList] got comments");
     };
 
-    // Side Bar Handling
-    const handleDrawerOpen = () => {
-        setOpen(true);
+    const handleDrawerToggle = () => {
+        setDrawerToggled(!drawerToggled);
     };
 
-    const handleDrawerClose = () => {
-        setOpen(false);
-    };
-
-    // Version Control
     const handleChangeVersion = (event) => {
-        versionId = event.target.value;
-        // Change docs to different version
-        window.location.replace("/" + paperId + "/" + versionId);
+        const versionId = event.target.value;
+        history.push(`/${paperId}/${versionId}`)
     };
 
     //PageStore.subscribe(() => {if (currentPage !== PageStore.getState().currentPage) setCurrentPage(PageStore.getState().currentPage); });
@@ -211,17 +111,17 @@ const DocumentView = ({ match, history }) => {
                 <CssBaseline />
                 <AppBar
                     position="absolute"
-                    className={clsx(classes.appBar, open && classes.appBarShift)}
+                    className={clsx(classes.appBar, drawerToggled && classes.appBarShift)}
                 >
                     <Toolbar className={classes.toolbar}>
                         <IconButton
                             edge="start"
                             color="inherit"
                             aria-label="open drawer"
-                            onClick={handleDrawerOpen}
+                            onClick={handleDrawerToggle}
                             className={clsx(
                                 classes.menuButton,
-                                open && classes.menuButtonHidden
+                                drawerToggled && classes.menuButtonHidden
                             )}
                             size="large"
                         >
@@ -242,19 +142,19 @@ const DocumentView = ({ match, history }) => {
                             startIcon={<Person />}
                             href="/userprofile"
                         >
-                            {username}
+                            {user.firstName}
                         </Button>
                     </Toolbar>
                 </AppBar>
                 <Drawer
                     variant="permanent"
                     classes={{
-                        paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
+                        paper: clsx(classes.drawerPaper, !drawerToggled && classes.drawerPaperClose),
                     }}
-                    open={open}
+                    open={drawerToggled}
                 >
                     <div className={classes.toolbarIcon}>
-                        <IconButton onClick={handleDrawerClose} size="large">
+                        <IconButton onClick={handleDrawerToggle} size="large">
                             <ChevronLeft />
                         </IconButton>
                     </div>

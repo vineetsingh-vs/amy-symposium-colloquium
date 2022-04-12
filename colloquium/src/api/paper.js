@@ -3,17 +3,9 @@ import { apiUrl } from "./api.config";
 
 const resource = "papers";
 
-//
-// get list of
-//  shared with me
-//  my uploaded papers
-//  all papers
 const paperApi = {
-    //
-    // get all papers associated with a user
-    //  filter user uploaded, shared with, or all associated papers
     getList: async (userId, filter) => {
-        if (filter !== "shared" && filter !== "uploaded" && filter !== "all")
+        if (filter !== "shared" && filter !== "uploaded" && filter !== "published")
             return { message: "filter invalid" };
 
         return axios

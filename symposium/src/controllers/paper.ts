@@ -3,19 +3,29 @@ import { Fields, Files, IncomingForm } from "formidable";
 import fs from "fs";
 import { Paper } from "../entities/Paper";
 import { Version } from "../entities/Version";
+import { User } from "../entities/User";
 import config from "../utils/config";
 
 export const getPaperList = async (req: Request, res: Response) => {
     const { filter, userId } = req.query;
     console.log("[paperController] getPaperList");
 
+    const user = User.findOne({ where: { id: userId } });
+    if (!user) {
+        res.status(400).json({ message: "User not found" });
+    }
+
     let paperList;
     if (filter === "shared") {
+        paperList = await Paper.find();
     } else if (filter === "uploaded") {
-    } else {
+        paperList = await Paper.find();
+    } else if (filter === "published") {
         // if user admin return all papers
         // else return papers shared with or associated with
         paperList = await Paper.find();
+    } else {
+        res.status(400).json({ message: "Invalid filter" });
     }
 
     res.status(200).send(paperList);

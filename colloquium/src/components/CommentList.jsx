@@ -1,8 +1,9 @@
-import React, { Fragment, useState, useEffect } from "react";
-import makeStyles from '@mui/styles/makeStyles';
+import { Fragment, useState, useEffect } from "react";
+
 import ReplyList from "../components/ReplyList";
 import {PageStore} from "../views/DocumentView";
 import commentApi from "../api/comment";
+import { useCommentListStyles } from "../styles/commentListStyles";
 
 import {
     List,
@@ -13,25 +14,13 @@ import {
     Avatar,
     Typography,
     Button,
-    TextField
+    TextField,
 } from "@mui/material";
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        width: "100%",
-        backgroundColor: theme.palette.background.paper,
-    },
-    fonts: {
-        fontWeight: "bold",
-    },
-    inline: {
-        display: "inline",
-    },
-}));
-
-const Comment = ({ comment, pageNum }) => {
-    const classes = useStyles();
-    const [hidden, setHidden] = useState(false);const [comments, setComments] = useState([]);
+const Comment = ({ comment }) => {
+    const classes = useCommentListStyles();
+    const [hidden, setHidden] = useState(false);
+    const [comments, setComments] = useState([]);
     const [username, setUsername] = useState("Default Username");
     const [replies, setReplies] = useState([]);
     const [isFetching, setIsFetching] = useState(false);
@@ -39,15 +28,15 @@ const Comment = ({ comment, pageNum }) => {
 
     const handleType = (text) => {
         setValue(text.target.value);
-    }
+    };
 
     const handleClick = () => {
         replies.push(createReply(comments.length, username, value));
         listReplies();
         console.log(replies);
         setValue("");
-    }
-    
+    };
+
     const createReply = (id, name, body) => {
         commentApi.createComment(comment.paperId, comment.versionId, comment.id, name, body, pageNum);
         return { id, pageNum: 0, parentId: comment.id, content: body, user: name };
@@ -65,12 +54,12 @@ const Comment = ({ comment, pageNum }) => {
         setIsFetching(true);
         listReplies();
         setIsFetching(false);
-    }, []);  
+    }, []);
 
     const addReply = () => {
         setHidden(!hidden);
         console.log(hidden);
-    }
+    };
     return (
         <div className={`comment ${comment.id}`}>
             <ListItem key={comment.id} alignItems="flex-start">
@@ -102,6 +91,18 @@ const Comment = ({ comment, pageNum }) => {
             
             { replies ? <ReplyList reply={replies}/> : <div></div>}
 
+            {hidden && (
+                <Button
+                    color="secondary"
+                    variant="contained"
+                    disabled={value == ""}
+                    onClick={handleClick}
+                >
+                    Add Reply
+                </Button>
+            )}
+            <ReplyList reply={replies} />
+
             <Divider />
         </div>
     );
@@ -109,7 +110,7 @@ const Comment = ({ comment, pageNum }) => {
 
 const CommentList = ({ paperId, versionId }) => {
     const [comments, setComments] = useState([]);
-    const classes = useStyles();
+    const classes = useCommentListStyles();
 
     useEffect(() => {
         PageStore.subscribe(() => {
