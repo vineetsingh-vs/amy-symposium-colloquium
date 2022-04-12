@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useHistory, useLocation } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -10,20 +11,27 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Copyright from "../components/Copyright";
-import {useAuthViewStyles} from "../styles/authViewStyles";
-import { useAuth } from "../useAuth"
-import ErrorMessage from "../components/ErrorMessage.js"
+import { useAuthViewStyles } from "../styles/authViewStyles";
+import { useAuth } from "../useAuth";
+import ErrorMessage from "../components/ErrorMessage.js";
 
 const LoginView = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const classes = useAuthViewStyles();
-    const auth = useAuth()
+    const auth = useAuth();
+    const history = useHistory()
+    const { state } = useLocation()
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        auth.login(email, password)
+        auth.login(email, password);
     };
+
+    useEffect(() => {
+        if (auth.user) 
+            history.push(state?.path || "/papers")
+    }, [auth.user]);
 
     return (
         <Container component="main" maxWidth="xs">
@@ -77,7 +85,7 @@ const LoginView = () => {
                             </Link>
                         </Grid>
                         <Grid item>
-                            <Link href="#" variant="body2" underline="hover">
+                            <Link href="signup" variant="body2" underline="hover">
                                 {"Don't have an account? Sign Up"}
                             </Link>
                         </Grid>

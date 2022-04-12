@@ -22,25 +22,25 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import Person from "@mui/icons-material/Person";
 import PapersTable from "./PapersTable";
 import paperApi from "../api/paper";
-import { usePaperViewStyles } from "../styles/paperViewStyles";
+import {usePaperViewStyles} from "../styles/paperViewStyles";
 import Copyright from "../components/Copyright";
+import { useAuth } from "../useAuth"
 
 const PapersView = () => {
     const classes = usePaperViewStyles();
-    const [username, setUsername] = useState("Default Username");
-    const [userID, setUserID] = useState(1);
-    const [drawerToggled, setdrawerToggled] = useState(true);
+    const [drawerToggled, setDrawerToggled] = useState(false);
     const [filter, setFilter] = useState("uploaded")
     const [title, setTitle] = useState("My Papers")
     const [papers, setPapers] = useState([]);
+    const auth = useAuth()
 
     const handleDrawerToggle = () => {
-        setdrawerToggled(!drawerToggled);
+        setDrawerToggled(!drawerToggled);
     };
 
+    // get filtered papers on mount and everytime filter state is updated
     useEffect(() => {
-        paperApi.getList(userID, filter).then((paperList) => {
-            console.log(paperList)
+        paperApi.getList(auth.user.id, filter).then((paperList) => {
             setPapers(paperList);
         });
         if (filter === "uploaded") setTitle("My Papers")
@@ -85,7 +85,7 @@ const PapersView = () => {
                         startIcon={<Person />}
                         href="/userprofile"
                     >
-                        {username}
+                        {auth.user.firstName}
                     </Button>
                 </Toolbar>
             </AppBar>

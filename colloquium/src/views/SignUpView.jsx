@@ -18,16 +18,16 @@ import { useAuth } from "../useAuth";
 const theme = createTheme();
 
 export default function SignUp() {
-    const [firstName, setFirstName] = useState("")
-    const [lastName, setLastName] = useState("")
-    const [affiliation, setAffiliation] = useState("")
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [affiliation, setAffiliation] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const auth = useAuth();
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        auth.signup(email, password, affiliation, firstName, lastName);
+        auth.signup(email, password, firstName, lastName, affiliation);
     };
 
     return (
@@ -108,18 +108,13 @@ export default function SignUp() {
                                 />
                             </Grid>
                         </Grid>
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            sx={{ mt: 3, mb: 2 }}
-                        >
+                        <Button type="submit" fullWidth variant="contained" sx={{ mt: 3 }}>
                             Sign Up
                         </Button>
-                        <Grid container justifyContent="flex-end">
+                        <Grid container mt={2} mb={8} justifyContent="center">
                             <Grid item>
-                                <Link href="#" variant="body2">
-                                    Already have an account? Sign in
+                                <Link href="/" variant="body2">
+                                    Already have an account? 
                                 </Link>
                             </Grid>
                         </Grid>

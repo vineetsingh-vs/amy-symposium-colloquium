@@ -1,19 +1,24 @@
-import { useState, useContext, createContext } from "react";
-import authApi from "./api/auth";
+import { useEffect, useState, useContext, createContext } from "react";
+import axios from "axios";
+import { apiUrl } from "./api/api.config";
 
 const authContext = createContext();
 
-// Provider hook that creates auth object and handles state
+// provider hook that creates auth object and handles state
 const useProvideAuth = () => {
     const [user, setUser] = useState(null);
     const [error, setError] = useState(null);
 
+    // login, store and set the user info from response
     const login = async (email, password) => {
         try {
-            const response = await authApi.login(email, password);
-            setUser(response.user);
+            const response = await axios.post(`${apiUrl}/auth/login`, {
+                email,
+                password,
+            });
+            localStorage.setItem("userInfo", JSON.stringify(response.data));
+            setUser(response.data);
             setError(null);
-            return response.user;
         } catch (error) {
             const errMsg =
                 error.response && error.response.data.message
@@ -23,12 +28,20 @@ const useProvideAuth = () => {
         }
     };
 
-    const signup = async (email, password) => {
+    // signup, store and set the user info from response
+    const signup = async (email, password, firstName, lastName, affiliation) => {
         try {
-            const response = await authApi.signup(email, password);
-            setUser(response.user);
+            const response = await axios.post(`${apiUrl}/auth/signup`, {
+                email,
+                password,
+                firstName,
+                lastName,
+                affiliation,
+            });
+            localStorage.setItem("userInfo", JSON.stringify(response.data));
+            setUser(response.data);
             setError(null);
-            return response.user;
+            return response.data;
         } catch (error) {
             const errMsg =
                 error.response && error.response.data.message
@@ -42,6 +55,23 @@ const useProvideAuth = () => {
         return setUser(null);
     };
 
+    const setConfig = () => {
+        return {
+            headers: { "x-auth-token": user.token },
+        };
+    };
+
+    // get userInfo on mount from browser sotrage if not already set ...
+    // ... useAuth mounts when imported and assigned
+    useEffect(() => {
+        if (!user) {
+            const userInfoFromLocal = localStorage.getItem("userInfo")
+                ? JSON.parse(localStorage.getItem("userInfo"))
+                : null;
+            setUser(userInfoFromLocal);
+        }
+    }, [user]);
+
     // Return the user object and auth methods
     return {
         user,
@@ -49,6 +79,7 @@ const useProvideAuth = () => {
         login,
         signup,
         signout,
+        setConfig,
     };
 };
 

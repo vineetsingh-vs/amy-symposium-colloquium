@@ -1,4 +1,3 @@
-import { useEffect, createContext, useReducer, useMemo } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import AdminDashboard from "./views/AdminDashboard";
 import PageNotFound from "./views/PageNotFound";
@@ -25,23 +24,23 @@ const App = () => {
                     <Router>
                         <div className="mainContainer">
                             <Switch>
-                                <ProtectedRoute exact path="/admin" component={AdminDashboard} />
-                                <ProtectedRoute exact path="/userprofile" component={ProfileView} />
                                 <Route exact path="/" component={LoginView} />
                                 <Route exact path="/signup" component={SignUp} />
-                                <Route exact path="/papers" component={PapersView} />
-                                <Route
+                                <ProtectedRoute exact path="/admin" component={AdminDashboard} />
+                                <ProtectedRoute exact path="/userprofile" component={ProfileView} />
+                                <ProtectedRoute exact path="/papers" component={PapersView} />
+                                <ProtectedRoute
                                     exact
                                     path="/:paperId/:versionId/share"
                                     component={SharingView}
                                 />
-                                <Route exact path="/upload" component={UploadView} />
-                                <Route
+                                <ProtectedRoute exact path="/upload" component={UploadView} />
+                                <ProtectedRoute
                                     exact
                                     path="/:paperId/:versionId/reviews"
                                     component={ReviewView}
                                 />
-                                <Route
+                                <ProtectedRoute
                                     exact
                                     path="/:paperId/:versionId"
                                     component={DocumentView}

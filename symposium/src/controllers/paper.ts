@@ -17,7 +17,9 @@ export const getPaperList = async (req: Request, res: Response) => {
 
     let paperList;
     if (filter === "shared") {
+        paperList = await Paper.find();
     } else if (filter === "uploaded") {
+        paperList = await Paper.find();
     } else if (filter === "published") {
         // if user admin return all papers
         // else return papers shared with or associated with
