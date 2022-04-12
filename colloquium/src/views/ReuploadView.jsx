@@ -8,23 +8,18 @@ import {
   Box,
   AppBar,
   Toolbar,
-  List,
   Typography,
-  Select,
-  MenuItem,
   Divider,
   IconButton,
   Container,
   Grid,
-  Link,
   Input
 } from "@mui/material"
 
 import {
   Menu,
   ChevronLeft,
-  Person,
-  Assignment
+  Person
 } from "@mui/icons-material"
 
 import { DocumentItems } from '../components/listItems';
@@ -124,13 +119,6 @@ const ReuploadView = ({match, history}) => {
     // Document Information
     const [documentTitle, setDocumentTitle] = React.useState("");
     const [username, setUsername] = React.useState("Default Username");
-
-    // Version Control -> Should not do anything
-    const ChangeCurrentVersion = (event) => {
-        // versionId = event.target.value
-        // // Change docs to different version
-        // window.location.replace("/" + paperId + "/" + versionId + "/reupload");
-    }
 
     const handleDrawerOpen = () => {
         setOpen(true);
