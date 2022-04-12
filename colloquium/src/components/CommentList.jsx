@@ -1,6 +1,7 @@
-import React, { Fragment, useState, useEffect } from "react";
-import makeStyles from '@mui/styles/makeStyles';
+import { Fragment, useState, useEffect } from "react";
+
 import ReplyList from "../components/ReplyList";
+import { useCommentListStyles } from "../styles/commentListStyles";
 
 import {
     List,
@@ -11,25 +12,13 @@ import {
     Avatar,
     Typography,
     Button,
-    TextField
+    TextField,
 } from "@mui/material";
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        width: "100%",
-        backgroundColor: theme.palette.background.paper,
-    },
-    fonts: {
-        fontWeight: "bold",
-    },
-    inline: {
-        display: "inline",
-    },
-}));
-
 const Comment = ({ comment }) => {
-    const classes = useStyles();
-    const [hidden, setHidden] = useState(false);const [comments, setComments] = useState([]);
+    const classes = useCommentListStyles();
+    const [hidden, setHidden] = useState(false);
+    const [comments, setComments] = useState([]);
     const [username, setUsername] = useState("Default Username");
     const [replies, setReplies] = useState([]);
     const [isFetching, setIsFetching] = useState(false);
@@ -37,18 +26,18 @@ const Comment = ({ comment }) => {
 
     const handleType = (text) => {
         setValue(text.target.value);
-    }
+    };
 
     const handleClick = () => {
         replies.push(createReply(comments.length, username, value));
         listReplies();
         console.log(replies);
         setValue("");
-    }
-    
+    };
+
     const createReply = (id, name, body) => {
-        return { id, name,  body};
-    }
+        return { id, name, body };
+    };
 
     const listReplies = () => {
         let replyList = replies.slice();
@@ -61,12 +50,12 @@ const Comment = ({ comment }) => {
         setIsFetching(true);
         listReplies();
         setIsFetching(false);
-    }, []);  
+    }, []);
 
     const addReply = () => {
         setHidden(!hidden);
         console.log(hidden);
-    }
+    };
     return (
         <div className={`comment ${comment.id}`}>
             <ListItem key={comment.id} alignItems="flex-start">
@@ -82,8 +71,7 @@ const Comment = ({ comment }) => {
                                 variant="body2"
                                 className={classes.inline}
                                 color="textPrimary"
-                            >
-                            </Typography>
+                            ></Typography>
                             {`${comment.body}`}
                         </>
                     }
@@ -92,10 +80,27 @@ const Comment = ({ comment }) => {
             <Button color="secondary" variant="contained" onClick={addReply}>
                 Reply
             </Button>
-            {hidden && (<TextField multiline variant="outlined" fullWidth={true} value={value} onChange={handleType}></TextField>)}
-            
-            {hidden && (<Button color="secondary" variant="contained" disabled={value == ""} onClick={handleClick}>Add Reply</Button>)}
-            <ReplyList reply={replies}/>
+            {hidden && (
+                <TextField
+                    multiline
+                    variant="outlined"
+                    fullWidth={true}
+                    value={value}
+                    onChange={handleType}
+                ></TextField>
+            )}
+
+            {hidden && (
+                <Button
+                    color="secondary"
+                    variant="contained"
+                    disabled={value == ""}
+                    onClick={handleClick}
+                >
+                    Add Reply
+                </Button>
+            )}
+            <ReplyList reply={replies} />
 
             <Divider />
         </div>
@@ -103,7 +108,7 @@ const Comment = ({ comment }) => {
 };
 
 const CommentList = ({ comments }) => {
-    const classes = useStyles();
+    const classes = useCommentListStyles();
     return (
         <List className={classes.root}>
             {comments.map((comment) => (

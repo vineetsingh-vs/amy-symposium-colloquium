@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { useHistory, useParams } from "react-router-dom"
 import DocViewer, {
     HTMLRenderer,
     JPGRenderer,
     PNGRenderer,
     TXTRenderer,
-    MSDocRenderer,
 } from "react-doc-viewer";
 import CustomPDFRenderer from "../renderers/CustomPDFRenderer";
+import CustomMSDocRenderer from "../renderers/CustomMSDocRenderer";
 import clsx from "clsx";
 import {
     Button,
@@ -27,43 +28,47 @@ import {
 import Menu from "@mui/icons-material/Menu";
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import Person from "@mui/icons-material/Person";
-import CommentList from "../components/CommentList";
+import { CommentList } from "../components/CommentList";
 import { DocumentItems } from "../components/listItems";
 import Copyright from "../components/Copyright";
 import paperApi from "../api/paper";
-import { useDocumentViewStyles } from "../styles/documentViewStyles";
+import { createStore } from "redux";
+import commentApi from "../api/comment";
+import {useDocumentViewStyles} from "../styles/documentViewStyles";
+import { useAuth } from "../useAuth"
 
 const pageContext = {
     currentPage: 1,
 };
 
-const ChangeCurrentPage = (page) => {
-    pageContext.currentPage = page;
-};
+function pageReducer(state = { currentPage: 1 }, action) {
+    switch (action.type) {
+        case "Page_Change":
+            return { currentPage: action.newPage };
+        default:
+            return state;
+    }
+}
+const PageStore = createStore(pageReducer);
 
-const DocumentView = ({ match, history }) => {
+const DocumentView = () => {
     const classes = useDocumentViewStyles();
-    const paperId = match.params.paperId;
-    let versionId = match.params.versionId;
-
+    const {paperId, versionId} = useParams();
+    const history = useHistory()
+    const { user } = useAuth()
     const [drawerToggled, setDrawerToggled] = useState(false);
-
-    // Displaying Document
-    const [username, setUsername] = useState("Default Username");
     const [comments, setComments] = useState([]);
     const [docUri, setDocUri] = useState([]);
     const [documentTitle, setDocumentTitle] = useState("");
-
+    const [currentPage, setCurrentPage] = useState(1);
     const [isFetching, setIsFetching] = useState(false);
-
-    // Comment Handling
     const [currentComment, setCurrentComment] = useState("");
     const handleType = (text) => {
         setCurrentComment(text.target.value);
     };
 
     const handleClick = () => {
-        comments.push(createComment(comments.length, username, currentComment, []));
+        //comments.push(createComment(comments.length, username, currentComment, []));
         listComments();
         console.log(comments);
         setCurrentComment("");
@@ -71,6 +76,7 @@ const DocumentView = ({ match, history }) => {
 
     const createComment = (id, name, body, replies) => {
         // Push a comment thing here to backend
+        commentApi.createComment(paperId, versionId, 1, body, currentPage);
         return { id, name, body, replies };
     };
 
@@ -84,12 +90,12 @@ const DocumentView = ({ match, history }) => {
         setDrawerToggled(!drawerToggled);
     };
 
-    // Version Control
     const handleChangeVersion = (event) => {
-        versionId = event.target.value;
-        // Change docs to different version
-        window.location.replace("/" + paperId + "/" + versionId);
+        const versionId = event.target.value;
+        history.push(`/${paperId}/${versionId}`)
     };
+
+    //PageStore.subscribe(() => {if (currentPage !== PageStore.getState().currentPage) setCurrentPage(PageStore.getState().currentPage); });
 
     useEffect(() => {
         // load document metadata and file version
@@ -136,7 +142,7 @@ const DocumentView = ({ match, history }) => {
                             startIcon={<Person />}
                             href="/userprofile"
                         >
-                            {username}
+                            {user.firstName}
                         </Button>
                     </Toolbar>
                 </AppBar>
@@ -176,7 +182,7 @@ const DocumentView = ({ match, history }) => {
                                 <DocViewer
                                     pluginRenderers={[
                                         CustomPDFRenderer,
-                                        MSDocRenderer,
+                                        CustomMSDocRenderer,
                                         HTMLRenderer,
                                         JPGRenderer,
                                         PNGRenderer,
@@ -194,7 +200,7 @@ const DocumentView = ({ match, history }) => {
                             </Grid>
                             {/* Comments */}
                             <Grid item xs={4}>
-                                <CommentList comments={comments} />
+                                <CommentList paperId={paperId} versionId={versionId} />
                                 <TextField
                                     variant="outlined"
                                     multiline
@@ -224,4 +230,4 @@ const DocumentView = ({ match, history }) => {
     }
 };
 
-export { DocumentView, ChangeCurrentPage };
+export { DocumentView, PageStore };
