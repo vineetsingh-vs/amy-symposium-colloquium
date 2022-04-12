@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const Comment = ({ comment, pageNum }) => {
+const Comment = ({ comment, paperId, versionId, pageNum }) => {
     const classes = useStyles();
     const [hidden, setHidden] = useState(false);const [comments, setComments] = useState([]);
     const [username, setUsername] = useState("Default Username");
@@ -44,14 +44,14 @@ const Comment = ({ comment, pageNum }) => {
     }
 
     const handleClick = () => {
-        replies.push(createReply(comments.length, username, value));
+        replies.push(createReply(comments.length, 1, value));
         listReplies();
         console.log(replies);
         setValue("");
     }
     
     const createReply = (id, name, body) => {
-        commentApi.createComment(comment.paperId, comment.versionId, comment.id, name, body, pageNum);
+        commentApi.createComment(paperId, versionId, comment.id, name, body, pageNum);
         return { id, pageNum: 0, parentId: comment.id, content: body, user: name };
     }
 
@@ -102,7 +102,7 @@ const Comment = ({ comment, pageNum }) => {
             
             {hidden && (<Button color="secondary" variant="contained" disabled={value == ""} onClick={handleClick}>Add Reply</Button>)}
             
-            { replies ? <ReplyList reply={replies}/> : <div></div>}
+            { replies ? <ReplyList replies={replies}/> : <div></div>}
 
             <Divider />
         </div>
@@ -147,7 +147,7 @@ const CommentList = ({ paperId, versionId }) => {
         <Grid item xs={4}>
             <List className={classes.root}>
                 {comments.map((comment) => (
-                    <Comment comment={comment} pageNum={PageStore.getState().currentPage} />
+                    <Comment comment={comment} paperId={paperId} versionId={versionId} pageNum={PageStore.getState().currentPage} />
                 ))}
             </List>
             <TextField

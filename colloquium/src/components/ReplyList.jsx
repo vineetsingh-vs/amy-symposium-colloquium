@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Reply = ({ reply }) => {
     const classes = useStyles();
-    
+    console.log(reply);
     return (
         <div className={`reply ${reply.id}`}>
             <ListItem key={reply.id} alignItems="flex-start">
@@ -41,7 +41,7 @@ const Reply = ({ reply }) => {
                     <Avatar alt="avatar" />
                 </ListItemAvatar>
                 <ListItemText
-                    primary={<Typography className={classes.fonts}>{reply.name}</Typography>}
+                    primary={<Typography className={classes.fonts}>{reply.user}</Typography>}
                     secondary={
                         <>
                             <Typography
@@ -51,7 +51,7 @@ const Reply = ({ reply }) => {
                                 color="textPrimary"
                             >
                             </Typography>
-                            {`${reply.body}`}
+                            {`${reply.content}`}
                         </>
                     }
                 />
@@ -61,11 +61,12 @@ const Reply = ({ reply }) => {
     );
 };
 
-const ReplyList = ({ reply }) => {
+const ReplyList = ({ replies }) => {
     const classes = useStyles();
     return (
         <List className={classes.root}>
-            {reply.map((reply) => (
+            {
+            replies.map((reply) => (
                 <Reply reply={reply} />
             ))}
         </List>

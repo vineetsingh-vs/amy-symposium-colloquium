@@ -6,7 +6,7 @@ import { getManager } from "typeorm";
 
 export const getCommentList = async (req: Request, res: Response) => {
     console.log("[commentController] getCommentList");
-    const comments = await Comment.find();
+    const comments = await Comment.find({ relations: ['parent', 'replies'] });
     res.status(200).send(comments);
 };
 
@@ -19,29 +19,66 @@ export const createComment = async (req: Request, res: Response) => {
     let paper = await Paper.findOne({ where: { id: paperId } });
     if (paper) {
         let version = paper.versions[Number(versionId) - 1]
-        const newComment = Comment.create({
-            version: version,
-            parent: parentId,
-            user: userId,
-            content: content,
-            pageNum: pageNum,
-        });
+        if (parentId) {
+            let parent = await Comment.findOne({ relations: ['parent', 'replies'], where: { id: parentId } });
+            if (parent) {
+                const newComment = Comment.create({
+                    version: version,
+                    parent: parent,
+                    user: userId,
+                    content: content,
+                    replies: [],
+                    pageNum: pageNum,
+                });
+                await newComment.save();
 
-        await newComment.save();
-        console.log("saved comment: ");
-        console.log(newComment);
+                parent.replies.push(newComment);
+                await parent.save();
 
-        res.status(200).json({
-            id: newComment.id,
-            version: newComment.version,
-            content: newComment.content,
-            parent: newComment.parent,
-            replies: newComment.replies,
-            pageNum: newComment.pageNum,
-            user: newComment.user,
-            createdAt: newComment.created_at,
-            updatedAt: newComment.updated_at,
-        });
+                console.log("saved comment: ");
+                console.log(newComment);
+
+                res.status(200).json({
+                    id: newComment.id,
+                    version: newComment.version,
+                    content: newComment.content,
+                    parent: newComment.parent,
+                    replies: newComment.replies,
+                    pageNum: newComment.pageNum,
+                    user: newComment.user,
+                    createdAt: newComment.created_at,
+                    updatedAt: newComment.updated_at,
+                });
+            } else {
+                res.status(400).json({ message: "Could not find parent comment" });
+            }
+        } else {
+            console.log("Top level Comment");
+            const newComment = Comment.create({
+                version: version,
+                user: userId,
+                content: content,
+                replies: [],
+                pageNum: pageNum,
+            });
+
+            await newComment.save();
+
+            console.log("saved comment: ");
+            console.log(newComment);
+
+            res.status(200).json({
+                id: newComment.id,
+                version: newComment.version,
+                content: newComment.content,
+                parent: newComment.parent,
+                replies: newComment.replies,
+                pageNum: newComment.pageNum,
+                user: newComment.user,
+                createdAt: newComment.created_at,
+                updatedAt: newComment.updated_at,
+            });
+        }
     } else {
         res.status(400).json({ message: "Could not find paper" });
     }
@@ -99,9 +136,7 @@ export const getCommentsByVersionAndPage = async (req: Request, res: Response) =
     let paper = await Paper.findOne({ where: { id: paperID } });
     if (paper) {
         let version = paper.versions[Number(versionID) - 1];
-        console.log(version);
-        console.log(page);
-        let comments = await Comment.find({ relations: ['replies'], where: { version: version, pageNum: page } });
+        let comments = await Comment.find({ relations: ['parent', 'replies'], where: { version: version, parent: null, pageNum: page } });
         console.log(comments);
         //let comments = await Comment.find({ where: { version: version, pageNum: pageNumber } });
 
