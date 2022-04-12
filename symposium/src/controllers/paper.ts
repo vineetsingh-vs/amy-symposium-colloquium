@@ -11,8 +11,15 @@ export const getPaperList = async (req: Request, res: Response) => {
 
     let paperList;
     if (filter === "shared") {
+        paperList = await Paper.find();
+        // paperList = await Paper.find({where: [ {sharedWith : includes this user}]});
     } else if (filter === "uploaded") {
-    } else {
+        paperList = await Paper.find();
+        // Need the auth to be passed into this folder
+        // paperList = await Paper.find({where: [ {creator : is this user}]});
+    } else if (filter == "published") {
+        paperList = await Paper.find({where: [ {isPublished : true}]});
+    } else if (filter == "all"){
         // if user admin return all papers
         // else return papers shared with or associated with
         paperList = await Paper.find();
@@ -126,7 +133,10 @@ export const updatePaperMetaData = async (req: Request, res: Response) => {
         paper.title = title || paper.title;
         paper.creator = creator || paper.creator;
         paper.authors = authors || paper.authors;
-        paper.isPublished = isPublished || paper.isPublished;
+        if(isPublished !== null) {
+            paper.isPublished = isPublished;
+        }
+        
 
         await paper.save();
         res.status(200).json({

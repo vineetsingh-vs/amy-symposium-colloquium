@@ -5,25 +5,19 @@ import {
     AppBar,
     Button,
     Box,
-    TextField,
     CssBaseline,
     Container,
     Drawer,
     Divider,
     Grid,
     IconButton,
-    Link,
-    List,
-    ListItem,
-    ListItemIcon,
     Toolbar,
     Input,
     Typography,
-    FormControl,
     FormGroup,
 } from "@mui/material";
 import paperApi from "../api/paper";
-import { Menu, ChevronLeft, People, Person, Assignment } from "@mui/icons-material";
+import { Menu, ChevronLeft, Person } from "@mui/icons-material";
 import { DashboardItems } from "../components/listItems";
 import Copyright from "../components/Copyright";
 
@@ -123,7 +117,6 @@ const UploadPaperView = () => {
     const handleDrawerClose = () => {
         setOpen(false);
     };
-    const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
     const [username, setUsername] = React.useState("Default Username");
 
     // Form Data
@@ -158,7 +151,7 @@ const UploadPaperView = () => {
             console.log(files[i])
         }
 
-        const response = await paperApi.create(form);
+        await paperApi.create(form);
         window.location.replace("/mypapers");   
       }
       else {
@@ -244,7 +237,7 @@ const UploadPaperView = () => {
                                         onChange={(e) => setFiles(e.target.files)}
                                     />
                                     <br />
-                                    <Input type="submit" disabled={!(documentTitle != "" && author != "" && files.length != 0)} onClick={handleSubmission} />
+                                    <Input type="submit" disabled={!(documentTitle !== "" && author !== "" && files.length !== 0)} onClick={handleSubmission} />
                                 </FormGroup>
                             </Grid>
                         </Grid>

@@ -138,8 +138,14 @@ const MyPapersView = () => {
       return (year + '-' + month + '-' + dt);
     };
 
+    const changePublished = (paperID, published) => {
+      console.log(published)
+      paperApi.updateMetadata(paperID, { isPublished : published })
+      window.location.replace("/mypapers");
+    };
+
     useEffect(() => {
-        paperApi.getList(userID, "all").then((paperList) => {
+        paperApi.getList(userID, "uploaded").then((paperList) => {
             setList(paperList)
         })
     }, []);
@@ -225,11 +231,11 @@ const MyPapersView = () => {
                                                       <FormControlLabel
                                                           control={
                                                           <Switch
-                                                              checked={row.published}
+                                                              checked={row.isPublished}
+                                                              onChange={(e) => changePublished(row.id, !row.isPublished)}
                                                               color="primary"
                                                           />
                                                           }
-                                                          label = {row.published ? "Published": "Unpublished"}
                                                       />
     
                                               </TableCell>

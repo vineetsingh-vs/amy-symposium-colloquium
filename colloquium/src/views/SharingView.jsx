@@ -11,8 +11,6 @@ import {
     TableBody,
     TableCell,
     TableHead,
-    List,
-    ListItem,
     AppBar,
     CssBaseline,
     Container,
@@ -20,8 +18,6 @@ import {
     Divider,
     Grid,
     IconButton,
-    Link,
-    ListItemIcon,
     Toolbar,
     Typography,
     Box
@@ -32,7 +28,6 @@ import {
   Menu,
   ChevronLeft,
   Person,
-  People
 } from "@mui/icons-material"
 
 import Copyright from "../components/Copyright";

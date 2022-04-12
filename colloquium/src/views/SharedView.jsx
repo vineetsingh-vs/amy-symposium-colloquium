@@ -139,7 +139,7 @@ const SharedView = () => {
     };
 
     useEffect(async () => {
-      const result = await paperApi.getList(userID, "all");
+      const result = await paperApi.getList(userID, "shared");
       setList(result);
     }, []);
 
