@@ -118,8 +118,6 @@ const ReviewView = ({match, history}) => {
     // Document Info
     const [documentTitle, setDocumentTitle] = useState("");
     const [username, setUsername] = useState("Default Username");
-    const [reviews, setReviews] = useState([]);
-    const [value, setValue] = useState("");
     const [totalVersions, setTotalVersions] = useState(1);
     const [displayVersions, setDisplayVersions] = useState([]);
 
@@ -129,34 +127,10 @@ const ReviewView = ({match, history}) => {
 
         window.location.replace("/" + paperId + "/" + versionId + "/reviews");
     }
-
-    // Reviews Handling
-    const handleType = (text) => {
-        setValue(text.target.value);
-    }
-
-    const handleClick = () => {
-        reviews.push(createReviews(reviews.length, 1, value, []));
-        listReviews();
-        console.log(reviews);
-        setValue("");
-    }
     
-    const createReviews = (id, name, body, replies) => {
-        commentApi.createComment(paperId, versionId, null, name, body, 0);
-        return { id, pageNum: 0,  content: body, user: name };
-    }
-
-    const listReviews = () => {
-        let reviewList = reviews.slice();
-        setReviews(reviewList);
-        console.log("[ReviewList] got reviews");
-    };
-
     useEffect(() => {
         async function apiCalls() {
             await paperApi.getMetaDataById(paperId).then((doc) => setDocumentTitle(doc.title));
-            await commentApi.getCommentsByPaperVersion(paperId, versionId).then((reviews) => setReviews(reviews));
         }
         apiCalls();
         let temp = []
@@ -164,9 +138,6 @@ const ReviewView = ({match, history}) => {
             temp.push(version);
         }
         setDisplayVersions(temp);
-        // Fetch Reviews and set to reviews
-        console.log("[ReviewList] mount");
-        console.log(reviews)
     }, []);  
 
     // Side Bar Handling
@@ -249,13 +220,7 @@ const ReviewView = ({match, history}) => {
                 <div className={classes.appBarSpacer} />
                 <Container maxWidth="lg" className={classes.container}>
                     {/* Reviews */}
-                    <Grid item xs={12}>
-                        <ReviewList reviews={reviews}/>
-                        <TextField variant="outlined" multiline placeholder="Enter Review Here" fullWidth={true} value={value} onChange={handleType}></TextField>
-                        <Button color="primary" variant="contained" fullWidth={true} disabled={value === ""} onClick={handleClick}>
-                            Add Review
-                        </Button>
-                    </Grid>
+                    <ReviewList paperId={paperId} versionId={versionId} />
                     <Box pt={4}>
                         <Copyright />
                     </Box>

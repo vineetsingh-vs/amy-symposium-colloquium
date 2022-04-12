@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment } from "react";
 import makeStyles from '@mui/styles/makeStyles';
 import {
     List,
@@ -9,8 +9,6 @@ import {
     ListItemAvatar,
     Avatar,
     Typography,
-    Button,
-    TextField
 } from "@mui/material";
 
 import SubdirectoryArrowRightIcon from '@mui/icons-material/SubdirectoryArrowRight';
@@ -30,7 +28,6 @@ const useStyles = makeStyles((theme) => ({
 
 const Reply = ({ reply }) => {
     const classes = useStyles();
-    console.log(reply);
     return (
         <div className={`reply ${reply.id}`}>
             <ListItem key={reply.id} alignItems="flex-start">

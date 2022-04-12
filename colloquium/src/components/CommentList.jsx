@@ -51,8 +51,9 @@ const Comment = ({ comment, paperId, versionId, pageNum }) => {
     }
     
     const createReply = (id, name, body) => {
+        console.log(comment);
         commentApi.createComment(paperId, versionId, comment.id, name, body, pageNum);
-        return { id, pageNum: 0, parentId: comment.id, content: body, user: name };
+        return { id, pageNum: pageNum, parentId: comment.id, content: body, user: name };
     }
 
     const listReplies = () => {
@@ -67,7 +68,7 @@ const Comment = ({ comment, paperId, versionId, pageNum }) => {
         setIsFetching(true);
         listReplies();
         setIsFetching(false);
-    }, []);  
+    }, [comment, replies]);  
 
     const addReply = () => {
         setHidden(!hidden);
@@ -111,24 +112,28 @@ const Comment = ({ comment, paperId, versionId, pageNum }) => {
 
 const CommentList = ({ paperId, versionId }) => {
     const [comments, setComments] = useState([]);
-    const classes = useStyles();
-    // Comment Handling
     const [currentComment, setCurrentComment] = useState("");
+    const classes = useStyles();
+    
+    // Comment Handling
     const handleType = (text) => {
         setCurrentComment(text.target.value);
     };
 
-    const handleClick = () => {
-        comments.push(createComment(comments.length, 1, currentComment, []));
+    const handleClick = async() => {
+        await createComment(comments.length, 1, currentComment, []).then((data) => comments.push(data));
+        //comments.push(createComment(comments.length, 1, currentComment, []));
         listComments();
         console.log(comments);
         setCurrentComment("");
     };
 
-    const createComment = (id, user, content, replies) => {
+    const createComment = async(id, user, content, replies) => {
         // Push a comment thing here to backend
-        commentApi.createComment(paperId, versionId, null,  1, content, PageStore.getState().currentPage);
-        return { id, user, content, replies };
+        let data = await commentApi.createComment(paperId, versionId, null,  1, content, PageStore.getState().currentPage).then((data) => {
+            return data;
+        });
+        return data;
     };
 
     const listComments = () => {
@@ -170,17 +175,56 @@ const CommentList = ({ paperId, versionId }) => {
     );
 };
 
-const ReviewList = ({ reviews }) => {
+const ReviewList = ({ paperId, versionId }) => {
+    const [reviews, setReviews] = useState([]);
     const classes = useStyles();
+    const [value, setValue] = useState("");
+    
+    // Reviews Handling
+    const handleType = (text) => {
+        setValue(text.target.value);
+    }
 
-    console.log(reviews);
+    const handleClick = async() => {
+        await createReviews(reviews.length, 1, value, []).then((data) => reviews.push(data));
+        listReviews();
+        console.log(reviews);
+        setValue("");
+    }
+
+    const createReviews = async(id, name, body, replies) => {
+        let data = await commentApi.createComment(paperId, versionId, null, name, body, 0).then((data) => {
+            return data;
+        });
+        return data;
+    }
+
+    const listReviews = () => {
+        setReviews(reviews);
+        console.log("[ReviewList] got reviews");
+    };
+
+    useEffect(() => {
+        async function apiCalls() {
+            await commentApi.getCommentsByPage(paperId, versionId, 0).then((reviews) => setReviews(reviews));
+        }
+        apiCalls();
+        console.log("[ReviewList] mount");
+        console.log(reviews)
+    }, []);  
 
     return (
-        <List className={classes.root}>
-            {reviews.map((review) => (
-                <Comment comment={review} pageNum={0} />
-            ))}
-        </List>
+        <Grid item xs={12}>
+            <List className={classes.root}>
+                {reviews.map((review) => (
+                    <Comment comment={review} paperId={paperId} versionId={versionId} pageNum={0} />
+                ))}
+            </List>
+            <TextField variant="outlined" multiline placeholder="Enter Review Here" fullWidth={true} value={value} onChange={handleType}></TextField>
+            <Button color="primary" variant="contained" fullWidth={true} disabled={value === ""} onClick={handleClick}>
+                Add Review
+            </Button>
+        </Grid>
     );
 };
 
