@@ -8,23 +8,18 @@ import {
   Box,
   AppBar,
   Toolbar,
-  List,
   Typography,
-  Select,
-  MenuItem,
   Divider,
   IconButton,
   Container,
   Grid,
-  Link,
   Input
 } from "@mui/material"
 
 import {
   Menu,
   ChevronLeft,
-  Person,
-  Assignment
+  Person
 } from "@mui/icons-material"
 
 import { DocumentItems } from '../components/listItems';
@@ -125,13 +120,6 @@ const ReuploadView = ({match, history}) => {
     const [documentTitle, setDocumentTitle] = React.useState("");
     const [username, setUsername] = React.useState("Default Username");
 
-    // Version Control -> Should not do anything
-    const ChangeCurrentVersion = (event) => {
-        // versionId = event.target.value
-        // // Change docs to different version
-        // window.location.replace("/" + paperId + "/" + versionId + "/reupload");
-    }
-
     const handleDrawerOpen = () => {
         setOpen(true);
     };
@@ -194,18 +182,6 @@ const ReuploadView = ({match, history}) => {
                 </div>
                 <Divider />
                 <DocumentItems versionId={versionId}/>
-                <h3>Version</h3>
-                <Select
-                    labelId="Version Select Label"
-                    id="Version Select"
-                    label="Version"
-                    value={versionId}
-                    onChange={(e) => ChangeCurrentVersion(e)}
-                >
-                    <MenuItem value={1}>1</MenuItem>
-                    <MenuItem value={2}>2</MenuItem>
-                    <MenuItem value={3}>3</MenuItem>
-                </Select>
             </Drawer>
             <main className={classes.content}>
                 <div className={classes.appBarSpacer}>

@@ -120,9 +120,11 @@ const ReviewView = ({match, history}) => {
     const [username, setUsername] = useState("Default Username");
     const [reviews, setReviews] = useState([]);
     const [value, setValue] = useState("");
+    const [totalVersions, setTotalVersions] = useState(1);
+    const [displayVersions, setDisplayVersions] = useState([]);
 
     // Version Control
-    const ChangeCurrentVersion = (event) => {
+    const handleChangeVersion = (event) => {
         versionId = event.target.value;
 
         window.location.replace("/" + paperId + "/" + versionId + "/reviews");
@@ -157,6 +159,11 @@ const ReviewView = ({match, history}) => {
             await commentApi.getCommentsByPaperVersion(paperId, versionId).then((reviews) => setReviews(reviews));
         }
         apiCalls();
+        let temp = []
+        for(let version = 1; version <= totalVersions; version++){
+            temp.push(version);
+        }
+        setDisplayVersions(temp);
         // Fetch Reviews and set to reviews
         console.log("[ReviewList] mount");
         console.log(reviews)
@@ -227,11 +234,15 @@ const ReviewView = ({match, history}) => {
                     id="Version Select"
                     label="Version"
                     value={versionId}
-                    onChange={(e) => ChangeCurrentVersion(e)}
+                    onChange={(e) => handleChangeVersion(e)}
                 >
-                    <MenuItem value={1}>1</MenuItem>
-                    <MenuItem value={2}>2</MenuItem>
-                    <MenuItem value={3}>3</MenuItem>
+                    {displayVersions.map((version) => (
+                        <MenuItem
+                            value={version}
+                        >
+                            {version}
+                        </MenuItem>
+                    ))}
                 </Select>
             </Drawer>
             <main className={classes.content}>
