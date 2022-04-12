@@ -37,7 +37,7 @@ const Comment = ({ comment }) => {
         setValue("");
     };
 
-    const createReply = (id, name, body) => {
+    const createReply = (id, name, body, pageNum) => {
         commentApi.createComment(comment.paperId, comment.versionId, comment.id, name, body, pageNum);
         return { id, pageNum: 0, parentId: comment.id, content: body, user: name };
     }
@@ -127,8 +127,8 @@ const CommentList = ({ paperId, versionId }) => {
     );
 };
 
-const ReviewList = ({ reviews }) => {
-    const classes = useStyles();
+const ReviewList = ({reviews}) => {
+    const classes = useCommentListStyles();
 
     console.log(reviews);
 
