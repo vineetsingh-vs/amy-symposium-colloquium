@@ -57,10 +57,13 @@ const DocumentView = () => {
     const history = useHistory()
     const { user } = useAuth()
     const [drawerToggled, setDrawerToggled] = useState(false);
-    const [comments, setComments] = useState([]);
     const [docUri, setDocUri] = useState([]);
     const [documentTitle, setDocumentTitle] = useState("");
     const [isFetching, setIsFetching] = useState(false);
+
+    const handleDrawerToggle = () => {
+        setDrawerToggled(!drawerToggled);
+    };
 
     const handleChangeVersion = (event) => {
         const versionId = event.target.value;
