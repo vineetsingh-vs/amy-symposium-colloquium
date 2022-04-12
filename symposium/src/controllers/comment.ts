@@ -78,9 +78,7 @@ export const getCommentsByVersionId = async (req: Request, res: Response) => {
     let paper = await Paper.findOne({ where: { id: paperID } });
     if (paper) {
         let version = paper.versions[Number(versionID) - 1];
-        const manager = getManager();
-        let comments = await manager.getTreeRepository(Comment).createQueryBuilder("comment")
-            .where("comment.version = :version", { version: version}).getMany();
+        let comments = await Comment.find({ where: { version: version }})
         console.log(comments);
         //let comments = await Comment.find({ where: { version: version } });
         if (comments) {
@@ -101,10 +99,7 @@ export const getCommentsByVersionAndPage = async (req: Request, res: Response) =
     let paper = await Paper.findOne({ where: { id: paperID } });
     if (paper) {
         let version = paper.versions[Number(versionID) - 1];
-        const manager = getManager();
-        let comments = await manager.getTreeRepository(Comment).createQueryBuilder("comment")
-            .where("comment.version = :version", { version: version})
-            .andWhere("comment.pageNum = :pageNumber", { pageNumber: pageNumber}).getMany();
+        let comments = await Comment.find({ where: { version: version, parent: null, pageNum: pageNumber}});
         console.log(comments);
         //let comments = await Comment.find({ where: { version: version, pageNum: pageNumber } });
 
