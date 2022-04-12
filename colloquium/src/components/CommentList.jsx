@@ -125,15 +125,14 @@ const CommentList = ({ paperId, versionId }) => {
         setCurrentComment("");
     };
 
-    const createComment = (id, name, body, replies) => {
+    const createComment = (id, user, content, replies) => {
         // Push a comment thing here to backend
-        commentApi.createComment(paperId, versionId, null,  1, body, PageStore.getState().currentPage);
-        return { id, name, body, replies };
+        commentApi.createComment(paperId, versionId, null,  1, content, PageStore.getState().currentPage);
+        return { id, user, content, replies };
     };
 
     const listComments = () => {
-        let commentList = comments.slice();
-        setComments(commentList);
+        setComments(comments);
         console.log("[CommentList] got comments");
     };
 
