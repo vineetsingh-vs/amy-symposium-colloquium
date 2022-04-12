@@ -194,18 +194,6 @@ const ReuploadView = ({match, history}) => {
                 </div>
                 <Divider />
                 <DocumentItems versionId={versionId}/>
-                <h3>Version</h3>
-                <Select
-                    labelId="Version Select Label"
-                    id="Version Select"
-                    label="Version"
-                    value={versionId}
-                    onChange={(e) => ChangeCurrentVersion(e)}
-                >
-                    <MenuItem value={1}>1</MenuItem>
-                    <MenuItem value={2}>2</MenuItem>
-                    <MenuItem value={3}>3</MenuItem>
-                </Select>
             </Drawer>
             <main className={classes.content}>
                 <div className={classes.appBarSpacer}>
