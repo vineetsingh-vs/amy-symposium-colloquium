@@ -244,7 +244,7 @@ const UploadPaperView = () => {
                                         onChange={(e) => setFiles(e.target.files)}
                                     />
                                     <br />
-                                    <Input type="submit" onClick={handleSubmission} />
+                                    <Input type="submit" disabled={!(documentTitle != "" && author != "" && files.length != 0)} onClick={handleSubmission} />
                                 </FormGroup>
                             </Grid>
                         </Grid>

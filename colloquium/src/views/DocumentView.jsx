@@ -21,7 +21,6 @@ import {
     Box,
     AppBar,
     Toolbar,
-    List,
     Typography,
     Select,
     MenuItem,
@@ -29,8 +28,6 @@ import {
     IconButton,
     Container,
     Grid,
-    TextField,
-    Input,
 } from "@mui/material";
 import Menu from "@mui/icons-material/Menu";
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
@@ -40,12 +37,8 @@ import { DocumentItems } from "../components/listItems";
 import Copyright from "../components/Copyright";
 import paperApi from "../api/paper";
 import { createStore } from "redux";
-import commentApi from "../api/comment";
 
 const drawerWidth = 240;
-const pageContext = {
-    currentPage: 1,
-};
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -147,7 +140,6 @@ const DocumentView = ({ match, history }) => {
 
     // Displaying Document
     const [username, setUsername] = useState("Default Username");
-    const [comments, setComments] = useState([]);
     const [docUri, setDocUri] = useState([]);
     const [documentTitle, setDocumentTitle] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
@@ -155,31 +147,6 @@ const DocumentView = ({ match, history }) => {
 
     const [isFetching, setIsFetching] = useState(false);
     const [displayVersions, setDisplayVersions] = useState([]);
-
-    // Comment Handling
-    const [currentComment, setCurrentComment] = useState("");
-    const handleType = (text) => {
-        setCurrentComment(text.target.value);
-    };
-
-    const handleClick = () => {
-        //comments.push(createComment(comments.length, username, currentComment, []));
-        listComments();
-        console.log(comments);
-        setCurrentComment("");
-    };
-
-    const createComment = (id, name, body, replies) => {
-        // Push a comment thing here to backend
-        commentApi.createComment(paperId, versionId, 1, body, currentPage);
-        return { id, name, body, replies };
-    };
-
-    const listComments = () => {
-        let commentList = comments.slice();
-        setComments(commentList);
-        console.log("[CommentList] got comments");
-    };
 
     // Side Bar Handling
     const handleDrawerOpen = () => {
@@ -313,26 +280,7 @@ const DocumentView = ({ match, history }) => {
                                 />
                             </Grid>
                             {/* Comments */}
-                            <Grid item xs={4}>
-                                {/* <CommentList paperId={paperId} versionId={versionId} /> */}
-                                <TextField
-                                    variant="outlined"
-                                    multiline
-                                    placeholder="Enter Comment Here"
-                                    fullWidth={true}
-                                    value={currentComment}
-                                    onChange={handleType}
-                                ></TextField>
-                                <Button
-                                    color="primary"
-                                    variant="contained"
-                                    fullWidth={true}
-                                    disabled={currentComment === ""}
-                                    onClick={handleClick}
-                                >
-                                    Add Comment
-                                </Button>
-                            </Grid>
+                            <CommentList paperId={paperId} versionId={versionId} />
                         </Grid>
                         <Box pt={4}>
                             <Copyright />
