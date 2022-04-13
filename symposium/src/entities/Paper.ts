@@ -33,7 +33,7 @@ export class Paper extends BaseEntity {
     sharedWith: User[];
 
     @Column("boolean", { default: false })
-    isPublished: boolean = false;
+    isPublished: boolean;
 
     @CreateDateColumn()
     createdAt: Date;
@@ -45,7 +45,7 @@ export class Paper extends BaseEntity {
     versionNumber: number;
 
     @OneToMany(() => Version, (version) => version.paper, {
-        eager: true
+        eager: true,
     })
     versions!: Version[];
 }

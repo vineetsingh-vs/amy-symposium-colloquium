@@ -13,6 +13,7 @@ import {
     FormControlLabel,
 } from "@mui/material";
 import { usePaperTableStyles } from "../styles/paperViewStyles";
+import paperApi from "../api/paper.js";
 
 const convertNiceDate = (badDate) => {
     let date = new Date(badDate);
@@ -32,6 +33,12 @@ const convertNiceDate = (badDate) => {
 
 const PapersTable = ({ papers, filter }) => {
     const classes = usePaperTableStyles();
+
+    const handleChangePublish = (paperID, published) => {
+        console.log(published);
+        paperApi.updateMetadata(paperID, {isPublished: published}).then(resp => console.log(resp))
+    };
+
     return (
         <div className={classes.appBarSpacer}>
             <Container maxWidth="lg" className={classes.container}>
@@ -48,12 +55,11 @@ const PapersTable = ({ papers, filter }) => {
                                     <TableCell>My Papers</TableCell>
                                     <TableCell>Paper Owner</TableCell>
                                     <TableCell>Most Recent Edit</TableCell>
-                                    {
-                                        filter === "uploaded" ?
+                                    {filter === "uploaded" ? (
                                         <TableCell>Publish</TableCell>
-                                        :
+                                    ) : (
                                         <></>
-                                    }
+                                    )}
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -75,21 +81,28 @@ const PapersTable = ({ papers, filter }) => {
                                         <TableCell>
                                             {convertNiceDate(paper.updatedAt)}
                                         </TableCell>
-                                        {
-                                            filter === "uploaded" ?
+                                        {filter === "uploaded" ? (
                                             <TableCell>
                                                 <FormControlLabel
                                                     control={
                                                         <Switch
-                                                            checked={paper.published}
+                                                            checked={paper.isPublished}
                                                             color="primary"
+                                                            onChange={(e) => {
+                                                                e.preventDefault()
+                                                                console.log(paper)
+                                                                handleChangePublish(
+                                                                    paper.id,
+                                                                    !paper.isPublished
+                                                                )
+                                                            }}
                                                         />
                                                     }
                                                 />
                                             </TableCell>
-                                            :
+                                        ) : (
                                             <></>
-                                        }
+                                        )}
                                     </TableRow>
                                 ))}
                             </TableBody>

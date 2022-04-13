@@ -26,8 +26,8 @@ export const getPaperList = async (req: Request, res: Response) => {
         // Need the auth to be passed into this folder
         // paperList = await Paper.find({where: [ {creator : is this user}]});
     } else if (filter == "published") {
-        paperList = await Paper.find({where: [ {isPublished : true}]});
-    } else if (filter == "all"){
+        paperList = await Paper.find({ where: [{ isPublished: true }] });
+    } else if (filter == "all") {
         // if user admin return all papers
         // else return papers shared with or associated with
         paperList = await Paper.find();
@@ -137,29 +137,18 @@ export const updatePaperMetaData = async (req: Request, res: Response) => {
     console.log("[paperController] updatePaperMetaData");
     const { paperId } = req.params;
     const { title, creator, authors, isPublished } = req.body;
+    console.log(req.body);
+    console.log(isPublished);
 
     let paper = await Paper.findOne({ where: { id: paperId } });
     if (paper) {
         paper.title = title || paper.title;
         paper.creator = creator || paper.creator;
         paper.authors = authors || paper.authors;
-        if (isPublished !== null) {
-            paper.isPublished = isPublished;
-        }
-
-        await paper.save();
-        res.status(200).json({
-            id: paper.id,
-            title: paper.title,
-            creator: paper.creator,
-            authors: paper.authors,
-            sharedWith: paper.sharedWith,
-            isPublished: paper.isPublished,
-            createdAt: paper.createdAt,
-            updatedAt: paper.updatedAt,
-            versionNumber: paper.versionNumber,
-            versions: paper.versions,
-        });
+        if (isPublished !== undefined && isPublished !== null) paper.isPublished = isPublished;
+        const updatedPaper = await paper.save();
+        console.log(updatedPaper.isPublished);
+        res.status(200).json(updatedPaper);
     } else {
         res.status(400).json({ message: "Paper not found" });
     }
@@ -249,9 +238,7 @@ export const updatePaperFileVersion = async (req: Request, res: Response) => {
         } else {
             res.status(400).json({ message: "Paper not found" });
         }
-
     });
-
 };
 
 //

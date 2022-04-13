@@ -40,14 +40,12 @@ const PapersView = () => {
 
     // get filtered papers on mount and everytime filter state is updated
     useEffect(() => {
-        console.log(user)
         paperApi.getList(user.id, filter).then((paperList) => {
             setPapers(paperList);
         });
         if (filter === "uploaded") setTitle("My Papers");
         if (filter === "shared") setTitle("Shared With Me");
         if (filter === "published") setTitle("Published Papers");
-        console.log(filter);
     }, [filter]);
 
     return (
