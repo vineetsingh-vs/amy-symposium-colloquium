@@ -7,26 +7,27 @@ import {
     Column,
     BaseEntity,
     ManyToOne,
-    JoinTable,
-    Tree,
-    TreeChildren,
-    TreeParent,
 } from "typeorm";
 import { Version } from "./Version";
 
 @Entity()
-@Tree("adjacency-list")
 export class Comment extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     id!: string;
 
-    @ManyToOne(() => Version, (version) => version.comments)
+    @ManyToOne(() => Version, (version) => version.comments, {
+        eager: true
+    })
     version!: Version;
 
-    @ManyToOne(() => Comment, (comment) => comment.replies)
+    @ManyToOne(() => Comment, (comment) => comment.replies, {
+        onUpdate: 'CASCADE'
+    })
     parent: Comment;
 
-    @OneToMany(() => Comment, (comment) => comment.parent)
+    @OneToMany(() => Comment, (comment) => comment.parent, {
+        cascade: true
+    })
     replies: Comment[];
 
     @Column()

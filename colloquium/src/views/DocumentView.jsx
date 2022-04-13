@@ -23,7 +23,6 @@ import {
     IconButton,
     Container,
     Grid,
-    TextField,
 } from "@mui/material";
 import Menu from "@mui/icons-material/Menu";
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
@@ -60,6 +59,8 @@ const DocumentView = () => {
     const [docUri, setDocUri] = useState([]);
     const [documentTitle, setDocumentTitle] = useState("");
     const [isFetching, setIsFetching] = useState(false);
+    const [displayVersions, setDisplayVersions] = useState([]);
+    const [totalVersions, setTotalVersions] = useState(0)
 
     const handleDrawerToggle = () => {
         setDrawerToggled(!drawerToggled);
@@ -74,8 +75,16 @@ const DocumentView = () => {
 
     useEffect(() => {
         // load document metadata and file version
-        paperApi.getMetaDataById(paperId).then((metadata) => setDocumentTitle(metadata.title));
+        paperApi.getMetaDataById(paperId).then((metadata) => {
+            setTotalVersions(metadata.versionNumber);
+            setDocumentTitle(metadata.title)});
         setDocUri([{ uri: paperApi.getDocumentURI(paperId, versionId) }]);
+
+        let temp = []
+        for(let version = 1; version <= totalVersions; version++){
+            temp.push(version);
+        }
+        setDisplayVersions(temp);
     }, []);
 
     if (isFetching) {
@@ -143,9 +152,13 @@ const DocumentView = () => {
                         value={versionId}
                         onChange={(e) => handleChangeVersion(e)}
                     >
-                        <MenuItem value={1}>1</MenuItem>
-                        <MenuItem value={2}>2</MenuItem>
-                        <MenuItem value={3}>3</MenuItem>
+                        {displayVersions.map((version) => (
+                            <MenuItem
+                                value={version}
+                            >
+                                {version}
+                            </MenuItem>
+                        ))}
                     </Select>
                 </Drawer>
                 <main className={classes.content}>

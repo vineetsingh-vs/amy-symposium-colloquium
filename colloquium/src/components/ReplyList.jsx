@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment } from "react";
 import makeStyles from '@mui/styles/makeStyles';
 import {
     List,
@@ -9,8 +9,6 @@ import {
     ListItemAvatar,
     Avatar,
     Typography,
-    Button,
-    TextField
 } from "@mui/material";
 
 import SubdirectoryArrowRightIcon from '@mui/icons-material/SubdirectoryArrowRight';
@@ -30,7 +28,6 @@ const useStyles = makeStyles((theme) => ({
 
 const Reply = ({ reply }) => {
     const classes = useStyles();
-    
     return (
         <div className={`reply ${reply.id}`}>
             <ListItem key={reply.id} alignItems="flex-start">
@@ -41,7 +38,7 @@ const Reply = ({ reply }) => {
                     <Avatar alt="avatar" />
                 </ListItemAvatar>
                 <ListItemText
-                    primary={<Typography className={classes.fonts}>{reply.name}</Typography>}
+                    primary={<Typography className={classes.fonts}>{reply.user}</Typography>}
                     secondary={
                         <>
                             <Typography
@@ -51,7 +48,7 @@ const Reply = ({ reply }) => {
                                 color="textPrimary"
                             >
                             </Typography>
-                            {`${reply.body}`}
+                            {`${reply.content}`}
                         </>
                     }
                 />
@@ -61,11 +58,12 @@ const Reply = ({ reply }) => {
     );
 };
 
-const ReplyList = ({ reply }) => {
+const ReplyList = ({ replies }) => {
     const classes = useStyles();
     return (
         <List className={classes.root}>
-            {reply.map((reply) => (
+            {
+            replies.map((reply) => (
                 <Reply reply={reply} />
             ))}
         </List>

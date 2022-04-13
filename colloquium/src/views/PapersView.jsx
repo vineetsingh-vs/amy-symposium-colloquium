@@ -32,7 +32,7 @@ const PapersView = () => {
     const [filter, setFilter] = useState("uploaded");
     const [title, setTitle] = useState("My Papers");
     const [papers, setPapers] = useState([]);
-    const auth = useAuth();
+    const { user } = useAuth();
 
     const handleDrawerToggle = () => {
         setDrawerToggled(!drawerToggled);
@@ -40,7 +40,8 @@ const PapersView = () => {
 
     // get filtered papers on mount and everytime filter state is updated
     useEffect(() => {
-        paperApi.getList(auth.user.id, filter).then((paperList) => {
+        console.log(user)
+        paperApi.getList(user.id, filter).then((paperList) => {
             setPapers(paperList);
         });
         if (filter === "uploaded") setTitle("My Papers");
@@ -85,7 +86,7 @@ const PapersView = () => {
                         startIcon={<Person />}
                         href="/userprofile"
                     >
-                        {auth.user.firstName}
+                        {user.firstName}
                     </Button>
                 </Toolbar>
             </AppBar>

@@ -9,6 +9,8 @@ import config from "../utils/config";
 export const getPaperList = async (req: Request, res: Response) => {
     const { filter, userId } = req.query;
     console.log("[paperController] getPaperList");
+    console.log(userId);
+    console.log(filter);
 
     const user = User.findOne({ where: { id: userId } });
     if (!user) {
@@ -136,7 +138,9 @@ export const updatePaperMetaData = async (req: Request, res: Response) => {
         paper.title = title || paper.title;
         paper.creator = creator || paper.creator;
         paper.authors = authors || paper.authors;
-        paper.isPublished = isPublished || paper.isPublished;
+        if (isPublished !== null) {
+            paper.isPublished = isPublished;
+        }
 
         await paper.save();
         res.status(200).json({

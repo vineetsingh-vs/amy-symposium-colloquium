@@ -33,15 +33,17 @@ const Comment = ({ comment }) => {
     };
 
     const handleClick = () => {
-        replies.push(createReply(comments.length, username, value));
+        replies.push(createReply(comments.length, 1, value));
         listReplies();
         console.log(replies);
         setValue("");
-    };
-
-    const createReply = (id, name, body, pageNum) => {
-        commentApi.createComment(comment.paperId, comment.versionId, comment.id, name, body, pageNum);
-        return { id, pageNum: 0, parentId: comment.id, content: body, user: name };
+        setHidden(!hidden);
+    }
+    
+    const createReply = (id, paperId, versionId, comment, name, content, pageNum) => {
+        console.log(comment);
+        commentApi.createComment(paperId, versionId, comment.id, name, content, pageNum);
+        return { id, pageNum: pageNum, parentId: comment.id, content: content, user: name };
     }
 
     const listReplies = () => {
@@ -56,7 +58,7 @@ const Comment = ({ comment }) => {
         setIsFetching(true);
         listReplies();
         setIsFetching(false);
-    }, []);
+    }, [comment, replies]);  
 
     const addReply = () => {
         setHidden(!hidden);
@@ -91,7 +93,7 @@ const Comment = ({ comment }) => {
             
             {hidden && (<Button color="secondary" variant="contained" disabled={value == ""} onClick={handleClick}>Add Reply</Button>)}
             
-            { replies ? <ReplyList reply={replies}/> : <div></div>}
+            { replies ? <ReplyList replies={replies}/> : <div></div>}
 
             {hidden && (
                 <Button
@@ -110,31 +112,32 @@ const Comment = ({ comment }) => {
     );
 };
 
-const CommentList = ({ paperId, versionId }) => {
+const CommentList = ({paperId, versionId}) => {
     const [comments, setComments] = useState([]);
+    const [currentComment, setCurrentComment] = useState("")
     const classes = useCommentListStyles();
-    // Comment Handling
-    const [currentComment, setCurrentComment] = useState("");
     const handleType = (text) => {
         setCurrentComment(text.target.value);
     };
 
-    const handleClick = () => {
-        comments.push(createComment(comments.length, 1, currentComment, []));
+    const handleClick = async() => {
+        await createComment(comments.length, 1, currentComment, []).then((data) => comments.push(data));
+        //comments.push(createComment(comments.length, 1, currentComment, []));
         listComments();
         console.log(comments);
         setCurrentComment("");
     };
 
-    const createComment = (id, name, body, replies) => {
+    const createComment = async(id, user, content, replies) => {
         // Push a comment thing here to backend
-        commentApi.createComment(paperId, versionId, null,  1, body, PageStore.getState().currentPage);
-        return { id, name, body, replies };
+        let data = await commentApi.createComment(paperId, versionId, null,  1, content, PageStore.getState().currentPage).then((data) => {
+            return data;
+        });
+        return data;
     };
 
     const listComments = () => {
-        let commentList = comments.slice();
-        setComments(commentList);
+        setComments(comments);
         console.log("[CommentList] got comments");
     };
 
@@ -148,7 +151,7 @@ const CommentList = ({ paperId, versionId }) => {
         <Grid item xs={4}>
             <List className={classes.root}>
                 {comments.map((comment) => (
-                    <Comment comment={comment} pageNum={PageStore.getState().currentPage} />
+                    <Comment comment={comment} paperId={paperId} versionId={versionId} pageNum={PageStore.getState().currentPage} />
                 ))}
             </List>
             <TextField
@@ -172,17 +175,56 @@ const CommentList = ({ paperId, versionId }) => {
     );
 };
 
-const ReviewList = ({reviews}) => {
+const ReviewList = ({ paperId, versionId }) => {
+    const [reviews, setReviews] = useState([]);
     const classes = useCommentListStyles();
+    const [value, setValue] = useState("");
+    
+    // Reviews Handling
+    const handleType = (text) => {
+        setValue(text.target.value);
+    }
 
-    console.log(reviews);
+    const handleClick = async() => {
+        await createReviews(reviews.length, 1, value, []).then((data) => reviews.push(data));
+        listReviews();
+        console.log(reviews);
+        setValue("");
+    }
+
+    const createReviews = async(id, name, body, replies) => {
+        let data = await commentApi.createComment(paperId, versionId, null, name, body, 0).then((data) => {
+            return data;
+        });
+        return data;
+    }
+
+    const listReviews = () => {
+        setReviews(reviews);
+        console.log("[ReviewList] got reviews");
+    };
+
+    useEffect(() => {
+        async function apiCalls() {
+            await commentApi.getCommentsByPage(paperId, versionId, 0).then((reviews) => setReviews(reviews));
+        }
+        apiCalls();
+        console.log("[ReviewList] mount");
+        console.log(reviews)
+    }, []);  
 
     return (
-        <List className={classes.root}>
-            {reviews.map((review) => (
-                <Comment comment={review} pageNum={0} />
-            ))}
-        </List>
+        <Grid item xs={12}>
+            <List className={classes.root}>
+                {reviews.map((review) => (
+                    <Comment comment={review} paperId={paperId} versionId={versionId} pageNum={0} />
+                ))}
+            </List>
+            <TextField variant="outlined" multiline placeholder="Enter Review Here" fullWidth={true} value={value} onChange={handleType}></TextField>
+            <Button color="primary" variant="contained" fullWidth={true} disabled={value === ""} onClick={handleClick}>
+                Add Review
+            </Button>
+        </Grid>
     );
 };
 
