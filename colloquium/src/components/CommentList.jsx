@@ -105,7 +105,6 @@ const Comment = ({ comment }) => {
                     Add Reply
                 </Button>
             )}
-            <ReplyList reply={replies} />
 
             <Divider />
         </div>
