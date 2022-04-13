@@ -134,7 +134,7 @@ const PapersView = () => {
                 </List>
             </Drawer>
             <div className={classes.papersTable}>
-                <PapersTable papers={papers} />
+                <PapersTable papers={papers} filter={filter}/>
             </div>
             <div pt={4}>
                 <Copyright />

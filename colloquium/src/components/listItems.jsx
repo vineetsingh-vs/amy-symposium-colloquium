@@ -17,7 +17,7 @@ const DocumentItems = (versionId) => {
       <ListItemIcon>
         <Dashboard />
       </ListItemIcon>
-      <Link href="/published" underline="hover">
+      <Link href="/papers" underline="hover">
         Dashboard
       </Link>
     </ListItem>
@@ -61,8 +61,8 @@ const SecondaryListItems = () => {
   <List>
     <ListItem>
       <ListItemIcon>
-                  <Dashboard />
-              </ListItemIcon>
+          <Dashboard />
+      </ListItemIcon>
       <Link href="/papers" underline="hover">
         Dashboard
       </Link>
@@ -77,24 +77,8 @@ const DashboardItems = () => {
           <ListItemIcon>
               <Assignment />
           </ListItemIcon>
-          <Link href="/published" underline="hover">
-              Published
-          </Link>
-      </ListItem>
-      <ListItem>
-          <ListItemIcon>
-              <People />
-          </ListItemIcon>
-          <Link href="/shared" underline="hover">
-              Shared With Me
-          </Link>
-      </ListItem>
-      <ListItem>
-          <ListItemIcon>
-              <Person />
-          </ListItemIcon>
-          <Link href="/mypapers" underline="hover">
-              My Papers
+          <Link href="/papers" underline="hover">
+              Dashboard
           </Link>
       </ListItem>
   </List>

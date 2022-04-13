@@ -20,9 +20,14 @@ export const getPaperList = async (req: Request, res: Response) => {
     let paperList;
     if (filter === "shared") {
         paperList = await Paper.find();
+        // paperList = await Paper.find({where: [ {sharedWith : includes this user}]});
     } else if (filter === "uploaded") {
         paperList = await Paper.find();
-    } else if (filter === "published") {
+        // Need the auth to be passed into this folder
+        // paperList = await Paper.find({where: [ {creator : is this user}]});
+    } else if (filter == "published") {
+        paperList = await Paper.find({where: [ {isPublished : true}]});
+    } else if (filter == "all"){
         // if user admin return all papers
         // else return papers shared with or associated with
         paperList = await Paper.find();

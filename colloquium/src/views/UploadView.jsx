@@ -75,7 +75,7 @@ const UploadView = () => {
                 console.log(files[i]);
             }
 
-            const response = await paperApi.create(form);
+            await paperApi.create(form);
             history.push("papers");
         } else {
             clearValues();

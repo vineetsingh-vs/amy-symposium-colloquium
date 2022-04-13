@@ -30,7 +30,7 @@ const convertNiceDate = (badDate) => {
     return year + "-" + month + "-" + dt;
 };
 
-const PapersTable = ({ papers }) => {
+const PapersTable = ({ papers, filter }) => {
     const classes = usePaperTableStyles();
     return (
         <div className={classes.appBarSpacer}>
@@ -48,7 +48,12 @@ const PapersTable = ({ papers }) => {
                                     <TableCell>My Papers</TableCell>
                                     <TableCell>Paper Owner</TableCell>
                                     <TableCell>Most Recent Edit</TableCell>
-                                    <TableCell>Publish</TableCell>
+                                    {
+                                        filter === "uploaded" ?
+                                        <TableCell>Publish</TableCell>
+                                        :
+                                        <></>
+                                    }
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -70,21 +75,21 @@ const PapersTable = ({ papers }) => {
                                         <TableCell>
                                             {convertNiceDate(paper.updatedAt)}
                                         </TableCell>
-                                        <TableCell>
-                                            <FormControlLabel
-                                                control={
-                                                    <Switch
-                                                        checked={paper.published}
-                                                        color="primary"
-                                                    />
-                                                }
-                                                label={
-                                                    paper.published
-                                                        ? "Published"
-                                                        : "Unpublished"
-                                                }
-                                            />
-                                        </TableCell>
+                                        {
+                                            filter === "uploaded" ?
+                                            <TableCell>
+                                                <FormControlLabel
+                                                    control={
+                                                        <Switch
+                                                            checked={paper.published}
+                                                            color="primary"
+                                                        />
+                                                    }
+                                                />
+                                            </TableCell>
+                                            :
+                                            <></>
+                                        }
                                     </TableRow>
                                 ))}
                             </TableBody>
