@@ -68,7 +68,7 @@ const DocumentView = () => {
 
     const handleChangeVersion = (event) => {
         const versionId = event.target.value;
-        history.push(`/${paperId}/${versionId}`)
+        window.location.replace("/" + paperId + "/" + versionId);
     };
 
     //PageStore.subscribe(() => {if (currentPage !== PageStore.getState().currentPage) setCurrentPage(PageStore.getState().currentPage); });
@@ -76,15 +76,14 @@ const DocumentView = () => {
     useEffect(() => {
         // load document metadata and file version
         paperApi.getMetaDataById(paperId).then((metadata) => {
-            setTotalVersions(metadata.versionNumber);
-            setDocumentTitle(metadata.title)});
+            let temp = []
+            for(let version = 1; version <= metadata.versionNumber; version++){
+                temp.push(version);
+            }
+            setDisplayVersions(temp);
+            setDocumentTitle(metadata.title)
+        });
         setDocUri([{ uri: paperApi.getDocumentURI(paperId, versionId) }]);
-
-        let temp = []
-        for(let version = 1; version <= totalVersions; version++){
-            temp.push(version);
-        }
-        setDisplayVersions(temp);
     }, []);
 
     if (isFetching) {

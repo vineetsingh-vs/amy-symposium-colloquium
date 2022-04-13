@@ -130,14 +130,16 @@ const ReviewView = ({match, history}) => {
     
     useEffect(() => {
         async function apiCalls() {
-            await paperApi.getMetaDataById(paperId).then((doc) => setDocumentTitle(doc.title));
+            await paperApi.getMetaDataById(paperId).then((metadata) => {
+                let temp = []
+                for(let version = 1; version <= metadata.versionNumber; version++){
+                    temp.push(version);
+                }
+                setDisplayVersions(temp);
+                setDocumentTitle(metadata.title)
+            });
         }
         apiCalls();
-        let temp = []
-        for(let version = 1; version <= totalVersions; version++){
-            temp.push(version);
-        }
-        setDisplayVersions(temp);
     }, []);  
 
     // Side Bar Handling

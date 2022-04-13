@@ -42,6 +42,11 @@ const App = () => {
                                 />
                                 <ProtectedRoute
                                     exact
+                                    path="/:paperId/:versionId/reupload"
+                                    component={ReuploadView}
+                                />
+                                <ProtectedRoute
+                                    exact
                                     path="/:paperId/:versionId"
                                     component={DocumentView}
                                 />

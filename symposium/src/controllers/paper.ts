@@ -196,13 +196,68 @@ export const deletePaper = async (req: Request, res: Response) => {
     }
 };
 
+// update a version of a paper (file and version metadata)
+export const updatePaperFileVersion = async (req: Request, res: Response) => {
+    console.log("[paperController] Uploading new Version");
+    const { paperId } = req.params;
+
+    let form = new IncomingForm({ uploadDir: config.tmpFolder });
+    form.parse(req, async (err, fields: Fields, files: Files) => {
+        if (err) {
+            console.log("Error parsing file");
+            res.status(400).json({
+                message: "Error parsing file",
+                error: err,
+            });
+        }
+
+        let filePath = "/";
+        if (!Array.isArray(files.files)) {
+            let file = files.files;
+            console.log(files);
+            try {
+                var oldPath = file.filepath;
+                // TODO: Where we would either save file to AWS or local storage
+                filePath = config.uploadFolder + "/" + file.originalFilename;
+                fs.writeFileSync(filePath, fs.readFileSync(oldPath));
+            } catch (e) {
+                console.log("Error writing file", e);
+                res.status(400).json({
+                    message: "File couldn't be saved",
+                });
+            }
+            console.log("[paperController] File uploaded");
+        } else {
+            res.status(500).json({ message: "Backend currently can't handle multiple files" });
+            console.log("[paperController] Can't handle multiple files");
+        }
+
+        let paper = await Paper.findOne({ where: { id: paperId } });
+
+        if (paper) {
+            paper.versionNumber += 1;
+            const newVersion = Version.create({
+                filePath: filePath,
+                paper: paper,
+            });
+            await newVersion.save();
+
+            paper.versions.push(newVersion);
+            console.log(paper);
+            await paper.save();
+        } else {
+            res.status(400).json({ message: "Paper not found" });
+        }
+
+    });
+
+};
+
 //
 // ======== TODO >>>>
 
 // delete a version of a paper (file and version metadata)
 export const deletePaperVersion = async (req: Request, res: Response) => {};
-// update a version of a paper (file and version metadata)
-export const updatePaperFileVersion = async (req: Request, res: Response) => {};
 // share a paper with another user
 export const sharePaper = async (req: Request, res: Response) => {};
 // stop sharing a paper with another user

@@ -1,161 +1,112 @@
-import React, {useEffect} from "react";
-import clsx from 'clsx';
-import makeStyles from '@mui/styles/makeStyles';
+import React, { useState } from "react";
+import { useHistory, useParams } from "react-router-dom";
+import clsx from "clsx";
 import {
-  Button,
-  CssBaseline,
-  Drawer,
-  Box,
-  AppBar,
-  Toolbar,
-  Typography,
-  Divider,
-  IconButton,
-  Container,
-  Grid,
-  Input
-} from "@mui/material"
-
-import {
-  Menu,
-  ChevronLeft,
-  Person
-} from "@mui/icons-material"
-
-import { DocumentItems } from '../components/listItems';
-import Copyright from "../components/Copyright";
+    AppBar,
+    Button,
+    Box,
+    CssBaseline,
+    Container,
+    Drawer,
+    Divider,
+    Grid,
+    IconButton,
+    Toolbar,
+    Input,
+    Typography,
+    FormGroup,
+} from "@mui/material";
 import paperApi from "../api/paper";
+import { Menu, ChevronLeft, Person } from "@mui/icons-material";
+import { DocumentItems } from "../components/listItems";
+import Copyright from "../components/Copyright";
+import { useAuth } from "../useAuth";
+import { usePaperUploadViewStyles } from "../styles/paperUploadViewStyles";
 
-const drawerWidth = 240;
+const acceptedDocumentTypes = [
+    "text/htm",
+    "text/html",
+    "image/jpg",
+    "image/jpeg",
+    "application/pdf",
+    "image/png",
+    "text/plain",
+];
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: 'flex',
-  },
-  toolbar: {
-    paddingRight: 24, // keep right padding when drawer closed
-  },
-  toolbarIcon: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: '0 8px',
-    ...theme.mixins.toolbar,
-  },
-  appBar: {
-    zIndex: theme.zIndex.drawer + 1,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-  },
-  appBarShift: {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  menuButton: {
-    marginRight: 36,
-  },
-  menuButtonHidden: {
-    display: 'none',
-  },
-  title: {
-    flexGrow: 1,
-  },
-  drawerPaper: {
-    position: 'relative',
-    whiteSpace: 'nowrap',
-    width: drawerWidth,
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  drawerPaperClose: {
-    overflowX: 'hidden',
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-    width: theme.spacing(7),
-    [theme.breakpoints.up('sm')]: {
-      width: theme.spacing(9),
-    },
-  },
-  appBarSpacer: theme.mixins.toolbar,
-  content: {
-    flexGrow: 1,
-    height: '100vh',
-    overflow: 'auto',
-  },
-  container: {
-    paddingTop: theme.spacing(10),
-    paddingBottom: theme.spacing(4),
-  },
-  paper: {
-    padding: theme.spacing(2),
-    display: 'flex',
-    overflow: 'auto',
-    flexDirection: 'column',
-  },
-  fixedHeight: {
-    height: 240,
-  },
-}));
+const ReuploadView = () => {
+    const classes = usePaperUploadViewStyles();
+    const {user} = useAuth();
+    const {paperId, versionId} = useParams();
+    const history = useHistory();
+    const [drawerToggled, setDrawerToggled] = useState(false);
 
-const ReuploadView = ({match, history}) => {
-
-    const classes = useStyles();
-    const paperId = match.params.paperId;
-    let versionId = match.params.versionId;
-
-    // Drawer
-    const [open, setOpen] = React.useState(false);
-
-    // Document Information
-    const [documentTitle, setDocumentTitle] = React.useState("");
-    const [username, setUsername] = React.useState("Default Username");
-
-    const handleDrawerOpen = () => {
-        setOpen(true);
+    const handleDrawerToggle = () => {
+        setDrawerToggled(!drawerToggled);
     };
 
-    const handleDrawerClose = () => {
-        setOpen(false);
+    // Form Data
+    const [author, setAuthor] = useState("");
+    const [documentTitle, setDocumentTitle] = useState("");
+    const [files, setFiles] = useState([]);
+
+    const clearValues = () => {
+      setDocumentTitle("");
+      setAuthor("");
     };
 
-    const [upload, setUpload] = React.useState(true);
-    const handleUpload = () => {
-        setUpload(false);
-    };
+    // Submitting the document through a form
+    const handleSubmission = async (event) => {
+        event.preventDefault();
+        let result = true;
+        for (let i = 0; i < files.length; i++) {
+            result = acceptedDocumentTypes.find((docTypes) =>
+                docTypes.includes(files[i].type)
+            );
+            if (result) break;
+        }
 
-    useEffect(() => {
-      async function fetchData() {
-        return await paperApi.getMetaDataById(paperId);
-      }
-      // Getting Document Title
-      setDocumentTitle(fetchData().title);
-    }, []);
+        if (result) {
+            const form = new FormData();
+            for (let i = 0; i < files.length; i++) {
+                form.append("files", files[i], files[i].name);
+                console.log(files[i]);
+            }
+
+            await paperApi.updateFileVersion(paperId, form);
+            window.location.replace("/" + paperId + "/" + versionId);
+        } else {
+            clearValues();
+            return alert("This document is not supported at this time");
+        }
+    };
 
     return (
         <div className={classes.root}>
             <CssBaseline />
-            <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
+            <AppBar
+                position="absolute"
+                className={clsx(classes.appBar, drawerToggled && classes.appBarShift)}
+            >
                 <Toolbar className={classes.toolbar}>
                     <IconButton
                         edge="start"
                         color="inherit"
                         aria-label="open drawer"
-                        onClick={handleDrawerOpen}
-                        className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
+                        onClick={handleDrawerToggle}
+                        className={clsx(
+                            classes.menuButton,
+                            drawerToggled && classes.menuButtonHidden
+                        )}
                     >
                         <Menu />
                     </IconButton>
-                    <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
+                    <Typography
+                        component="h1"
+                        variant="h6"
+                        color="inherit"
+                        noWrap
+                        className={classes.title}
+                    >
                         Reupload Document
                     </Typography>
                     <Button
@@ -164,48 +115,51 @@ const ReuploadView = ({match, history}) => {
                         startIcon={<Person />}
                         href="/userprofile"
                     >
-                        {username}
+                        {user.firstName}
                     </Button>
                 </Toolbar>
             </AppBar>
             <Drawer
                 variant="permanent"
                 classes={{
-                    paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
+                    paper: clsx(
+                        classes.drawerPaper,
+                        !drawerToggled && classes.drawerPaperClose
+                    ),
                 }}
-                open={open}
+                open={drawerToggled}
             >
                 <div className={classes.toolbarIcon}>
-                    <IconButton onClick={handleDrawerClose}>
+                    <IconButton onClick={handleDrawerToggle}>
                         <ChevronLeft />
                     </IconButton>
                 </div>
                 <Divider />
-                <DocumentItems versionId={versionId}/>
+                <DocumentItems versionId={versionId} />
             </Drawer>
             <main className={classes.content}>
                 <div className={classes.appBarSpacer}>
                     <Container maxWidth="lg" className={classes.container}>
                         <Grid container spacing={3}>
                             <Grid item xs={12} md={12} lg={12}>
-                            <label htmlFor="contained-button-file">  
-                                <Input accept="*" id="contained-button-file" multiple type="file" onChange={handleUpload}/>                                   
-                            </label>
-                            </Grid>
-                            <Grid item xs={12} md={12} lg={12}>
-                                <Button variant="contained" color="primary" disabled={upload} href="/1">
-                                    CONFIRM REUPLOAD
-                                </Button>  
+                                <FormGroup>
+                                    <Input
+                                        type="file"
+                                        onChange={(e) => setFiles(e.target.files)}
+                                    />
+                                    <br />
+                                    <Input type="submit" disabled={!(files.length !== 0)} onClick={handleSubmission} />
+                                </FormGroup>
                             </Grid>
                         </Grid>
                         <Box pt={4}>
                             <Copyright />
                         </Box>
                     </Container>
-                </div>   
+                </div>
             </main>
         </div>
     );
-}
+};
 
 export default ReuploadView;
