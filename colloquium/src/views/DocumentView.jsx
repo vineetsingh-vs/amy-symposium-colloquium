@@ -60,7 +60,7 @@ const DocumentView = () => {
     const [documentTitle, setDocumentTitle] = useState("");
     const [isFetching, setIsFetching] = useState(false);
     const [displayVersions, setDisplayVersions] = useState([]);
-    const [totalVersions, setTotalVersions] = useState(0)
+    const [totalVersions, setTotalVersions] = useState(1);
 
     const handleDrawerToggle = () => {
         setDrawerToggled(!drawerToggled);
