@@ -67,8 +67,8 @@ const DocumentView = () => {
     };
 
     const handleChangeVersion = (event) => {
-        const versionId = event.target.value;
-        window.location.replace("/" + paperId + "/" + versionId);
+        const newVersionId = event.target.value;
+        window.location.replace("/" + paperId + "/" + newVersionId);
     };
 
     //PageStore.subscribe(() => {if (currentPage !== PageStore.getState().currentPage) setCurrentPage(PageStore.getState().currentPage); });
