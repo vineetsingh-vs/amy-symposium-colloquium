@@ -37,7 +37,7 @@ export class Comment extends BaseEntity {
     content!: string;
 
     @Column({nullable: true})
-    user!: number;
+    user!: string;
 
     @CreateDateColumn()
     created_at: Date;

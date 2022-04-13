@@ -3,6 +3,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import ReplyList from "../components/ReplyList";
 import {PageStore} from "../views/DocumentView";
 import commentApi from "../api/comment";
+import { useAuth } from "../useAuth";
 
 import {
     List,
@@ -33,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
 const Comment = ({ comment, paperId, versionId, pageNum }) => {
     const classes = useStyles();
     const [hidden, setHidden] = useState(false);const [comments, setComments] = useState([]);
-    const [username, setUsername] = useState("Default Username");
+    const { user } = useAuth();
     const [replies, setReplies] = useState([]);
     const [isFetching, setIsFetching] = useState(false);
     const [value, setValue] = useState("");
@@ -44,7 +45,7 @@ const Comment = ({ comment, paperId, versionId, pageNum }) => {
     }
 
     const handleClick = () => {
-        replies.push(createReply(comments.length, 1, value));
+        replies.push(createReply(comments.length, user.firstName, value));
         listReplies();
         console.log(replies);
         setValue("");
@@ -115,6 +116,7 @@ const CommentList = ({ paperId, versionId }) => {
     const [comments, setComments] = useState([]);
     const [currentComment, setCurrentComment] = useState("");
     const classes = useStyles();
+    const { user } = useAuth();
     
     // Comment Handling
     const handleType = (text) => {
@@ -122,7 +124,7 @@ const CommentList = ({ paperId, versionId }) => {
     };
 
     const handleClick = async() => {
-        await createComment(comments.length, 1, currentComment, []).then((data) => comments.push(data));
+        await createComment(comments.length, user.firstName, currentComment, []).then((data) => comments.push(data));
         //comments.push(createComment(comments.length, 1, currentComment, []));
         listComments();
         console.log(comments);
@@ -131,7 +133,7 @@ const CommentList = ({ paperId, versionId }) => {
 
     const createComment = async(id, user, content, replies) => {
         // Push a comment thing here to backend
-        let data = await commentApi.createComment(paperId, versionId, null,  1, content, PageStore.getState().currentPage).then((data) => {
+        let data = await commentApi.createComment(paperId, versionId, null, user, content, PageStore.getState().currentPage).then((data) => {
             return data;
         });
         return data;
@@ -180,6 +182,7 @@ const ReviewList = ({ paperId, versionId }) => {
     const [reviews, setReviews] = useState([]);
     const classes = useStyles();
     const [value, setValue] = useState("");
+    const { user } = useAuth();
     
     // Reviews Handling
     const handleType = (text) => {
@@ -187,7 +190,7 @@ const ReviewList = ({ paperId, versionId }) => {
     }
 
     const handleClick = async() => {
-        await createReviews(reviews.length, 1, value, []).then((data) => reviews.push(data));
+        await createReviews(reviews.length, user.firstName, value, []).then((data) => reviews.push(data));
         listReviews();
         console.log(reviews);
         setValue("");

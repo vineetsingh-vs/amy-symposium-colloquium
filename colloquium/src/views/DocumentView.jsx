@@ -34,7 +34,7 @@ import paperApi from "../api/paper";
 import { createStore } from "redux";
 import commentApi from "../api/comment";
 import {useDocumentViewStyles} from "../styles/documentViewStyles";
-import { useAuth } from "../useAuth"
+import { useAuth } from "../useAuth";
 
 const pageContext = {
     currentPage: 1,
