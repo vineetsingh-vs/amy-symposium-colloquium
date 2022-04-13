@@ -54,6 +54,12 @@ const ReuploadView = () => {
       setAuthor("");
     };
 
+    const nextVersionDisplay = () => {
+        paperApi.getMetaDataById(paperId).then((metadata) => {
+            history.push(`/${paperId}/${metadata.versionNumber}`)
+        });
+    }
+
     // Submitting the document through a form
     const handleSubmission = async (event) => {
         event.preventDefault();
@@ -69,11 +75,10 @@ const ReuploadView = () => {
             const form = new FormData();
             for (let i = 0; i < files.length; i++) {
                 form.append("files", files[i], files[i].name);
-                console.log(files[i]);
+                // console.log(files[i]);
             }
-
             await paperApi.updateFileVersion(paperId, form);
-            window.location.replace("/" + paperId + "/" + versionId);
+            nextVersionDisplay();
         } else {
             clearValues();
             return alert("This document is not supported at this time");

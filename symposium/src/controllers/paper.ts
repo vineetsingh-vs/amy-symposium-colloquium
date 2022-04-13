@@ -245,6 +245,7 @@ export const updatePaperFileVersion = async (req: Request, res: Response) => {
             paper.versions.push(newVersion);
             console.log(paper);
             await paper.save();
+            res.status(200).json({ message: "Successfully Reuploaded Paper" });
         } else {
             res.status(400).json({ message: "Paper not found" });
         }
