@@ -35,10 +35,8 @@ import { createStore } from "redux";
 import commentApi from "../api/comment";
 import {useDocumentViewStyles} from "../styles/documentViewStyles";
 import { useAuth } from "../useAuth";
+import path from "path-browserify";
 
-const pageContext = {
-    currentPage: 1,
-};
 
 function pageReducer(state = { currentPage: 1 }, action) {
     switch (action.type) {
@@ -61,6 +59,7 @@ const DocumentView = () => {
     const [isFetching, setIsFetching] = useState(false);
     const [displayVersions, setDisplayVersions] = useState([]);
     const [totalVersions, setTotalVersions] = useState(1);
+    const [fileType, setFileType] = useState("");
 
     const handleDrawerToggle = () => {
         setDrawerToggled(!drawerToggled);
@@ -76,14 +75,19 @@ const DocumentView = () => {
     useEffect(() => {
         // load document metadata and file version
         paperApi.getMetaDataById(paperId).then((metadata) => {
+            setFileType(path.extname(metadata.versions[metadata.versionNumber - 1].filePath))
             let temp = []
             for(let version = 1; version <= metadata.versionNumber; version++){
                 temp.push(version);
+            }
+            if (fileType !== ".pdf") {
+                PageStore.dispatch({ type: "Page_Change", newPage: 1 });
             }
             setDisplayVersions(temp);
             setDocumentTitle(metadata.title)
         });
         setDocUri([{ uri: paperApi.getDocumentURI(paperId, versionId) }]);
+        
     }, []);
 
     if (isFetching) {
