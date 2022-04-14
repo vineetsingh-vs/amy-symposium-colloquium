@@ -15,42 +15,43 @@ export const signUp = async (req: Request, res: Response) => {
     let user = await User.findOne({ where: { email: email } });
 
     if (user) {
-        res.status(400);
         console.log("User already exists");
+        res.status(400);
     }
+    else {
+        //
+        // encrypt password with salt
+        const salt = await bcrypt.genSalt(10);
+        const salted_password = await bcrypt.hash(password, salt);
 
-    //
-    // encrypt password with salt
-    const salt = await bcrypt.genSalt(10);
-    const salted_password = await bcrypt.hash(password, salt);
+        const newUser = User.create({
+            firstName: firstName,
+            lastName: lastName,
+            roles: ["user"],
+            email: email,
+            password: salted_password,
+            affiliation: affiliation,
+        });
 
-    const newUser = User.create({
-        firstName: firstName,
-        lastName: lastName,
-        roles: ["user"],
-        email: email,
-        password: salted_password,
-        affiliation: affiliation,
-    });
+        // TODO: create empty many-many relations with papers and reviews before saving
 
-    // TODO: create empty many-many relations with papers and reviews before saving
+        await newUser.save();
+        console.log("saved user: ");
+        console.log(newUser);
 
-    await newUser.save();
-    console.log("saved user: ");
-    console.log(newUser);
-
-    //
-    // return the new user as json obj
-    res.status(200).json({
-        id: newUser.id,
-        email: newUser.email,
-        firstName: newUser.firstName,
-        lastName: newUser.lastName,
-        password: newUser.password,
-        affiliation: newUser.affiliation,
-        createdAt: newUser.createdAt,
-        updatedAt: newUser.updatedAt,
-    });
+        //
+        // return the new user as json obj
+        res.status(200).json({
+            id: newUser.id,
+            email: newUser.email,
+            firstName: newUser.firstName,
+            lastName: newUser.lastName,
+            password: newUser.password,
+            affiliation: newUser.affiliation,
+            createdAt: newUser.createdAt,
+            updatedAt: newUser.updatedAt,
+        });
+    }
 };
 
 export const login = async (req: Request, res: Response) => {

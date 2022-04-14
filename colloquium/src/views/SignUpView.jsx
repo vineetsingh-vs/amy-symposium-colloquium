@@ -28,6 +28,7 @@ export default function SignUp() {
     const handleSubmit = (event) => {
         event.preventDefault();
         auth.signup(email, password, firstName, lastName, affiliation);
+        window.location.replace("/");
     };
 
     return (
