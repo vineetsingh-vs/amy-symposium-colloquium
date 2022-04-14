@@ -132,6 +132,7 @@ const ReviewView = ({match, history}) => {
                 >
                     {displayVersions.map((version) => (
                         <MenuItem
+                            key={version}
                             value={version}
                         >
                             {version}

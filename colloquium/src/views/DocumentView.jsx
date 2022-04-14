@@ -157,6 +157,7 @@ const DocumentView = () => {
                     >
                         {displayVersions.map((version) => (
                             <MenuItem
+                                key={version}
                                 value={version}
                             >
                                 {version}
