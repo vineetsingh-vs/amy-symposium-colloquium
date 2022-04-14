@@ -37,6 +37,7 @@ const PapersTable = ({ papers, filter }) => {
     const handleChangePublish = (paperID, published) => {
         console.log(published);
         paperApi.updateMetadata(paperID, {isPublished: published}).then(resp => console.log(resp))
+        window.location.replace("/papers");
     };
 
     return (
