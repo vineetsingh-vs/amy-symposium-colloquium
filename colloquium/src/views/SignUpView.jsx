@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useHistory } from "react-router-dom"
+import { useEffect, useState } from "react";
+import { useHistory, useLocation } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -13,6 +13,7 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Copyright from "../components/Copyright";
 import { useAuth } from "../useAuth";
+import ErrorMessage from "../components/ErrorMessage.js";
 
 const theme = createTheme();
 
@@ -24,12 +25,17 @@ export default function SignUp() {
     const [password, setPassword] = useState("");
     const auth = useAuth();
     const history = useHistory();
+    const { state } = useLocation();
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        auth.signup(email, password, firstName, lastName, affiliation).then(() => history.push("/papers")
-        );
+        auth.signup(email, password, firstName, lastName, affiliation);
     }
+
+    useEffect(() => {
+        if (auth.user) 
+            history.push(state?.path || "/papers")
+    }, [auth.user]);
 
     return (
         <ThemeProvider theme={theme}>
@@ -50,6 +56,7 @@ export default function SignUp() {
                         Sign up
                     </Typography>
                     <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+                        {auth.error && <ErrorMessage message={auth.error} />}
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>
                                 <TextField
