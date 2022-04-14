@@ -51,8 +51,9 @@ const useProvideAuth = () => {
         }
     };
 
-    const signout = () => {
-        return setUser(null);
+    const logout = () => {
+        localStorage.removeItem("userInfo");
+        setUser(null);
     };
 
     const setConfig = () => {
@@ -78,7 +79,7 @@ const useProvideAuth = () => {
         error,
         login,
         signup,
-        signout,
+        logout,
         setConfig,
     };
 };

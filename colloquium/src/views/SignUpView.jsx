@@ -28,6 +28,7 @@ export default function SignUp() {
     const handleSubmit = (event) => {
         event.preventDefault();
         auth.signup(email, password, firstName, lastName, affiliation);
+        window.location.replace("/");
     };
 
     return (
@@ -108,7 +109,7 @@ export default function SignUp() {
                                 />
                             </Grid>
                         </Grid>
-                        <Button type="submit" fullWidth variant="contained" sx={{ mt: 3 }}>
+                        <Button type="submit" fullWidth variant="contained" disabled={email == "" || password == "" || firstName == "" || lastName == "" || affiliation == ""} sx={{ mt: 3 }}>
                             Sign Up
                         </Button>
                         <Grid container mt={2} mb={8} justifyContent="center">

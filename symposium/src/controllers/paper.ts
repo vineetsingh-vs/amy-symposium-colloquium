@@ -19,7 +19,8 @@ export const getPaperList = async (req: Request, res: Response) => {
             // paperList = await Paper.find({where: [ {sharedWith : includes this user}]});
             res.status(200).send(user?.sharedWithMe);
         } else if (filter === "uploaded") {
-            res.status(200).send(user?.papers);
+            let paperList = await Paper.find({ where: [{ creator: userId } ]})
+            res.status(200).send(paperList);
         } else if (filter == "published") {
             let paperList = await Paper.find({ where: [{ isPublished: true }] });
             res.status(200).send(paperList);
@@ -104,8 +105,6 @@ export const createPaper = async (req: Request, res: Response) => {
 
         fields["versions"] = [];
         const newPaper = Paper.create(fields);
-        // await newPaper.save();
-        // console.log("saved paper: ");
 
         //
         // create a version and version array
@@ -115,7 +114,6 @@ export const createPaper = async (req: Request, res: Response) => {
             paper: newPaper,
         });
         await newVersion.save();
-        console.log(newVersion);
 
         newPaper.versions.push(newVersion);
         console.log(newPaper);
@@ -257,12 +255,48 @@ export const updatePaperFileVersion = async (req: Request, res: Response) => {
     });
 };
 
+export const sharePaper = async (req: Request, res: Response) => {
+    // const { userId, userShareId, paperId } = req.body;
+    // const user = await User.findOne({ where: { id: userId } });
+    // if (!user) res.status(404).json({ message: "user not found" });
+    // const shareUser = await User.findOne({ where: { id: userShareId } });
+    // if (!shareUser) res.status(404).json({ message: "shared with user not found" });
+    // const paper = await Paper.findOne({ where: { paperId: paperId } });
+    // if (paper && paper.creator.id === user?.id) {
+    // shareUser?.sharedWithMe.push(paper);
+    // shareUser?.save();
+    // if (shareUser) {
+    // paper.sharedWith?.push(shareUser);
+    // paper.save();
+    // }
+    // res.status(200).json(paper);
+    // } else {
+    // res.status(404).json({ message: "paper not found" });
+    // }
+};
+// stop sharing a paper with another user
+export const stopSharingPaper = async (req: Request, res: Response) => {
+    // const { userId, userShareId, paperId } = req.body;
+    // const user = await User.findOne({ where: { id: userId } });
+    // if (!user) res.status(404).json({ message: "user not found" });
+    // const shareUser = await User.findOne({ where: { id: userShareId } });
+    // if (!shareUser) res.status(404).json({ message: "shared with user not found" });
+    // const paper = await Paper.findOne({ where: { paperId: paperId } });
+    // if (paper && paper.creator.id === user?.id) {
+    // let tmp = shareUser?.sharedWithMe.filter((obj) => {
+    // return obj.id !== paper.id;
+    // });
+    // shareUser?.sharedWithMe = tmp;
+    // shareUser?.save();
+    // if (shareUser) paper.sharedWith?.push(shareUser);
+    // res.status(200).json(paper);
+    // } else {
+    // res.status(404).json({ message: "paper not found" });
+    // }
+};
+
 //
 // ======== TODO >>>>
 
 // delete a version of a paper (file and version metadata)
 export const deletePaperVersion = async (req: Request, res: Response) => {};
-// share a paper with another user
-export const sharePaper = async (req: Request, res: Response) => {};
-// stop sharing a paper with another user
-export const stopSharingPaper = async (req: Request, res: Response) => {};

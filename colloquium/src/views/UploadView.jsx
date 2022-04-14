@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useHistory } from "react-router-dom";
 import clsx from "clsx";
 import {
@@ -35,7 +35,7 @@ const acceptedDocumentTypes = [
 
 const UploadView = () => {
     const classes = usePaperUploadViewStyles();
-    const {user} = useAuth();
+    const { user } = useAuth();
     const history = useHistory();
     const [drawerToggled, setDrawerToggled] = useState(false);
 
@@ -49,8 +49,8 @@ const UploadView = () => {
     const [files, setFiles] = useState([]);
 
     const clearValues = () => {
-      setDocumentTitle("");
-      setAuthor("");
+        setDocumentTitle("");
+        setAuthor("");
     };
 
     // Submitting the document through a form
@@ -68,7 +68,7 @@ const UploadView = () => {
             const form = new FormData();
             form.append("title", documentTitle);
             form.append("authors", "{" + author + "}");
-            form.append("creatorId", 1);
+            form.append("creator", user.id);
             form.append("versions", "{}");
             for (let i = 0; i < files.length; i++) {
                 form.append("files", files[i], files[i].name);
@@ -164,7 +164,17 @@ const UploadView = () => {
                                         onChange={(e) => setFiles(e.target.files)}
                                     />
                                     <br />
-                                    <Input type="submit" disabled={!(documentTitle !== "" && author !== "" && files.length !== 0)} onClick={handleSubmission} />
+                                    <Input
+                                        type="submit"
+                                        disabled={
+                                            !(
+                                                documentTitle !== "" &&
+                                                author !== "" &&
+                                                files.length !== 0
+                                            )
+                                        }
+                                        onClick={handleSubmission}
+                                    />
                                 </FormGroup>
                             </Grid>
                         </Grid>
