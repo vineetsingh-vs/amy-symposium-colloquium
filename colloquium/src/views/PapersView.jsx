@@ -16,6 +16,7 @@ import {
     Typography,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import LogoutIcon from '@mui/icons-material/Logout';
 import Assignment from "@mui/icons-material/Assignment";
 import People from "@mui/icons-material/People";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -32,7 +33,7 @@ const PapersView = () => {
     const [filter, setFilter] = useState("uploaded");
     const [title, setTitle] = useState("My Papers");
     const [papers, setPapers] = useState([]);
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
 
     const handleDrawerToggle = () => {
         setDrawerToggled(!drawerToggled);
@@ -79,12 +80,20 @@ const PapersView = () => {
                         {title}
                     </Typography>
                     <Button
-                        variant="link"
+                        variant="outlined"
                         color="inherit"
                         startIcon={<Person />}
                         href="/userprofile"
                     >
                         {user.firstName}
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="error"
+                        startIcon={<LogoutIcon />}
+                        onClick={logout}
+                    >
+                        Logout
                     </Button>
                 </Toolbar>
             </AppBar>
