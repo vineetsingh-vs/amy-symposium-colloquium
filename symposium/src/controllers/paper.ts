@@ -5,6 +5,7 @@ import { Paper } from "../entities/Paper";
 import { Version } from "../entities/Version";
 import { User } from "../entities/User";
 import config from "../utils/config";
+import { downloadFile, uploadFile } from "../utils/aws";
 
 export const getPaperList = async (req: Request, res: Response) => {
     const { filter, userId } = req.query;
@@ -12,25 +13,28 @@ export const getPaperList = async (req: Request, res: Response) => {
     console.log(userId);
     console.log(filter);
 
-    const user = User.findOne({ where: { id: userId } });
-    if (!user) {
+    let user = await User.findOne({ where: { id: userId } });
+    if (user) {
+        if (filter === "shared") {
+            // paperList = await Paper.find({where: [ {sharedWith : includes this user}]});
+            res.status(200).send(user?.sharedWithMe);
+        } else if (filter === "uploaded") {
+            let paperList = await Paper.find({ where: [{ creator: userId } ]})
+            res.status(200).send(paperList);
+        } else if (filter == "published") {
+            let paperList = await Paper.find({ where: [{ isPublished: true }] });
+            res.status(200).send(paperList);
+        } else if (filter == "all") {
+            // if user admin return all papers
+            // else return papers shared with or associated with
+            let paperList = await Paper.find();
+            res.status(200).send(paperList);
+        } else {
+            res.status(400).json({ message: "Invalid filter" });
+        } 
+    } else {
         res.status(400).json({ message: "User not found" });
     }
-
-    let paperList;
-    if (filter === "shared") {
-        paperList = await Paper.find();
-        // paperList = await Paper.find({where: [ {sharedWith : includes this user}]});
-    } else if (filter === "uploaded") {
-        paperList = await Paper.find({ where: { creator: userId } });
-    } else if (filter == "published") {
-        paperList = await Paper.find({ where: { isPublished: true } });
-    } else {
-        res.status(400).json({ message: "Invalid filter" });
-    }
-
-    console.log(paperList);
-    res.status(200).send(paperList);
 };
 
 export const getPaperMetaData = async (req: Request, res: Response) => {
@@ -72,15 +76,19 @@ export const createPaper = async (req: Request, res: Response) => {
             });
         }
 
-        let filePath = "/";
+        let path = "";
         if (!Array.isArray(files.files)) {
             let file = files.files;
-            console.log(files);
             try {
                 var oldPath = file.filepath;
                 // TODO: Where we would either save file to AWS or local storage
-                filePath = config.uploadFolder + "/" + file.originalFilename;
-                fs.writeFileSync(filePath, fs.readFileSync(oldPath));
+                if (config.usingAWS) {
+                    path = file.originalFilename!;
+                    await uploadFile(oldPath, path);
+                } else if (config.usingFS) {
+                    path = config.uploadFolder + "/" + file.originalFilename;
+                    fs.writeFileSync(path, fs.readFileSync(oldPath));
+                }
             } catch (e) {
                 console.log("Error writing file", e);
                 res.status(400).json({
@@ -100,8 +108,9 @@ export const createPaper = async (req: Request, res: Response) => {
 
         //
         // create a version and version array
+        console.log(path);
         const newVersion = Version.create({
-            filePath: filePath,
+            filePath: path,
             paper: newPaper,
         });
         await newVersion.save();
@@ -155,8 +164,21 @@ export const getPaperFileVersion = async (req: Request, res: Response) => {
         console.log(paper);
         let version = await paper.versions[Number(versionId) - 1];
         if (version) {
-            console.log(process.cwd() + "/" + version.filePath);
-            res.status(200).sendFile(process.cwd() + "/" + version.filePath);
+            if (config.usingFS) {
+                res.status(200).sendFile(version.filePath);
+            } else if (config.usingAWS) {
+                const path = process.cwd() + "/" + config.tmpFolder + "/" + version.filePath;
+                const content = await downloadFile(version.filePath);
+                fs.writeFileSync(path, content, "binary");
+                res.status(200).sendFile(path, (err) => {
+                    if (err) {
+                        console.log("Error sending file from temp", err);
+                        res.status(400).json({ message: "Failed to download file" });
+                    } else {
+                        fs.unlinkSync(path);
+                    }
+                });
+            }
         }
     } else {
         res.status(400).json({ message: "Paper not found" });
