@@ -32,6 +32,7 @@ import {
 
 import Copyright from "../components/Copyright";
 import paperApi from "../api/paper";
+import { useAuth } from "../useAuth";
 
 const drawerWidth = 240;
 
@@ -112,6 +113,7 @@ const SharingView = ({match, history}) => {
     const classes = useStyles();
     const paperId = match.params.paperId;
     let versionId = match.params.versionId;
+    const { user } = useAuth();
 
     // Drawer
     const [open, setOpen] = useState(true);
@@ -158,13 +160,13 @@ const SharingView = ({match, history}) => {
                     Share {documentTitle} With:
                 </Typography>
                 <Button
-                        variant="link"
-                        color="inherit"
-                        startIcon={<Person />}
-                        href="/userprofile"
-                    >
-                        {username}
-                    </Button>
+                    variant="outlined"
+                    color="inherit"
+                    startIcon={<Person />}
+                    href="/userprofile"
+                >
+                    {user.firstName}
+                </Button>
             </Toolbar>
         </AppBar>
         <Drawer

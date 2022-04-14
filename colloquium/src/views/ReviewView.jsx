@@ -19,105 +19,26 @@ import {
 import makeStyles from '@mui/styles/makeStyles';
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import PersonIcon from "@mui/icons-material/Person";
+import Person from "@mui/icons-material/Person";
 import { ReviewList } from "../components/CommentList";
 import { DocumentItems } from "../components/listItems";
 import Copyright from "../components/Copyright";
 import paperApi from "../api/paper"
 import commentApi from "../api/comment";
-
-const drawerWidth = 240;
-
-const useStyles = makeStyles((theme) => ({
-    root: {
-        display: "flex",
-    },
-    toolbar: {
-        paddingRight: 24, // keep right padding when drawer closed
-    },
-    toolbarIcon: {
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "flex-end",
-        padding: "0 8px",
-        ...theme.mixins.toolbar,
-    },
-    appBar: {
-        zIndex: theme.zIndex.drawer + 1,
-        transition: theme.transitions.create(["width", "margin"], {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen,
-        }),
-    },
-    appBarShift: {
-        marginLeft: drawerWidth,
-        width: `calc(100% - ${drawerWidth}px)`,
-        transition: theme.transitions.create(["width", "margin"], {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.enteringScreen,
-        }),
-    },
-    menuButton: {
-        marginRight: 36,
-    },
-    menuButtonHidden: {
-        display: "none",
-    },
-    title: {
-        flexGrow: 1,
-    },
-    drawerPaper: {
-        position: "relative",
-        whiteSpace: "nowrap",
-        width: drawerWidth,
-        transition: theme.transitions.create("width", {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.enteringScreen,
-        }),
-    },
-    drawerPaperClose: {
-        overflowX: "hidden",
-        transition: theme.transitions.create("width", {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen,
-        }),
-        width: theme.spacing(7),
-        [theme.breakpoints.up("sm")]: {
-            width: theme.spacing(9),
-        },
-    },
-    appBarSpacer: theme.mixins.toolbar,
-    content: {
-        flexGrow: 1,
-        height: "100vh",
-        overflow: "auto",
-    },
-    container: {
-        paddingTop: theme.spacing(4),
-        paddingBottom: theme.spacing(4),
-    },
-    paper: {
-        padding: theme.spacing(2),
-        display: "flex",
-        overflow: "auto",
-        flexDirection: "column",
-    },
-    fixedHeight: {
-        height: 240,
-    },
-}));
+import { useAuth } from "../useAuth";
+import {useDocumentViewStyles} from "../styles/documentViewStyles";
 
 const ReviewView = ({match, history}) => {
-    const classes = useStyles();
+    const classes = useDocumentViewStyles();
     const paperId = match.params.paperId;
     let versionId = match.params.versionId;
+    const { user } = useAuth()
 
     // Drawer
     const [open, setOpen] = useState(false);
 
     // Document Info
     const [documentTitle, setDocumentTitle] = useState("");
-    const [username, setUsername] = useState("Default Username");
     const [totalVersions, setTotalVersions] = useState(1);
     const [displayVersions, setDisplayVersions] = useState([]);
 
@@ -178,12 +99,12 @@ const ReviewView = ({match, history}) => {
                         {documentTitle}
                     </Typography>
                     <Button
-                        variant="link"
+                        variant="outlined"
                         color="inherit"
-                        startIcon={<PersonIcon />}
+                        startIcon={<Person />}
                         href="/userprofile"
                     >
-                        {username}
+                        {user.firstName}
                     </Button>
                 </Toolbar>
             </AppBar>

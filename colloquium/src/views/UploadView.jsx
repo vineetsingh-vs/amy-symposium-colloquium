@@ -113,7 +113,7 @@ const UploadView = () => {
                         Upload Document
                     </Typography>
                     <Button
-                        variant="link"
+                        variant="outlined"
                         color="inherit"
                         startIcon={<Person />}
                         href="/userprofile"
