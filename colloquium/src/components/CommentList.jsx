@@ -125,7 +125,6 @@ const CommentList = ({ paperId, versionId }) => {
 
     const handleClick = async() => {
         await createComment(comments.length, user.firstName, currentComment, []).then((data) => comments.push(data));
-        //comments.push(createComment(comments.length, 1, currentComment, []));
         listComments();
         console.log(comments);
         setCurrentComment("");
