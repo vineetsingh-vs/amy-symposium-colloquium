@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import config from "../utils/config";
 import { User } from "../entities/User";
 
 // NOTE:
@@ -12,38 +13,45 @@ export const createUser = async (req: Request, res: Response) => {
 
     if (user) {
         res.status(400);
-        console.log("User already exists");
+        console.warn("User already exists");
     }
+    try {
+        //
+        // create user from schema and save to db
+        const newUser = User.create({
+            firstName: firstName,
+            lastName: lastName,
+            roles: ["user"],
+            email: email,
+            password: password,
+            affiliation: affiliation,
+        });
 
-    //
-    // create user from schema and save to db
-    const newUser = User.create({
-        firstName: firstName,
-        lastName: lastName,
-        roles: ["user"],
-        email: email,
-        password: password,
-        affiliation: affiliation,
-    });
+        // TODO: create empty many-many relations with papers and reviews
 
-    // TODO: create empty many-many relations with papers and reviews
+        await newUser.save();
+        console.debug("saved user: ");
+        console.debug(newUser);
 
-    await newUser.save();
-    console.log("saved user: ");
-    console.log(newUser);
-
-    //
-    // return the new user as json obj
-    res.status(200).json({
-        id: newUser.id,
-        email: newUser.email,
-        firstName: newUser.firstName,
-        lastName: newUser.lastName,
-        password: newUser.password,
-        affiliation: newUser.affiliation,
-        createdAt: newUser.createdAt,
-        updatedAt: newUser.updatedAt,
-    });
+        //
+        // return the new user as json obj
+        res.status(200).json({
+            id: newUser.id,
+            email: newUser.email,
+            firstName: newUser.firstName,
+            lastName: newUser.lastName,
+            password: newUser.password,
+            affiliation: newUser.affiliation,
+            createdAt: newUser.createdAt,
+            updatedAt: newUser.updatedAt,
+        });
+    } catch (err) {
+        console.error("[userController] Failed to create User - Database Error", err);
+        res.status(500).json({
+            message: "Failed to create User - Database Error",
+            stack: config.nodeEnv === "production" ? null : err.stack
+        });
+    }
 };
 
 export const getUserList = async (req: Request, res: Response) => {
@@ -87,8 +95,16 @@ export const deleteUser = async (req: Request, res: Response) => {
     let user = await User.findOne({ where: { id: userID } });
 
     if (user) {
-        await user.remove();
-        res.status(200).json({ message: "Successfully deleted user" });
+        try {
+            await user.remove();
+            res.status(200).json({ message: "Successfully deleted user" });
+        } catch (err) {
+            console.error("[userController] Failed to delete User - Database Error", err);
+            res.status(500).json({
+                message: "Failed to delete User - Database Error",
+                stack: config.nodeEnv === "production" ? null : err.stack
+            });
+        }
     } else {
         res.status(400).json({ message: "User not found" });
     }
@@ -107,17 +123,25 @@ export const updateUser = async (req: Request, res: Response) => {
         user.lastName = lastName || user.lastName;
         user.password = password || user.password;
         user.affiliation = affiliation || user.affiliation;
-        await user.save();
-        res.status(200).json({
-            id: user.id,
-            email: user.email,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            password: user.password,
-            affiliation: user.affiliation,
-            createdAt: user.createdAt,
-            updatedAt: user.updatedAt,
-        });
+        try {
+            await user.save();
+            res.status(200).json({
+                id: user.id,
+                email: user.email,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                password: user.password,
+                affiliation: user.affiliation,
+                createdAt: user.createdAt,
+                updatedAt: user.updatedAt,
+            });
+        } catch (err) {
+            console.error("[userController] Failed to update User - Database Error", err);
+            res.status(500).json({
+                message: "Failed to delete User - Database Error",
+                stack: config.nodeEnv === "production" ? null : err.stack
+            });
+        }
     } else {
         res.status(400).json({ message: "User not found" });
     }

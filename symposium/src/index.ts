@@ -10,6 +10,7 @@ import commentRoutes from "./routes/comment";
 import config from "./utils/config";
 import connectDB from "./utils/db";
 import { existsSync, mkdirSync } from "fs";
+import { errorHandler, notFound } from "./loaders/error";
 
 const main = async () => {
     if (!existsSync(config.tmpFolder)) {
@@ -60,6 +61,9 @@ const main = async () => {
         });
     }
 
+    app.use(errorHandler);
+    app.use(notFound);
+    
     //
     // server startup
     const port = 4000;

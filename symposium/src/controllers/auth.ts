@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { User } from "../entities/User";
 import bcrypt from "bcrypt";
+import config from "../utils/config";
 
 export const signUp = async (req: Request, res: Response) => {
     console.log("[authController] signUp");
@@ -15,41 +16,48 @@ export const signUp = async (req: Request, res: Response) => {
     let user = await User.findOne({ where: { email: email } });
 
     if (user) {
-        console.log("User already exists");
+        console.warn("User already exists");
         res.status(400);
     } else {
         //
         // encrypt password with salt
         const salt = await bcrypt.genSalt(10);
         const salted_password = await bcrypt.hash(password, salt);
+        try {
+            const newUser = User.create({
+                firstName: firstName,
+                lastName: lastName,
+                roles: ["user"],
+                email: email,
+                password: salted_password,
+                affiliation: affiliation,
+            });
 
-        const newUser = User.create({
-            firstName: firstName,
-            lastName: lastName,
-            roles: ["user"],
-            email: email,
-            password: salted_password,
-            affiliation: affiliation,
-        });
+            // TODO: create empty many-many relations with papers and reviews before saving
 
-        // TODO: create empty many-many relations with papers and reviews before saving
+            await newUser.save();
+            console.debug("saved user: ");
+            console.debug(newUser);
 
-        await newUser.save();
-        console.log("saved user: ");
-        console.log(newUser);
-
-        //
-        // return the new user as json obj
-        res.status(200).json({
-            id: newUser.id,
-            email: newUser.email,
-            firstName: newUser.firstName,
-            lastName: newUser.lastName,
-            password: newUser.password,
-            affiliation: newUser.affiliation,
-            createdAt: newUser.createdAt,
-            updatedAt: newUser.updatedAt,
-        });
+            //
+            // return the new user as json obj
+            res.status(200).json({
+                id: newUser.id,
+                email: newUser.email,
+                firstName: newUser.firstName,
+                lastName: newUser.lastName,
+                password: newUser.password,
+                affiliation: newUser.affiliation,
+                createdAt: newUser.createdAt,
+                updatedAt: newUser.updatedAt,
+            });
+        } catch (err) {
+            console.error("[authController] Failed to create User - Database Error", err);
+            res.status(500).json({
+                message: "Failed to create User - Database Error",
+                stack: config.nodeEnv === "production" ? null : err.stack
+            })
+        }
     }
 };
 

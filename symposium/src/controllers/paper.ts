@@ -10,8 +10,8 @@ import { downloadFile, uploadFile } from "../utils/aws";
 export const getPaperList = async (req: Request, res: Response) => {
     const { filter, userId } = req.query;
     console.log("[paperController] getPaperList");
-    console.log(userId);
-    console.log(filter);
+    console.debug(userId);
+    console.debug(filter);
 
     let user = await User.findOne({ where: { id: userId } });
     if (user) {
@@ -69,10 +69,11 @@ export const createPaper = async (req: Request, res: Response) => {
     let form = new IncomingForm({ uploadDir: config.tmpFolder });
     form.parse(req, async (err, fields: Fields, files: Files) => {
         if (err) {
-            console.log("Error parsing file");
+            console.error("[paperController-createPaper] Error parsing file", err);
             res.status(400).json({
                 message: "Error parsing file",
                 error: err,
+                stack: config.nodeEnv === "production" ? null : err.stack
             });
         }
 
@@ -89,48 +90,57 @@ export const createPaper = async (req: Request, res: Response) => {
                     path = process.cwd() + "/" + config.uploadFolder + "/" + file.originalFilename;
                     fs.writeFileSync(path, fs.readFileSync(oldPath));
                 }
-            } catch (e) {
-                console.log("Error writing file", e);
-                res.status(400).json({
+            } catch (err) {
+                console.error("[paperController] Error saving file", err);
+                res.status(500).json({ 
                     message: "File couldn't be saved",
+                    stack: config.nodeEnv === "production" ? null : err.stack
                 });
             }
             console.log("[paperController] File uploaded");
         } else {
             res.status(500).json({ message: "Backend currently can't handle multiple files" });
-            console.log("[paperController] Can't handle multiple files");
+            console.error("[paperController] Can't handle multiple files");
         }
 
-        console.log(fields);
+        console.debug(fields);
 
         fields["versions"] = [];
-        const newPaper = Paper.create(fields);
+        try {
+            const newPaper = Paper.create(fields);
 
-        //
-        // create a version and version array
-        console.log(path);
-        const newVersion = Version.create({
-            filePath: path,
-            paper: newPaper,
-        });
-        await newVersion.save();
+            //
+            // create a version and version array
+            console.debug(path);
+            const newVersion = Version.create({
+                filePath: path,
+                paper: newPaper,
+            });
+            await newVersion.save();
 
-        newPaper.versions.push(newVersion);
-        console.log(newPaper);
-        await newPaper.save();
+            newPaper.versions.push(newVersion);
+            console.debug(newPaper);
+            await newPaper.save();
 
-        res.status(200).json({
-            id: newPaper.id,
-            title: newPaper.title,
-            creator: newPaper.creator,
-            authors: newPaper.authors,
-            sharedWith: newPaper.sharedWith,
-            isPublished: newPaper.isPublished,
-            createdAt: newPaper.createdAt,
-            updatedAt: newPaper.updatedAt,
-            versionNumber: newPaper.versionNumber,
-            versions: newPaper.versions,
-        });
+            res.status(200).json({
+                id: newPaper.id,
+                title: newPaper.title,
+                creator: newPaper.creator,
+                authors: newPaper.authors,
+                sharedWith: newPaper.sharedWith,
+                isPublished: newPaper.isPublished,
+                createdAt: newPaper.createdAt,
+                updatedAt: newPaper.updatedAt,
+                versionNumber: newPaper.versionNumber,
+                versions: newPaper.versions,
+            });
+        } catch (err) {
+            console.error("[paperController-createPaper] Failed to create Paper - Database Error", err);
+            res.status(500).json({
+                message: "Failed to create Paper - Database Error",
+                stack: config.nodeEnv === "production" ? null : err.stack
+            });
+        }
     });
 };
 
@@ -138,8 +148,8 @@ export const updatePaperMetaData = async (req: Request, res: Response) => {
     console.log("[paperController] updatePaperMetaData");
     const { paperId } = req.params;
     const { title, creator, authors, isPublished } = req.body;
-    console.log(req.body);
-    console.log(isPublished);
+    console.debug(req.body);
+    console.debug(isPublished);
 
     let paper = await Paper.findOne({ where: { id: paperId } });
     if (paper) {
@@ -148,7 +158,7 @@ export const updatePaperMetaData = async (req: Request, res: Response) => {
         paper.authors = authors || paper.authors;
         if (isPublished !== undefined && isPublished !== null) paper.isPublished = isPublished;
         const updatedPaper = await paper.save();
-        console.log(updatedPaper.isPublished);
+        console.debug(updatedPaper.isPublished);
         res.status(200).json(updatedPaper);
     } else {
         res.status(400).json({ message: "Paper not found" });
@@ -161,22 +171,33 @@ export const getPaperFileVersion = async (req: Request, res: Response) => {
 
     let paper = await Paper.findOne({ where: { id: paperId } });
     if (paper) {
-        console.log(paper);
+        console.debug(paper);
         let version = await paper.versions[Number(versionId) - 1];
         if (version) {
-            if (config.usingFS) {
-                res.status(200).sendFile(version.filePath);
-            } else if (config.usingAWS) {
-                const path = process.cwd() + "/" + config.tmpFolder + "/" + version.filePath;
-                const content = await downloadFile(version.filePath);
-                fs.writeFileSync(path, content, "binary");
-                res.status(200).sendFile(path, (err) => {
-                    if (err) {
-                        console.log("Error sending file from temp", err);
-                        res.status(400).json({ message: "Failed to download file" });
-                    } else {
-                        fs.unlinkSync(path);
-                    }
+            try {
+                if (config.usingFS) {
+                    res.status(200).sendFile(version.filePath);
+                } else if (config.usingAWS) {
+                    const path = process.cwd() + "/" + config.tmpFolder + "/" + version.filePath;
+                    const content = await downloadFile(version.filePath);
+                    fs.writeFileSync(path, content, "binary");
+                    res.status(200).sendFile(path, (err) => {
+                        if (err) {
+                            console.error("[paperController] Error sending file from temp", err);
+                            res.status(500).json({ 
+                                message: "Failed to download file",
+                                stack: config.nodeEnv === "production" ? null : err.stack
+                            });
+                        } else {
+                            fs.unlinkSync(path);
+                        }
+                    });
+                }
+            } catch (err) {
+                console.error("[paperController] Failed to send file", err);
+                res.status(500).json({ 
+                    message: "Failed to send paper",
+                    stack: config.nodeEnv === "production" ? null : err.stack
                 });
             }
         }
@@ -207,50 +228,75 @@ export const updatePaperFileVersion = async (req: Request, res: Response) => {
     let form = new IncomingForm({ uploadDir: config.tmpFolder });
     form.parse(req, async (err, fields: Fields, files: Files) => {
         if (err) {
-            console.log("Error parsing file");
+            console.error("[paperController-updatePaperFileVersion] Error parsing file", err);
             res.status(400).json({
                 message: "Error parsing file",
                 error: err,
+                stack: config.nodeEnv === "production" ? null : err.stack
             });
         }
 
-        let filePath = "/";
+        let path = "";
         if (!Array.isArray(files.files)) {
             let file = files.files;
-            console.log(files);
+            console.debug(files);
             try {
                 var oldPath = file.filepath;
                 // TODO: Where we would either save file to AWS or local storage
-                filePath = config.uploadFolder + "/" + file.originalFilename;
-                fs.writeFileSync(filePath, fs.readFileSync(oldPath));
-            } catch (e) {
-                console.log("Error writing file", e);
-                res.status(400).json({
+                try {
+                    var oldPath = file.filepath;
+                    // TODO: Where we would either save file to AWS or local storage
+                    if (config.usingAWS) {
+                        path = file.originalFilename!;
+                        await uploadFile(oldPath, path);
+                    } else if (config.usingFS) {
+                        path = process.cwd() + "/" + config.uploadFolder + "/" + file.originalFilename;
+                        fs.writeFileSync(path, fs.readFileSync(oldPath));
+                    }
+                } catch (err) {
+                    console.error("[paperController] Error saving file", err);
+                    res.status(500).json({ 
+                        message: "File couldn't be saved",
+                        stack: config.nodeEnv === "production" ? null : err.stack
+                    });
+                }
+                console.log("[paperController] File uploaded");
+            } catch (err) {
+                console.error("[paperController-updatePaperFileVersion] Error writing file", err);
+                res.status(500).json({
                     message: "File couldn't be saved",
+                    stack: config.nodeEnv === "production" ? null : err.stack
                 });
             }
             console.log("[paperController] File uploaded");
         } else {
+            console.warn("[paperController-updatePaperFileVersion] Can't handle multiple files");
             res.status(500).json({ message: "Backend currently can't handle multiple files" });
-            console.log("[paperController] Can't handle multiple files");
         }
+        try {
+            let paper = await Paper.findOne({ where: { id: paperId } });
 
-        let paper = await Paper.findOne({ where: { id: paperId } });
+            if (paper) {
+                paper.versionNumber += 1;
+                const newVersion = Version.create({
+                    filePath: path,
+                    paper: paper,
+                });
+                await newVersion.save();
 
-        if (paper) {
-            paper.versionNumber += 1;
-            const newVersion = Version.create({
-                filePath: filePath,
-                paper: paper,
-            });
-            await newVersion.save();
-
-            paper.versions.push(newVersion);
-            console.log(paper);
-            await paper.save();
-            res.status(200).json({ message: "Successfully Reuploaded Paper" });
-        } else {
-            res.status(400).json({ message: "Paper not found" });
+                paper.versions.push(newVersion);
+                console.debug(paper);
+                await paper.save();
+                res.status(200).json({ message: "Successfully Reuploaded Paper" });
+            } else {
+                res.status(400).json({ message: "Paper not found" });
+            }
+        } catch (err) {
+            console.error("[paperController-updatePaperFileVersion] Failed to update Paper - Database Error", err);
+            res.status(500).json({
+                message: "Failed to update Paper - Database Error",
+                stack: config.nodeEnv === "production" ? null : err.stack
+            })
         }
     });
 };
