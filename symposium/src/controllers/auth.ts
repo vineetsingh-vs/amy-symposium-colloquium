@@ -16,7 +16,7 @@ export const signUp = async (req: Request, res: Response) => {
 
     if (user) {
         console.log("User already exists");
-        res.status(400);
+        res.status(400).json({ message: "User with email already exists" });
     } else {
         //
         // encrypt password with salt
