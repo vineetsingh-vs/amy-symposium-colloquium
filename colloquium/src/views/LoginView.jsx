@@ -74,7 +74,7 @@ const LoginView = () => {
                         fullWidth
                         variant="contained"
                         color="primary"
-                        disabled={email == "" || password == ""}
+                        disabled={email === "" || password === ""}
                         className={classes.submit}
                     >
                         Sign In

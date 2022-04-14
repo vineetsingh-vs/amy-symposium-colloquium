@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useHistory, useParams } from "react-router-dom"
+import { useParams } from "react-router-dom"
 import DocViewer, {
     HTMLRenderer,
     JPGRenderer,
@@ -32,7 +32,6 @@ import { DocumentItems } from "../components/listItems";
 import Copyright from "../components/Copyright";
 import paperApi from "../api/paper";
 import { createStore } from "redux";
-import commentApi from "../api/comment";
 import {useDocumentViewStyles} from "../styles/documentViewStyles";
 import { useAuth } from "../useAuth";
 import path from "path-browserify";
@@ -51,14 +50,12 @@ const PageStore = createStore(pageReducer);
 const DocumentView = () => {
     const classes = useDocumentViewStyles();
     const {paperId, versionId} = useParams();
-    const history = useHistory()
     const { user } = useAuth()
     const [drawerToggled, setDrawerToggled] = useState(false);
     const [docUri, setDocUri] = useState([]);
     const [documentTitle, setDocumentTitle] = useState("");
     const [isFetching, setIsFetching] = useState(false);
     const [displayVersions, setDisplayVersions] = useState([]);
-    const [totalVersions, setTotalVersions] = useState(1);
     const [fileType, setFileType] = useState("");
 
     const handleDrawerToggle = () => {
@@ -76,7 +73,7 @@ const DocumentView = () => {
         // load document metadata and file version
         paperApi.getMetaDataById(paperId).then((metadata) => {
             setFileType(path.extname(metadata.versions[metadata.versionNumber - 1].filePath))
-            let temp = []
+            let temp = [];
             for(let version = 1; version <= metadata.versionNumber; version++){
                 temp.push(version);
             }
@@ -84,7 +81,8 @@ const DocumentView = () => {
                 PageStore.dispatch({ type: "Page_Change", newPage: 1 });
             }
             setDisplayVersions(temp);
-            setDocumentTitle(metadata.title)
+            setDocumentTitle(metadata.title);
+            setIsFetching(false);
         });
         setDocUri([{ uri: paperApi.getDocumentURI(paperId, versionId) }]);
         
@@ -157,6 +155,7 @@ const DocumentView = () => {
                     >
                         {displayVersions.map((version) => (
                             <MenuItem
+                                key={version}
                                 value={version}
                             >
                                 {version}

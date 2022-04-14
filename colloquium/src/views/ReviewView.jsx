@@ -10,13 +10,10 @@ import {
     Container,
     Drawer,
     Divider,
-    Grid,
     IconButton,
     Toolbar,
     Typography,
-    TextField
 } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import Person from "@mui/icons-material/Person";
@@ -24,7 +21,6 @@ import { ReviewList } from "../components/CommentList";
 import { DocumentItems } from "../components/listItems";
 import Copyright from "../components/Copyright";
 import paperApi from "../api/paper"
-import commentApi from "../api/comment";
 import { useAuth } from "../useAuth";
 import {useDocumentViewStyles} from "../styles/documentViewStyles";
 
@@ -39,7 +35,6 @@ const ReviewView = ({match, history}) => {
 
     // Document Info
     const [documentTitle, setDocumentTitle] = useState("");
-    const [totalVersions, setTotalVersions] = useState(1);
     const [displayVersions, setDisplayVersions] = useState([]);
 
     // Version Control
@@ -132,6 +127,7 @@ const ReviewView = ({match, history}) => {
                 >
                     {displayVersions.map((version) => (
                         <MenuItem
+                            key={version}
                             value={version}
                         >
                             {version}

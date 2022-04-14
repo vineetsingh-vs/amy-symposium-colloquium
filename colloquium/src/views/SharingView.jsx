@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from "react";
 import clsx from 'clsx';
 import { DocumentItems } from '../components/listItems';
-import makeStyles from '@mui/styles/makeStyles';
 
 import {
     TextField,
@@ -75,7 +74,7 @@ const SharingView = ({match, history}) => {
         
       }
       apiCalls();
-  }, []);
+    }, []);
 
     return (
         <div className={classes.root}>

@@ -45,14 +45,7 @@ const ReuploadView = () => {
     };
 
     // Form Data
-    const [author, setAuthor] = useState("");
-    const [documentTitle, setDocumentTitle] = useState("");
     const [files, setFiles] = useState([]);
-
-    const clearValues = () => {
-      setDocumentTitle("");
-      setAuthor("");
-    };
 
     const nextVersionDisplay = () => {
         paperApi.getMetaDataById(paperId).then((metadata) => {
@@ -80,7 +73,6 @@ const ReuploadView = () => {
             await paperApi.updateFileVersion(paperId, form);
             nextVersionDisplay();
         } else {
-            clearValues();
             return alert("This document is not supported at this time");
         }
     };
