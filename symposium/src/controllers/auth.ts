@@ -17,8 +17,7 @@ export const signUp = async (req: Request, res: Response) => {
     if (user) {
         console.log("User already exists");
         res.status(400);
-    }
-    else {
+    } else {
         //
         // encrypt password with salt
         const salt = await bcrypt.genSalt(10);

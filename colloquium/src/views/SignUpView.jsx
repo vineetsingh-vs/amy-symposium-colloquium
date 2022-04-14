@@ -1,10 +1,9 @@
 import { useState } from "react";
+import { useHistory } from "react-router-dom"
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -24,12 +23,13 @@ export default function SignUp() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const auth = useAuth();
+    const history = useHistory();
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        auth.signup(email, password, firstName, lastName, affiliation);
-        window.location.replace("/");
-    };
+        auth.signup(email, password, firstName, lastName, affiliation).then(() => history.push("/papers")
+        );
+    }
 
     return (
         <ThemeProvider theme={theme}>

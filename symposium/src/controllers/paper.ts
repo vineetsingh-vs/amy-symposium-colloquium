@@ -19,10 +19,10 @@ export const getPaperList = async (req: Request, res: Response) => {
             // paperList = await Paper.find({where: [ {sharedWith : includes this user}]});
             res.status(200).send(user?.sharedWithMe);
         } else if (filter === "uploaded") {
-            let paperList = await Paper.find({ where: [{ creator: userId } ]})
+            let paperList = await Paper.find({ where: { creator: userId } });
             res.status(200).send(paperList);
         } else if (filter == "published") {
-            let paperList = await Paper.find({ where: [{ isPublished: true }] });
+            let paperList = await Paper.find({ where: { isPublished: true } });
             res.status(200).send(paperList);
         } else if (filter == "all") {
             // if user admin return all papers
@@ -31,7 +31,7 @@ export const getPaperList = async (req: Request, res: Response) => {
             res.status(200).send(paperList);
         } else {
             res.status(400).json({ message: "Invalid filter" });
-        } 
+        }
     } else {
         res.status(400).json({ message: "User not found" });
     }
