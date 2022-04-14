@@ -5,14 +5,15 @@ import { join } from "path";
 var json: any = null;
 
 const config = () => {
-    if (json)
-        return json;
+    if (json) return json;
     let file = fs.readFileSync("./config.json");
     json = JSON.parse(file.toString());
     if (json.useFS && json.useAWS)
-        console.log("Configuration file is set to use both local and aws file storage! Please change either useFS or useAWS to false in config.json");
+        console.log(
+            "Configuration file is set to use both local and aws file storage! Please change either useFS or useAWS to false in config.json"
+        );
     return json;
-}
+};
 
 export default {
     nodeEnv: process.env.NODE_ENV,
@@ -21,9 +22,9 @@ export default {
     postgresPass: process.env.POSTGRESQL_PASSWORD,
     postgresDB: process.env.POSTGRESQL_DB,
     tmpFolder: config().tempFolder,
-    usingFS: config().useFS ? true : false,
+    usingFS: config().useFS,
     uploadFolder: config().uploadFolder,
-    usingAWS: config().useAWS ? true : false,
+    usingAWS: config().useAWS,
     awsBucket: config().awsBucket,
     awsRegion: config().awsRegion,
     awsAccessKey: process.env.AWS_ACCESS_KEY_ID,

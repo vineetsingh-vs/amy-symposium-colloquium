@@ -69,7 +69,6 @@ const UploadView = () => {
             form.append("title", documentTitle);
             form.append("authors", "{" + author + "}");
             form.append("creator", user.id);
-            form.append("versions", "{}");
             for (let i = 0; i < files.length; i++) {
                 form.append("files", files[i], files[i].name);
                 console.log(files[i]);

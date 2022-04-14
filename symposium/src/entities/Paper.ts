@@ -21,13 +21,13 @@ export class Paper extends BaseEntity {
     @Column({ type: "varchar", length: 60 })
     title!: string;
 
-    @ManyToOne(() => User, (user) => user.papers)
+    @ManyToOne(() => User, (user) => user.papers, { eager: true })
     creator!: User;
 
     @Column("text", { array: true })
     authors!: string[];
 
-    @ManyToMany(() => User)
+    @ManyToMany(() => User, { eager: true })
     @JoinTable()
     sharedWith: User[];
 
