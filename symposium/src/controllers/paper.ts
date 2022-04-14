@@ -80,11 +80,14 @@ export const createPaper = async (req: Request, res: Response) => {
             let file = files.files;
             try {
                 var oldPath = file.filepath;
-                path = file.originalFilename!;
                 // TODO: Where we would either save file to AWS or local storage
-                await uploadFile(oldPath, path);
-                //filePath = config.uploadFolder + "/" + file.originalFilename;
-                //fs.writeFileSync(filePath, fs.readFileSync(oldPath));
+                if (config.usingAWS) {
+                    path = file.originalFilename!;
+                    await uploadFile(oldPath, path);
+                } else if (config.usingFS) {
+                    path = config.uploadFolder + "/" + file.originalFilename;
+                    fs.writeFileSync(path, fs.readFileSync(oldPath));
+                }
             } catch (e) {
                 console.log("Error writing file", e);
                 res.status(400).json({
@@ -163,17 +166,21 @@ export const getPaperFileVersion = async (req: Request, res: Response) => {
         console.log(paper);
         let version = await paper.versions[Number(versionId) - 1];
         if (version) {
-            const path = process.cwd() + "/" + config.tmpFolder + "/" + version.filePath;
-            const content = await downloadFile(path, version.filePath);
-            fs.writeFileSync(path, content, "binary");
-            res.status(200).sendFile(path, (err) => {
-                if (err) {
-                    console.log("Error sending file from temp", err);
-                    res.status(400).json({ message: "Failed to download file" });
-                } else {
-                    fs.unlinkSync(path);
-                }
-            });
+            if (config.usingFS) {
+                res.status(200).sendFile(version.filePath);
+            } else if (config.usingAWS) {
+                const path = process.cwd() + "/" + config.tmpFolder + "/" + version.filePath;
+                const content = await downloadFile(version.filePath);
+                fs.writeFileSync(path, content, "binary");
+                res.status(200).sendFile(path, (err) => {
+                    if (err) {
+                        console.log("Error sending file from temp", err);
+                        res.status(400).json({ message: "Failed to download file" });
+                    } else {
+                        fs.unlinkSync(path);
+                    }
+                });
+            }
         }
     } else {
         res.status(400).json({ message: "Paper not found" });

@@ -6,17 +6,16 @@ import { Readable } from "stream";
 
 export const s3 = new S3Client({ region: config.awsRegion });
 
-export const uploadFile = async (filePath: string, key: string) => {
+export const uploadFile = (filePath: string, key: string): void => {
     var params = {
         Bucket: config.awsBucket,
         Key: path.basename(key),
         Body: fs.createReadStream(filePath)
     }
-    const data = await s3.send(new PutObjectCommand(params));
-    return data;
+    s3.send(new PutObjectCommand(params));
 };
 
-export const downloadFile = async (filePath: string, key: string): Promise<string> => {
+export const downloadFile = async (key: string): Promise<string> => {
     var params = {
         Bucket: config.awsBucket!,
         Key: key

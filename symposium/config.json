@@ -1,0 +1,8 @@
+{
+    "tempFolder": "./files/temp",
+    "useFS": true,
+    "uploadFolder": "./files/uploads",
+    "useAWS": false,
+    "awsBucket": "symposium-s3",
+    "awsRegion": "us-east-1"
+}
