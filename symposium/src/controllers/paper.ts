@@ -348,11 +348,15 @@ export const stopSharingPaper = async (req: Request, res: Response) => {
         const paper = await Paper.findOne({ where: { id: paperId } });
         if (paper && paper.creator.id === user.id) {
             if(user.id !== shareUser.id){
-                let tmp = paper.sharedWith.filter((obj) => {
-                    return obj.id != shareUser.id;
-                });
+                let tmp : User[] = []
+                for(let i = 0; i < paper.sharedWith.length; i++){
+                    if(paper.sharedWith[i].id !== shareUser.id){
+                        tmp.push(paper.sharedWith[i]);
+                    }
+                }
                 paper.sharedWith = tmp;
-                res.status(200).json(paper);
+                const updatedPaper = await paper.save();
+                res.status(200).json(updatedPaper);
             }
             else {
                 res.status(200).json({ message : "you own paper" });

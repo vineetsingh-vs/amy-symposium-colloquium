@@ -154,9 +154,9 @@ const SharingView = ({match, history}) => {
                                             <TableCell>
                                                 {row.firstName}
                                             </TableCell>
-                                            {/* <TableCell>
-                                                <Button variant="contained" color="secondary" onClick={removeSharedUser(row.email)} >Remove?</Button>
-                                            </TableCell> */}
+                                            <TableCell>
+                                                <Button variant="contained" color="secondary" onClick={() => removeSharedUser(row.email)}>Remove?</Button>
+                                            </TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
