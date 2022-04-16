@@ -1,8 +1,6 @@
 import {
     Entity,
-    ManyToMany,
     OneToMany,
-    JoinTable,
     PrimaryGeneratedColumn,
     CreateDateColumn,
     UpdateDateColumn,
@@ -36,10 +34,6 @@ export class User extends BaseEntity {
 
     @OneToMany(() => Paper, (paper) => paper.creator)
     papers: Paper[];
-
-    @ManyToMany(() => Paper)
-    @JoinTable()
-    sharedWithMe: Paper[];
 
     @CreateDateColumn()
     createdAt: Date;
