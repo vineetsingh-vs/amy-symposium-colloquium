@@ -70,7 +70,7 @@ const ReuploadView = () => {
                 form.append("files", files[i], files[i].name);
                 // console.log(files[i]);
             }
-            await paperApi.updateFileVersion(paperId, form);
+            await paperApi.updateFileVersion(paperId, user.id, form).then();
             nextVersionDisplay();
         } else {
             return alert("This document is not supported at this time");
