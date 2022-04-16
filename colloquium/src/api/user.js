@@ -1,11 +1,16 @@
 import axios from "axios";
 import { apiUrl } from "./api.config";
 
-const resource = "/users";
+const resource = "users";
 
 const userApi = {
     getList: async () => {
         return await axios.get(`${apiUrl}/${resource}`).then((response) => response.data);
+    },
+    getOneByEmail: async(userEmail) => {
+        return await axios
+            .get(`${apiUrl}/${resource}/${userEmail}`)
+            .then((response) => response.data);
     },
     getOneById: async (userId) => {
         return await axios

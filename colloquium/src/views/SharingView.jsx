@@ -33,12 +33,14 @@ import Copyright from "../components/Copyright";
 import paperApi from "../api/paper";
 import { useAuth } from "../useAuth";
 import { usePaperUploadViewStyles } from "../styles/paperUploadViewStyles";
+import userApi from "../api/user";
 
 const SharingView = ({match, history}) => {
     const classes = usePaperUploadViewStyles();
     const paperId = match.params.paperId;
     let versionId = match.params.versionId;
     const { user } = useAuth();
+    const [sharedUserEmail, setSharedUserEmail] = useState("");
 
     // Drawer
     const [open, setOpen] = useState(true);
@@ -46,13 +48,21 @@ const SharingView = ({match, history}) => {
     // Who is being shared with
     const [rows, setRows] = useState([]);
     const addSharedUser = () => {
-      console.log("Add a User");
-
+        console.log("Add a User");
+        async function apiCalls() {
+            await paperApi.sharePaper(user.id, sharedUserEmail, paperId);
+        }
+        apiCalls();
+        window.location.replace("/" + paperId + "/" + versionId + "/share");
     };
 
-    const removeSharedUser = () => {
-      console.log("Remove a User");
-
+    const removeSharedUser = (email) => {
+        console.log("Remove a User");
+        async function apiCalls() {
+            await paperApi.stopSharingPaper(user.id, email, paperId);
+        }
+        apiCalls();
+        window.location.replace("/" + paperId + "/" + versionId + "/share");
     };
 
     // Document Info
@@ -69,9 +79,11 @@ const SharingView = ({match, history}) => {
 
     useEffect(() => {
       async function apiCalls() {
-        await paperApi.getMetaDataById(paperId).then((rep) => setDocumentTitle(rep.title));
-        // Get Shared Users
-        
+        await paperApi.getMetaDataById(paperId).then((rep) => {
+            console.log(rep);
+            setDocumentTitle(rep.title);
+            setRows(rep.sharedWith);
+        });
       }
       apiCalls();
     }, []);
@@ -123,8 +135,8 @@ const SharingView = ({match, history}) => {
                 <Container maxWidth="lg" className={classes.container}>
                     <Grid container spacing={3}>
                         <Grid item xs={12} md={12} lg={12}>
-                            <TextField fullWidth label='Enter an Email Address'></TextField>
-                            <Button variant="contained" color="primary" onClick={addSharedUser} href={"/" + paperId + "/" + versionId + "/share"}>
+                            <TextField fullWidth label='Enter an Email Address' onChange={(e) => setSharedUserEmail(e.target.value)}></TextField>
+                            <Button variant="contained" color="primary" onClick={addSharedUser}>
                                 Share With
                             </Button>
                         </Grid>
@@ -133,18 +145,18 @@ const SharingView = ({match, history}) => {
                                 <TableHead>
                                     <TableRow>
                                         <TableCell>Shared With</TableCell>
-                                        <TableCell>Remove Share?</TableCell>
+                                        {/* <TableCell>Remove Share?</TableCell> */}
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     {rows.map((row) => (
                                         <TableRow key={row.id}>
                                             <TableCell>
-                                                {row.shareName}
+                                                {row.firstName}
                                             </TableCell>
-                                            <TableCell>
-                                                <Button variant="contained" color="secondary" href={"/" + paperId + "/" + versionId + "/share"} onClick={removeSharedUser}>Remove?</Button>
-                                            </TableCell>
+                                            {/* <TableCell>
+                                                <Button variant="contained" color="secondary" onClick={removeSharedUser(row.email)} >Remove?</Button>
+                                            </TableCell> */}
                                         </TableRow>
                                     ))}
                                 </TableBody>

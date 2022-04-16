@@ -6,6 +6,8 @@ import {
     UpdateDateColumn,
     Column,
     BaseEntity,
+    ManyToMany,
+    JoinTable
 } from "typeorm";
 import { Paper } from "./Paper";
 

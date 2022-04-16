@@ -14,9 +14,16 @@ export const getPaperList = async (req: Request, res: Response) => {
     let user = await User.findOne({ where: { id: userId } });
     if (user) {
         if (filter === "shared") {
-            // TODO
-            // paperList = await Paper.find({where: [ {sharedWith : includes this user}]});
-            // res.status(200).send(user?.sharedWithMe);
+            let sharedPapers : Paper[] = [];
+            let paperList = await Paper.find();
+            paperList.forEach(paper => {
+                for(let i = 0; i < paper.sharedWith.length; i++){
+                    if(paper.sharedWith[i].id === user!.id){
+                        sharedPapers.push(paper);
+                    }
+                }
+            });
+            res.status(200).send(sharedPapers);
         } else if (filter === "uploaded") {
             let paperList = await Paper.find({ where: { creator: userId } });
             res.status(200).send(paperList);
@@ -248,7 +255,7 @@ export const updatePaperFileVersion = async (req: Request, res: Response) => {
                     // TODO: Where we would either save file to AWS or local storage
                     if (config.usingAWS) {
                         path = file.originalFilename!;
-                        await uploadFile(oldPath, path);
+                        uploadFile(oldPath, path);
                     } else if (config.usingFS) {
                         path = process.cwd() + "/" + config.uploadFolder + "/" + file.originalFilename;
                         fs.writeFileSync(path, fs.readFileSync(oldPath));
@@ -302,47 +309,61 @@ export const updatePaperFileVersion = async (req: Request, res: Response) => {
 };
 
 export const sharePaper = async (req: Request, res: Response) => {
-    const { userId, userShareId } = req.body;
+    const { userId, sharedUserEmail } = req.body;
     const { paperId } = req.params;
     console.log("[paperController] sharePaper");
 
     const user = await User.findOne({ where: { id: userId } });
-    if (!user) res.status(404).json({ message: "user not found" });
-
-    const shareUser = await User.findOne({ where: { id: userShareId } });
-    if (!shareUser) res.status(404).json({ message: "shared with user not found" });
-
-    const paper = await Paper.findOne({ where: { id: paperId } });
-    console.log(paper);
-    if (paper && paper.creator.id === user?.id) {
-        // @ts-ignore
-        paper.sharedWith.push(shareUser);
-        paper.save();
-        res.status(200).json(paper);
-    } else {
-        res.status(404).json({ message: "paper not found" });
+    const shareUser = await User.findOne({ where: { email: sharedUserEmail } });
+    if(user && shareUser){
+        const paper = await Paper.findOne({ where: { id: paperId } });
+        if (paper && paper.creator.id === user.id) {
+            // @ts-ignore
+            if(user.id !== shareUser.id){
+                paper.sharedWith.push(shareUser);
+                const updatedPaper = await paper.save();
+                res.status(200).json(updatedPaper);
+            }
+            else {
+                res.status(200).json({ message : "you own paper" });
+            }
+        } else {
+            res.status(404).json({ message: "paper not found" });
+        }
+    }
+    else {
+        if (!user) res.status(404).json({ message: "user not found" });
+        else if (!shareUser) res.status(404).json({ message: "shared with user not found" });
     }
 };
 
 export const stopSharingPaper = async (req: Request, res: Response) => {
-    const { userId, userShareId, paperId } = req.body;
+    const { userId, sharedUserEmail } = req.body;
+    const { paperId } = req.params;
     console.log("[paperController] stopSharingPaper");
 
     const user = await User.findOne({ where: { id: userId } });
-    if (!user) res.status(404).json({ message: "user not found" });
-
-    const shareUser = await User.findOne({ where: { id: userShareId } });
-    if (!shareUser) res.status(404).json({ message: "shared with user not found" });
-
-    const paper = await Paper.findOne({ where: { paperId: paperId } });
-    if (paper && paper.creator.id === user?.id) {
-        let tmp = paper.sharedWith.filter((obj) => {
-            return obj.id != paperId;
-        });
-        paper.sharedWith = tmp;
-        res.status(200).json(paper);
-    } else {
-        res.status(404).json({ message: "paper not found" });
+    const shareUser = await User.findOne({ where: { email: sharedUserEmail } });
+    if(user && shareUser){
+        const paper = await Paper.findOne({ where: { id: paperId } });
+        if (paper && paper.creator.id === user.id) {
+            if(user.id !== shareUser.id){
+                let tmp = paper.sharedWith.filter((obj) => {
+                    return obj.id != shareUser.id;
+                });
+                paper.sharedWith = tmp;
+                res.status(200).json(paper);
+            }
+            else {
+                res.status(200).json({ message : "you own paper" });
+            }
+        } else {
+            res.status(404).json({ message: "paper not found" });
+        }
+    }
+    else {
+        if (!user) res.status(404).json({ message: "user not found" });
+        else if (!shareUser) res.status(404).json({ message: "shared with user not found" });
     }
 };
 

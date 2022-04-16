@@ -42,14 +42,19 @@ const paperApi = {
             .then((response) => response.data);
     },
     // start sharing paper (paperId) with user (userId) and set permissions
-    sharePaper: async (userId, shareUserId, paperId) => {
+    sharePaper: async (userId, sharedUserEmail, paperId) => {
         return await axios.post(`${apiUrl}/${resource}/${paperId}/share`, {
             userId,
-            shareUserId,
+            sharedUserEmail,
         });
     },
     // stop sharing paper (paperId) with user (userId)
-    stopSharingPaper: async (userId, shareUserId, paperId) => {},
+    stopSharingPaper: async (userId, sharedUserEmail, paperId) => {
+        return await axios.put(`${apiUrl}/${resource}/${paperId}/share`, {
+            userId,
+            sharedUserEmail,
+        });
+    },
     create: async (formData) => {
         return axios
             .post(`${apiUrl}/${resource}`, formData, {
