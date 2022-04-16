@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
 import clsx from 'clsx';
-import { DocumentItems } from '../components/listItems';
+import { DocumentItems, CreatorItems } from "../components/listItems";
 
 import {
     TextField,
@@ -41,9 +41,10 @@ const SharingView = ({match, history}) => {
     let versionId = match.params.versionId;
     const { user } = useAuth();
     const [sharedUserEmail, setSharedUserEmail] = useState("");
+    const [creatorAccess, setCreatorAccess] = useState(false);
 
     // Drawer
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(false);
 
     // Who is being shared with
     const [rows, setRows] = useState([]);
@@ -80,9 +81,34 @@ const SharingView = ({match, history}) => {
     useEffect(() => {
       async function apiCalls() {
         await paperApi.getMetaDataById(paperId).then((rep) => {
+            // Check if this user has access
+            let owner = false;
+            let shared = false;
+            if(rep.creator.id === user.id){
+                owner = true;
+            }
+            for(let i = 0; i < rep.sharedWith.length; i++){
+                if(rep.sharedWith[i].id === user.id){
+                    shared = true;
+                }
+            }
+
+            // Only the owner has access to the share screen at any point for the document
+            if(!owner) {
+                if(shared || rep.isPublished) {
+                    // If its shared, or public, send the user back to the doc view for the document
+                    window.location.replace("/" + paperId + "/" + match.params.versionId);
+                } else {
+                    window.location.replace("/papers");
+                }
+            }
+
             console.log(rep);
             setDocumentTitle(rep.title);
             setRows(rep.sharedWith);
+            if(rep.creator.id === user.id) {
+                setCreatorAccess(true);
+            }
         });
       }
       apiCalls();
@@ -129,6 +155,7 @@ const SharingView = ({match, history}) => {
             </div>
             <Divider />
             <DocumentItems versionId={versionId}/>
+            {creatorAccess ? (<CreatorItems versionId={versionId} />) : (<></>)}
         </Drawer>
         <main className={classes.content}>
             <div className={classes.appBarSpacer}>

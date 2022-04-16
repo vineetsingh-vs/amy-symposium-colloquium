@@ -37,10 +37,17 @@ const DocumentItems = (versionId) => {
         Reviews
       </Link>
     </ListItem>
-    <ListItem>
-      <ListItemIcon>
-        <People />
-      </ListItemIcon>
+  </List>
+)};
+
+const CreatorItems = (versionId) => {
+  let {paperId} = useParams()
+  return(
+    <List>
+      <ListItem>
+        <ListItemIcon>
+          <People />
+        </ListItemIcon>
       <Link href={"/" + paperId + "/" + versionId.versionId + "/share"} underline="hover">
         Share With
       </Link>
@@ -86,6 +93,7 @@ const DashboardItems = () => {
 
 export {
   DocumentItems,
+  CreatorItems,
   SecondaryListItems,
   DashboardItems
 };

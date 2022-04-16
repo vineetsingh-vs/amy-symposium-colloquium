@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import clsx from "clsx";
 import {
@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import paperApi from "../api/paper";
 import { Menu, ChevronLeft, Person } from "@mui/icons-material";
-import { DocumentItems } from "../components/listItems";
+import { DocumentItems, CreatorItems } from "../components/listItems";
 import Copyright from "../components/Copyright";
 import { useAuth } from "../useAuth";
 import { usePaperUploadViewStyles } from "../styles/paperUploadViewStyles";
@@ -39,6 +39,7 @@ const ReuploadView = () => {
     const {paperId, versionId} = useParams();
     const history = useHistory();
     const [drawerToggled, setDrawerToggled] = useState(false);
+    const [creatorAccess, setCreatorAccess] = useState(false);
 
     const handleDrawerToggle = () => {
         setDrawerToggled(!drawerToggled);
@@ -76,6 +77,36 @@ const ReuploadView = () => {
             return alert("This document is not supported at this time");
         }
     };
+
+    useEffect(() => {
+        paperApi.getMetaDataById(paperId).then((metadata) => {
+            // First, check that the user is allowed on the document
+            let owner = false;
+            let shared = false;
+            if(metadata.creator.id === user.id){
+                owner = true;
+            }
+            for(let i = 0; i < metadata.sharedWith.length; i++){
+                if(metadata.sharedWith[i].id === user.id){
+                    shared = true;
+                }
+            }
+
+            // Only the owner has access to the share screen at any point for the document
+            if(!owner) {
+                if(shared || metadata.isPublished) {
+                    // If its shared, or public, send the user back to the doc view for the document
+                    window.location.replace("/" + paperId + "/" + versionId);
+                } else {
+                    window.location.replace("/papers");
+                } 
+            }
+
+            if(metadata.creator.id === user.id) {
+                setCreatorAccess(true);
+            }
+        });      
+    }, []);
 
     return (
         <div className={classes.root}>
@@ -133,6 +164,7 @@ const ReuploadView = () => {
                 </div>
                 <Divider />
                 <DocumentItems versionId={versionId} />
+                {creatorAccess ? (<CreatorItems versionId={versionId} />) : (<></>)}
             </Drawer>
             <main className={classes.content}>
                 <div className={classes.appBarSpacer}>

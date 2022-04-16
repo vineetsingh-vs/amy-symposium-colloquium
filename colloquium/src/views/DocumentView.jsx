@@ -28,7 +28,7 @@ import Menu from "@mui/icons-material/Menu";
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import Person from "@mui/icons-material/Person";
 import { CommentList } from "../components/CommentList";
-import { DocumentItems } from "../components/listItems";
+import { DocumentItems, CreatorItems } from "../components/listItems";
 import Copyright from "../components/Copyright";
 import paperApi from "../api/paper";
 import { createStore } from "redux";
@@ -57,6 +57,7 @@ const DocumentView = () => {
     const [isFetching, setIsFetching] = useState(false);
     const [displayVersions, setDisplayVersions] = useState([]);
     const [fileType, setFileType] = useState("");
+    const [creatorAccess, setCreatorAccess] = useState(false);
 
     const handleDrawerToggle = () => {
         setDrawerToggled(!drawerToggled);
@@ -73,6 +74,8 @@ const DocumentView = () => {
         // load document metadata and file version
         paperApi.getMetaDataById(paperId).then((metadata) => {
             setFileType(path.extname(metadata.versions[metadata.versionNumber - 1].filePath))
+            
+            // First check to make sure the user is allowed on this document
             let owner = false;
             let shared = false;
             if(metadata.creator.id === user.id){
@@ -84,9 +87,12 @@ const DocumentView = () => {
                 }
             }
 
-            if(!owner && !shared)
-            {
-                window.location.replace("/papers");
+            // If the paper is not published, the user is not the owner or has share privliages,
+            // Send them away from this document
+            if(!owner && !shared) {
+                if(!metadata.isPublished){
+                    window.location.replace("/papers");
+                }
             }
 
             let temp = [];
@@ -99,6 +105,9 @@ const DocumentView = () => {
             setDisplayVersions(temp);
             setDocumentTitle(metadata.title);
             setIsFetching(false);
+            if(metadata.creator.id === user.id) {
+                setCreatorAccess(true);
+            }
         });
         setDocUri([{ uri: paperApi.getDocumentURI(paperId, versionId) }]);
         
@@ -161,6 +170,7 @@ const DocumentView = () => {
                     </div>
                     <Divider />
                     <DocumentItems versionId={versionId} />
+                    {creatorAccess ? (<CreatorItems versionId={versionId} />) : (<></>)}
                     <h3>Version</h3>
                     <Select
                         labelId="Version Select Label"
