@@ -73,6 +73,22 @@ const DocumentView = () => {
         // load document metadata and file version
         paperApi.getMetaDataById(paperId).then((metadata) => {
             setFileType(path.extname(metadata.versions[metadata.versionNumber - 1].filePath))
+            let owner = false;
+            let shared = false;
+            if(metadata.creator.id === user.id){
+                owner = true;
+            }
+            for(let i = 0; i < metadata.sharedWith.length; i++){
+                if(metadata.sharedWith[i].id === user.id){
+                    shared = true;
+                }
+            }
+
+            if(!owner && !shared)
+            {
+                window.location.replace("/papers");
+            }
+
             let temp = [];
             for(let version = 1; version <= metadata.versionNumber; version++){
                 temp.push(version);
