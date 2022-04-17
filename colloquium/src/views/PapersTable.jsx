@@ -31,7 +31,7 @@ const convertNiceDate = (badDate) => {
     return year + "-" + month + "-" + dt;
 };
 
-const PapersTable = ({ papers, filter }) => {
+const PapersTable = ({ papers, filter, user }) => {
     const classes = usePaperTableStyles();
 
     const handleChangePublish = (paperID, published) => {
@@ -82,7 +82,7 @@ const PapersTable = ({ papers, filter }) => {
                                         <TableCell>
                                             {convertNiceDate(paper.updatedAt)}
                                         </TableCell>
-                                        {filter === "uploaded" ? (
+                                        {filter === "uploaded" && paper.creator.id === user.id ? (
                                             <TableCell>
                                                 <FormControlLabel
                                                     control={
