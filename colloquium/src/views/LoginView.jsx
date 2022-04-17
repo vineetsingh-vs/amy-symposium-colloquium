@@ -81,9 +81,9 @@ const LoginView = () => {
                     </Button>
                     <Grid container>
                         <Grid item xs>
-                            <Link href="#" variant="body2" underline="hover">
+                            {/* <Link href="#" variant="body2" underline="hover">
                                 Forgot password?
-                            </Link>
+                            </Link> */}
                         </Grid>
                         <Grid item>
                             <Link href="signup" variant="body2" underline="hover">
