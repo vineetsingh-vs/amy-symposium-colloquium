@@ -31,6 +31,22 @@ const commentApi = {
             .get(`${apiUrl}/${resource}/${paperId}/${versionId}`)
             .then((response) => response.data);
     },
+    addLike: async (paperId, versionId, commentId, userId) => {
+        return axios
+            .put(`${apiUrl}/${resource}/${paperId}/${versionId}`, {
+                commentId,
+                userId
+            })
+            .then((response) => response.data);
+    },
+    addDislike: async (paperId, versionId, commentId, userId) => {
+        return axios
+            .put(`${apiUrl}/${resource}/${paperId}/${versionId}`, {
+                commentId,
+                userId
+            })
+            .then((response) => response.data);
+    }
 };
 
 export default commentApi;
