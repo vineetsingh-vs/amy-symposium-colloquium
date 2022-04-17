@@ -17,7 +17,7 @@ router.route("/:commentID").get(getCommentById).put(updateComment).delete(delete
 router.route("/:paperID/:versionID").get(getCommentsByVersionId);
 router.route("/:paperID/:versionID/:page").get(getCommentsByVersionAndPage);
 router.route("/").get(getCommentList).post(createComment);
-router.route("/like").put(addLike)
-router.route("/dislike").put(addDislike)
+router.route("/:commentID/like").put(addLike)
+router.route("/:commentID/dislike").put(addDislike)
 
 export default router;

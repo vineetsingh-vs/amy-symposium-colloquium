@@ -38,8 +38,8 @@ const Comment = ({ comment, paperId, versionId, pageNum }) => {
     const [hidden, setHidden] = useState(false);const [comments, setComments] = useState([]);
     const { user } = useAuth();
     const [replies, setReplies] = useState([]);
-    const [likes, setLikes] = useState([]);
-    const [dislikes, setDislikes] = useState([]);
+    const [likes, setLikes] = useState(comment.likes ? comment.likes.length : 0);
+    const [dislikes, setDislikes] = useState(comment.dislikes ? comment.dislikes.length : 0);
     const [value, setValue] = useState("");
 
     const handleType = (text) => {
@@ -57,15 +57,15 @@ const Comment = ({ comment, paperId, versionId, pageNum }) => {
 
     const addLike = async () => {
         await commentApi.addLike(comment.id, user.id).then((rep) => {
-            setLikes(rep.likes);
-            setDislikes(rep.dislikes);
+            setLikes(rep.likes ? rep.likes.length : likes);
+            setDislikes(rep.dislikes ? rep.dislikes.length : dislikes);
         });
     }
 
     const addDislike = async () => {
         await commentApi.addDislike(comment.id, user.id).then((rep) => {
-            setLikes(rep.likes);
-            setDislikes(rep.dislikes);
+            setLikes(rep.likes ? rep.likes.length : likes);
+            setDislikes(rep.dislikes ? rep.dislikes.length : dislikes);
         }); 
     }
     
@@ -117,11 +117,11 @@ const Comment = ({ comment, paperId, versionId, pageNum }) => {
             <ThumbUpIcon color="primary" variant="contained" onClick={addLike}>
                 Like
             </ThumbUpIcon>
-            <b>{likes.length}</b>
+            <b>{likes}</b>
             <ThumbDownIcon color="primary" variant="contained" onClick={addDislike}>
                 Dislike
             </ThumbDownIcon>
-            <b>{dislikes.length}</b>
+            <b>{dislikes}</b>
             <br />
             <Button color="secondary" variant="contained" onClick={addReply}>
                 Reply

@@ -130,11 +130,12 @@ export const getCommentById = async (req: Request, res: Response) => {
 };
 
 export const addLike = async (req: Request, res: Response) => {
-    console.log("[commentController] getCommentById");
-    const { commentId, userId } = req.body;
+    console.log("[commentController] add Like");
+    const { commentID } = req.params;
+    const { userId } = req.body;
 
     let user = await User.findOne({ where: { id : userId }})
-    let comment = await Comment.findOne({ where: { id: commentId } });
+    let comment = await Comment.findOne({ where: { id: commentID } });
 
     if (comment && user) {
 
@@ -181,11 +182,12 @@ export const addLike = async (req: Request, res: Response) => {
 };
 
 export const addDislike = async (req: Request, res: Response) => {
-    console.log("[commentController] getCommentById");
-    const { commentId, userId } = req.body;
+    console.log("[commentController] add Dislike");
+    const { commentID } = req.params;
+    const { userId } = req.body;
 
     let user = await User.findOne({ where: { id : userId }})
-    let comment = await Comment.findOne({ where: { id: commentId } });
+    let comment = await Comment.findOne({ where: { id: commentID } });
 
     if (comment && user) {
 
