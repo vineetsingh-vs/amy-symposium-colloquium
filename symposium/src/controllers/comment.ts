@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Paper } from "../entities/Paper";
 import { Comment } from "../entities/Comment";
 import config from "../utils/config";
+import { User } from "../entities/User";
 
 export const getCommentList = async (req: Request, res: Response) => {
     console.log("[commentController] getCommentList");
@@ -27,6 +28,8 @@ export const createComment = async (req: Request, res: Response) => {
                         user: userId,
                         content: content,
                         replies: [],
+                        likes: [],
+                        dislikes: [],
                         pageNum: pageNum,
                     });
                     await newComment.save();
@@ -43,6 +46,8 @@ export const createComment = async (req: Request, res: Response) => {
                         content: newComment.content,
                         parent: newComment.parent,
                         replies: newComment.replies,
+                        likes: newComment.likes,
+                        dislikes: newComment.dislikes,
                         pageNum: newComment.pageNum,
                         user: newComment.user,
                         createdAt: newComment.created_at,
@@ -79,6 +84,8 @@ export const createComment = async (req: Request, res: Response) => {
                     content: newComment.content,
                     parent: newComment.parent,
                     replies: newComment.replies,
+                    likes: newComment.likes,
+                    dislikes: newComment.dislikes,
                     pageNum: newComment.pageNum,
                     user: newComment.user,
                     createdAt: newComment.created_at,
@@ -110,6 +117,8 @@ export const getCommentById = async (req: Request, res: Response) => {
             content: comment.content,
             parent: comment.parent,
             replies: comment.replies,
+            likes: comment.likes,
+            dislikes: comment.dislikes,
             pageNum: comment.pageNum,
             user: comment.user,
             createdAt: comment.created_at,
@@ -117,6 +126,108 @@ export const getCommentById = async (req: Request, res: Response) => {
         });
     } else {
         res.status(400).json({ message: "Could not find Comment" });
+    }
+};
+
+export const addLike = async (req: Request, res: Response) => {
+    console.log("[commentController] getCommentById");
+    const { commentId, userId } = req.body;
+
+    let user = await User.findOne({ where: { id : userId }})
+    let comment = await Comment.findOne({ where: { id: commentId } });
+
+    if (comment && user) {
+
+        // Checking if in dislikes column
+        let tempD : User[] = [];
+        for(let i = 0; i < comment.dislikes.length; i++){
+            if(comment.dislikes[i].id !== user.id){
+                tempD.push(comment.dislikes[i]);
+            }
+        }
+        comment.dislikes = tempD;
+
+        // Checking if already in likes column
+        let check : Boolean = false;
+        for(let i = 0; i < comment.likes.length; i++){
+            if(comment.likes[i].id === user.id){
+                check = true;
+            }
+        }
+
+        if(!check){
+            comment.likes.push(user);
+        }
+
+        await comment.save();
+
+        res.status(200).json({
+            id: comment.id,
+            version: comment.version,
+            content: comment.content,
+            parent: comment.parent,
+            replies: comment.replies,
+            likes: comment.likes,
+            dislikes: comment.dislikes,
+            pageNum: comment.pageNum,
+            user: comment.user,
+            createdAt: comment.created_at,
+            updatedAt: comment.updated_at,
+        });
+    } else {
+        if(!user) res.status(400).json({ message: "Could not find User" });
+        else if(!comment) res.status(400).json({ message: "Could not find Comment" });
+    }
+};
+
+export const addDislike = async (req: Request, res: Response) => {
+    console.log("[commentController] getCommentById");
+    const { commentId, userId } = req.body;
+
+    let user = await User.findOne({ where: { id : userId }})
+    let comment = await Comment.findOne({ where: { id: commentId } });
+
+    if (comment && user) {
+
+        // Checking if in likes column
+        let tempD : User[] = [];
+        for(let i = 0; i < comment.likes.length; i++){
+            if(comment.likes[i].id !== user.id){
+                tempD.push(comment.likes[i]);
+            }
+        }
+        comment.likes = tempD;
+
+        // Checking if already in dislikes column
+        let check : Boolean = false;
+        for(let i = 0; i < comment.dislikes.length; i++){
+            if(comment.dislikes[i].id === user.id){
+                check = true;
+            }
+        }
+
+        if(!check){
+            comment.dislikes.push(user);
+        }
+
+        await comment.save();
+
+        res.status(200).json({
+            id: comment.id,
+            version: comment.version,
+            content: comment.content,
+            parent: comment.parent,
+            replies: comment.replies,
+            likes: comment.likes,
+            dislikes: comment.dislikes,
+            pageNum: comment.pageNum,
+            user: comment.user,
+            createdAt: comment.created_at,
+            updatedAt: comment.updated_at,
+        });
+    } else {
+        if(!user) res.status(400).json({ message: "Could not find User" });
+        else if(!comment) res.status(400).json({ message: "Could not find Comment" });
     }
 };
 
@@ -193,6 +304,8 @@ export const updateComment = async (req: Request, res: Response) => {
                 version: comment.version,
                 parent: comment.parent,
                 replies: comment.replies,
+                likes: comment.likes,
+                dislikes: comment.dislikes,
                 pageNum: comment.pageNum,
                 content: comment.content,
                 user: comment.user,

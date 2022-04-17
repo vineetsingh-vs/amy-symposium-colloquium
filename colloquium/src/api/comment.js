@@ -31,19 +31,19 @@ const commentApi = {
             .get(`${apiUrl}/${resource}/${paperId}/${versionId}`)
             .then((response) => response.data);
     },
-    addLike: async (paperId, versionId, commentId, userId) => {
+    addLike: async (commentId, userId) => {
         return axios
-            .put(`${apiUrl}/${resource}/${paperId}/${versionId}`, {
-                commentId,
-                userId
+            .put(`${apiUrl}/${resource}/like`, {
+                commentId: commentId,
+                userId: userId
             })
             .then((response) => response.data);
     },
-    addDislike: async (paperId, versionId, commentId, userId) => {
+    addDislike: async (commentId, userId) => {
         return axios
-            .put(`${apiUrl}/${resource}/${paperId}/${versionId}`, {
-                commentId,
-                userId
+            .put(`${apiUrl}/${resource}/dislike`, {
+                commentId: commentId,
+                userId: userId
             })
             .then((response) => response.data);
     }

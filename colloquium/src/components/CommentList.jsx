@@ -15,8 +15,10 @@ import {
     Typography,
     Grid,
     Button,
-    TextField
+    TextField,
 } from "@mui/material";
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -54,15 +56,17 @@ const Comment = ({ comment, paperId, versionId, pageNum }) => {
     }
 
     const addLike = async () => {
-        await commentApi.addLike(paperId, versionId, comment.id, user.id).then((rep) => {
-
+        await commentApi.addLike(comment.id, user.id).then((rep) => {
+            setLikes(rep.likes);
+            setDislikes(rep.dislikes);
         });
     }
 
     const addDislike = async () => {
-        await commentApi.addDislike(paperId, versionId, comment.id, user.id).then((rep) => {
-
-        });
+        await commentApi.addDislike(comment.id, user.id).then((rep) => {
+            setLikes(rep.likes);
+            setDislikes(rep.dislikes);
+        }); 
     }
     
     const createReply = (id, name, body) => {
@@ -113,10 +117,11 @@ const Comment = ({ comment, paperId, versionId, pageNum }) => {
             <ThumbUpIcon color="primary" variant="contained" onClick={addLike}>
                 Like
             </ThumbUpIcon>
-            <b>{totalLikes}</b>
-            <ThumbDownAltIcon color="primary" variant="contained" onClick={addDislike}>
+            <b>{likes.length}</b>
+            <ThumbDownIcon color="primary" variant="contained" onClick={addDislike}>
                 Dislike
-            </ThumbDownAltIcon>
+            </ThumbDownIcon>
+            <b>{dislikes.length}</b>
             <br />
             <Button color="secondary" variant="contained" onClick={addReply}>
                 Reply
