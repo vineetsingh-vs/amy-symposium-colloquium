@@ -7,8 +7,11 @@ import {
     Column,
     BaseEntity,
     ManyToOne,
+    ManyToMany,
+    JoinTable
 } from "typeorm";
 import { Version } from "./Version";
+import { User } from "./User";
 
 @Entity()
 export class Comment extends BaseEntity {
@@ -29,6 +32,14 @@ export class Comment extends BaseEntity {
         cascade: true
     })
     replies: Comment[];
+
+    @ManyToMany(() => User, { eager: true })
+    @JoinTable()
+    likes: User[]
+
+    @ManyToMany(() => User, { eager: true })
+    @JoinTable()
+    dislikes: User[]
 
     @Column()
     pageNum: number;

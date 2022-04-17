@@ -36,7 +36,8 @@ const Comment = ({ comment, paperId, versionId, pageNum }) => {
     const [hidden, setHidden] = useState(false);const [comments, setComments] = useState([]);
     const { user } = useAuth();
     const [replies, setReplies] = useState([]);
-    const [isFetching, setIsFetching] = useState(false);
+    const [likes, setLikes] = useState([]);
+    const [dislikes, setDislikes] = useState([]);
     const [value, setValue] = useState("");
 
     const handleType = (text) => {
@@ -50,6 +51,18 @@ const Comment = ({ comment, paperId, versionId, pageNum }) => {
         console.log(replies);
         setValue("");
         setHidden(!hidden);
+    }
+
+    const addLike = async () => {
+        await commentApi.addLike(paperId, versionId, comment.id, user.id).then((rep) => {
+
+        });
+    }
+
+    const addDislike = async () => {
+        await commentApi.addDislike(paperId, versionId, comment.id, user.id).then((rep) => {
+
+        });
     }
     
     const createReply = (id, name, body) => {
@@ -67,15 +80,14 @@ const Comment = ({ comment, paperId, versionId, pageNum }) => {
 
     useEffect(() => {
         console.log("[ReplyList] mount");
-        setIsFetching(true);
         listReplies();
-        setIsFetching(false);
     }, [comment, replies]);  
 
     const addReply = () => {
         setHidden(!hidden);
         console.log(hidden);
     }
+
     return (
         <div className={`comment ${comment.id}`}>
             <ListItem key={comment.id} alignItems="flex-start">
@@ -98,6 +110,14 @@ const Comment = ({ comment, paperId, versionId, pageNum }) => {
                     }
                 />
             </ListItem>
+            <ThumbUpIcon color="primary" variant="contained" onClick={addLike}>
+                Like
+            </ThumbUpIcon>
+            <b>{totalLikes}</b>
+            <ThumbDownAltIcon color="primary" variant="contained" onClick={addDislike}>
+                Dislike
+            </ThumbDownAltIcon>
+            <br />
             <Button color="secondary" variant="contained" onClick={addReply}>
                 Reply
             </Button>
