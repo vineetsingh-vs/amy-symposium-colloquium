@@ -4,6 +4,32 @@ import { Comment } from "../entities/Comment";
 import config from "../utils/config";
 import { User } from "../entities/User";
 
+
+export const getExtraComment = async (req: Request, res: Response) => {
+    console.log("[commentController] getCommentById");
+    const { commentID } = req.params;
+
+    let comment = await Comment.findOne({ where: { id: commentID } });
+
+    if (comment) {
+        res.status(200).json({
+            id: comment.id,
+            version: comment.version,
+            content: comment.content,
+            parent: comment.parent,
+            replies: comment.replies,
+            likes: comment.likes,
+            dislikes: comment.dislikes,
+            pageNum: comment.pageNum,
+            user: comment.user,
+            createdAt: comment.created_at,
+            updatedAt: comment.updated_at,
+        });
+    } else {
+        res.status(400).json({ message: "Could not find Comment" });
+    }
+};
+
 export const addLike = async (req: Request, res: Response) => {
     console.log("[commentController] add Like");
     const { commentID } = req.params;
