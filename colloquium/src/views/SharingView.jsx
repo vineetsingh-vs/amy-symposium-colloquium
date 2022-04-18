@@ -33,7 +33,6 @@ import Copyright from "../components/Copyright";
 import paperApi from "../api/paper";
 import { useAuth } from "../useAuth";
 import { usePaperUploadViewStyles } from "../styles/paperUploadViewStyles";
-import userApi from "../api/user";
 
 const SharingView = ({match, history}) => {
     const classes = usePaperUploadViewStyles();
