@@ -52,7 +52,6 @@ const Comment = ({ comment, paperId, versionId, pageNum }) => {
     const handleClick = () => {
         replies.push(createReply(comments.length, user.firstName, value));
         listReplies();
-        console.log(replies);
         setValue("");
         setHidden(!hidden);
     }
@@ -72,7 +71,6 @@ const Comment = ({ comment, paperId, versionId, pageNum }) => {
     }
     
     const createReply = (id, name, body) => {
-        console.log(comment);
         commentApi.createComment(paperId, versionId, comment.id, name, body, pageNum);
         return { id, pageNum: pageNum, parentId: comment.id, content: body, user: name };
     }
@@ -152,7 +150,6 @@ const CommentList = ({ paperId, versionId }) => {
     const handleClick = async() => {
         await createComment(comments.length, user.firstName, currentComment, []).then((data) => comments.push(data));
         listComments();
-        console.log(comments);
         setCurrentComment("");
     };
 
@@ -219,7 +216,6 @@ const ReviewList = ({ paperId, versionId }) => {
     const handleClick = async() => {
         await createReviews(reviews.length, user.firstName, value, []).then((data) => reviews.push(data));
         listReviews();
-        console.log(reviews);
         setValue("");
     }
 
@@ -241,7 +237,6 @@ const ReviewList = ({ paperId, versionId }) => {
         }
         apiCalls();
         console.log("[ReviewList] mount");
-        console.log(reviews)
     }, []);  
 
     return (

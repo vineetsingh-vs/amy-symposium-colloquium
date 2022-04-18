@@ -25,7 +25,6 @@ const PDFCustomControls = () => {
             {
                 PageStore.dispatch({ type: "Page_Change", newPage: context.state.currentPage }) != null &&
                 console.log("Page Change")
-                //ChangeCurrentPage(context.state.currentPage) != null
             }
         </Container>
     )

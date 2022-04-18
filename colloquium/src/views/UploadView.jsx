@@ -71,7 +71,6 @@ const UploadView = () => {
             form.append("creator", user.id);
             for (let i = 0; i < files.length; i++) {
                 form.append("files", files[i], files[i].name);
-                console.log(files[i]);
             }
 
             await paperApi.create(form);

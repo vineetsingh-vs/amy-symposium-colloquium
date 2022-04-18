@@ -80,17 +80,14 @@ export const createPaper = async (req: Request, res: Response) => {
                 stack: config.nodeEnv === "production" ? null : err.stack
             });
         }
-        console.log(files.files);
 
         let path = "";
         if (!Array.isArray(files.files)) {
             let file = files.files;
             try {
-                console.log("yuh");
                 var oldPath = file.filepath;
                 // TODO: Where we would either save file to AWS or local storage
                 if (config.usingAWS) {
-                    console.log("hu");
                     path = file.originalFilename!;
                     uploadFile(oldPath, path);
                 } else if (config.usingFS) {
@@ -312,7 +309,6 @@ export const updatePaperFileVersion = async (req: Request, res: Response) => {
     else {
         if(!paper)  res.status(400).json({ message: "Paper not found" });
         else if(paper.creator.id !== userId) {
-            console.log("NOT CORRECT USER");
             res.status(400).json({ message: "User is not the owner of the paper" });
         }
     }

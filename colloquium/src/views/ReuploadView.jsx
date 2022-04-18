@@ -69,7 +69,6 @@ const ReuploadView = () => {
             const form = new FormData();
             for (let i = 0; i < files.length; i++) {
                 form.append("files", files[i], files[i].name);
-                // console.log(files[i]);
             }
             await paperApi.updateFileVersion(paperId, user.id, form).then();
             nextVersionDisplay();

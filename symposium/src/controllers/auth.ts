@@ -62,6 +62,7 @@ export const signUp = async (req: Request, res: Response) => {
 };
 
 export const login = async (req: Request, res: Response) => {
+    console.log("[authController] login");
     const { email, password } = req.body;
 
     const user = await User.findOne({ where: { email: email } });

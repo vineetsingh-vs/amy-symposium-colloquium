@@ -49,7 +49,6 @@ const SharingView = ({match, history}) => {
     // Who is being shared with
     const [rows, setRows] = useState([]);
     const addSharedUser = () => {
-        console.log("Add a User");
         async function apiCalls() {
             await paperApi.sharePaper(user.id, sharedUserEmail, paperId);
         }
@@ -58,7 +57,6 @@ const SharingView = ({match, history}) => {
     };
 
     const removeSharedUser = (email) => {
-        console.log("Remove a User");
         async function apiCalls() {
             await paperApi.stopSharingPaper(user.id, email, paperId);
         }
@@ -103,7 +101,6 @@ const SharingView = ({match, history}) => {
                 }
             }
 
-            console.log(rep);
             setDocumentTitle(rep.title);
             setRows(rep.sharedWith);
             if(rep.creator.id === user.id) {

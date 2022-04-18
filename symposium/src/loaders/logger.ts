@@ -27,7 +27,6 @@ let logger = (req: Request, res: Response, next: NextFunction) => {
     let log = `[${chalk.blue(fmtDate)}] ${req.method}:${req.url} ${res.statusCode} ${chalk.red(
         durMilliseconds.toLocaleString() + "ms"
     )}`;
-    console.log(log);
     next();
 };
 

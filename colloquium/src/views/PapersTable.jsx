@@ -34,9 +34,8 @@ const convertNiceDate = (badDate) => {
 const PapersTable = ({ papers, filter, user }) => {
     const classes = usePaperTableStyles();
 
-    const handleChangePublish = (paperID, published) => {
-        console.log(published);
-        paperApi.updateMetadata(paperID, {isPublished: published}).then(resp => console.log(resp))
+    const handleChangePublish = async (paperID, published) => {
+        await paperApi.updateMetadata(paperID, {isPublished: published})
         window.location.replace("/papers");
     };
 
@@ -91,7 +90,6 @@ const PapersTable = ({ papers, filter, user }) => {
                                                             color="primary"
                                                             onChange={(e) => {
                                                                 e.preventDefault()
-                                                                console.log(paper)
                                                                 handleChangePublish(
                                                                     paper.id,
                                                                     !paper.isPublished
