@@ -79,17 +79,14 @@ const Comment = ({ comment, paperId, versionId, pageNum }) => {
         let replyList = comment.replies;
 
         setReplies(replyList ? replyList : []);
-        console.log("[ReplyList] got replies");
     };
 
     useEffect(() => {
-        console.log("[ReplyList] mount");
         listReplies();
     }, [comment, replies]);  
 
     const addReply = () => {
         setHidden(!hidden);
-        console.log(hidden);
     }
 
     return (
