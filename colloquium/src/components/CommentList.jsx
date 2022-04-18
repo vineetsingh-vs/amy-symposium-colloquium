@@ -178,8 +178,10 @@ const CommentList = ({ paperId, versionId }) => {
     return (
         <Grid item xs={4}>
             <List className={classes.root}>
-                {comments.map((comment) => (
-                    <Comment comment={comment} paperId={paperId} versionId={versionId} pageNum={PageStore.getState().currentPage} />
+                {comments.map((comment, index) => (
+                    <React.Fragment key={index}>
+                        <Comment comment={comment} paperId={paperId} versionId={versionId} pageNum={PageStore.getState().currentPage} />
+                    </React.Fragment>
                 ))}
             </List>
             <TextField
@@ -245,8 +247,10 @@ const ReviewList = ({ paperId, versionId }) => {
     return (
         <Grid item xs={12}>
             <List className={classes.root}>
-                {reviews.map((review) => (
-                    <Comment comment={review} paperId={paperId} versionId={versionId} pageNum={0} />
+                {reviews.map((review, index) => (
+                    <React.Fragment key={index}>
+                        <Comment comment={review} paperId={paperId} versionId={versionId} pageNum={0} />
+                    </React.Fragment>
                 ))}
             </List>
             <TextField variant="outlined" multiline placeholder="Enter Review Here" fullWidth={true} value={value} onChange={handleType}></TextField>

@@ -63,8 +63,10 @@ const ReplyList = ({ replies }) => {
     return (
         <List className={classes.root}>
             {
-            replies.map((reply) => (
-                <Reply reply={reply} />
+            replies.map((reply, index) => (
+                <React.Fragment key={index}>
+                    <Reply reply={reply} />
+                </React.Fragment>
             ))}
         </List>
     );
