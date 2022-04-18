@@ -134,7 +134,6 @@ const Comment = ({ comment, paperId, versionId, pageNum }) => {
             
             { replies ? <ReplyList replies={replies}/> : <div></div>}
 
-            <Divider />
         </div>
     );
 };
