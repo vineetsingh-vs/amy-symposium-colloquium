@@ -7,6 +7,7 @@ import authRoutes from "./routes/auth";
 import userRoutes from "./routes/user";
 import paperRoutes from "./routes/paper";
 import commentRoutes from "./routes/comment";
+import extraRoutes from "./routes/extra";
 import config from "./utils/config";
 import connectDB from "./utils/db";
 import { existsSync, mkdirSync } from "fs";
@@ -45,6 +46,7 @@ const main = async () => {
     app.use("/v1/users", userRoutes);
     app.use("/v1/papers", paperRoutes);
     app.use("/v1/comments", commentRoutes);
+    app.use("/v1/extra", extraRoutes);
 
     //
     // serve compiled frontend if production

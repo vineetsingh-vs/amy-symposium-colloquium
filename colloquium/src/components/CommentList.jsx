@@ -19,6 +19,7 @@ import {
 } from "@mui/material";
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import extraApi from "../api/extra";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -56,14 +57,14 @@ const Comment = ({ comment, paperId, versionId, pageNum }) => {
     }
 
     const addLike = async () => {
-        await commentApi.addLike(comment.id, user.id).then((rep) => {
+        await extraApi.addLike(comment.id, user.id).then((rep) => {
             setLikes(rep.likes ? rep.likes.length : likes);
             setDislikes(rep.dislikes ? rep.dislikes.length : dislikes);
         });
     }
 
     const addDislike = async () => {
-        await commentApi.addDislike(comment.id, user.id).then((rep) => {
+        await extraApi.addDislike(comment.id, user.id).then((rep) => {
             setLikes(rep.likes ? rep.likes.length : likes);
             setDislikes(rep.dislikes ? rep.dislikes.length : dislikes);
         }); 
