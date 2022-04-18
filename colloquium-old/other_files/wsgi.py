@@ -1,1 +1,0 @@
-from backend.decidio import app
