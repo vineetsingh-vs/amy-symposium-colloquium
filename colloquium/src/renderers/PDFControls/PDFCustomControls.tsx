@@ -1,4 +1,4 @@
-import React, {useState, useContext} from "react";
+import React, {useContext} from "react";
 import styled from "@emotion/styled";
 import { PDFContext } from "react-doc-viewer/build/plugins/pdf/state/index"
 import PDFPagination from "react-doc-viewer/build/plugins/pdf/components/PDFPagination"

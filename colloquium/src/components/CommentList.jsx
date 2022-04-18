@@ -8,7 +8,6 @@ import { useAuth } from "../useAuth";
 import {
     List,
     ListItem,
-    Divider,
     ListItemText,
     ListItemAvatar,
     Avatar,
@@ -125,7 +124,7 @@ const Comment = ({ comment, paperId, versionId, pageNum }) => {
             </Button>
             {hidden && (<TextField multiline variant="outlined" fullWidth={true} onChange={handleType} value={value} ></TextField>)}
             
-            {hidden && (<Button color="secondary" variant="contained" disabled={value == ""} onClick={handleClick}>Add Reply</Button>)}
+            {hidden && (<Button color="secondary" variant="contained" disabled={value === ""} onClick={handleClick}>Add Reply</Button>)}
             
             { replies ? <ReplyList replies={replies}/> : <div></div>}
 
