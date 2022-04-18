@@ -36,7 +36,8 @@ const useStyles = makeStyles((theme) => ({
 
 const Comment = ({ comment, paperId, versionId, pageNum }) => {
     const classes = useStyles();
-    const [hidden, setHidden] = useState(false);const [comments, setComments] = useState([]);
+    const [hidden, setHidden] = useState(false);
+    const [comments, setComments] = useState([]);
     const { user } = useAuth();
     const [replies, setReplies] = useState([]);
     const [likes, setLikes] = useState(comment.likes ? comment.likes.length : 0);
