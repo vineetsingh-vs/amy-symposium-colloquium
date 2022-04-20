@@ -68,7 +68,7 @@ const main = async () => {
     
     //
     // server startup
-    const port = 4000;
+    const port = Number(process.env.NODE_PORT);
 
     app.listen(port, "0.0.0.0", () => {
         console.log("Server listening on " + port);

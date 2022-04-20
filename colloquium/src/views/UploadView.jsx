@@ -15,6 +15,7 @@ import {
     Input,
     Typography,
     FormGroup,
+    CircularProgress,
 } from "@mui/material";
 import paperApi from "../api/paper";
 import { Menu, ChevronLeft, Person } from "@mui/icons-material";
@@ -38,6 +39,7 @@ const UploadView = () => {
     const { user } = useAuth();
     const history = useHistory();
     const [drawerToggled, setDrawerToggled] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const handleDrawerToggle = () => {
         setDrawerToggled(!drawerToggled);
@@ -56,6 +58,7 @@ const UploadView = () => {
     // Submitting the document through a form
     const handleSubmission = async (event) => {
         event.preventDefault();
+        setLoading(true);
         let result = true;
         for (let i = 0; i < files.length; i++) {
             result = acceptedDocumentTypes.find((docTypes) =>
@@ -72,8 +75,8 @@ const UploadView = () => {
             for (let i = 0; i < files.length; i++) {
                 form.append("files", files[i], files[i].name);
             }
-
             await paperApi.create(form);
+            setLoading(false);
             history.push("papers");
         } else {
             clearValues();
@@ -148,20 +151,24 @@ const UploadView = () => {
                                         type="text"
                                         placeholder="Document Title"
                                         value={documentTitle}
+                                        disabled={loading}
                                         onChange={(e) => setDocumentTitle(e.target.value)}
                                     />
                                     <Input
                                         type="text"
                                         placeholder="Author"
                                         value={author}
+                                        disabled={loading}
                                         onChange={(e) => setAuthor(e.target.value)}
                                     />
                                     <br />
                                     <Input
                                         type="file"
+                                        disabled={loading}
                                         onChange={(e) => setFiles(e.target.files)}
                                     />
                                     <br />
+                                    { loading ? <CircularProgress /> : 
                                     <Input
                                         type="submit"
                                         disabled={
@@ -172,7 +179,7 @@ const UploadView = () => {
                                             )
                                         }
                                         onClick={handleSubmission}
-                                    />
+                                    /> }
                                 </FormGroup>
                             </Grid>
                         </Grid>

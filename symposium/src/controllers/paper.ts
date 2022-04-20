@@ -79,6 +79,7 @@ export const createPaper = async (req: Request, res: Response) => {
                 error: err,
                 stack: config.nodeEnv === "production" ? null : err.stack
             });
+            return;
         }
 
         let path = "";
@@ -86,7 +87,6 @@ export const createPaper = async (req: Request, res: Response) => {
             let file = files.files;
             try {
                 var oldPath = file.filepath;
-                // TODO: Where we would either save file to AWS or local storage
                 if (config.usingAWS) {
                     path = file.originalFilename!;
                     uploadFile(oldPath, path);
@@ -100,11 +100,13 @@ export const createPaper = async (req: Request, res: Response) => {
                     message: "File couldn't be saved",
                     stack: config.nodeEnv === "production" ? null : err.stack
                 });
+                return;
             }
             console.log("[paperController] File uploaded");
         } else {
             res.status(500).json({ message: "Backend currently can't handle multiple files" });
             console.error("[paperController] Can't handle multiple files");
+            return;
         }
 
         console.debug(fields);

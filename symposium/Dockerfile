@@ -8,6 +8,7 @@ COPY tsconfig.json ./
 COPY src ./src
 COPY .env ./
 COPY .env.example ./
+COPY config.json ./
 
 RUN npm install
 RUN npm run build
@@ -23,6 +24,7 @@ RUN npm install --only=production
 COPY --from=build /usr/dist ./
 COPY --from=build /usr/.env ./
 COPY --from=build /usr/.env.example ./
+COPY --from=build /usr/config.json ./
 RUN npm install pm2 -g
 
 EXPOSE 8080

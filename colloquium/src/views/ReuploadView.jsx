@@ -15,6 +15,7 @@ import {
     Input,
     Typography,
     FormGroup,
+    CircularProgress,
 } from "@mui/material";
 import paperApi from "../api/paper";
 import { Menu, ChevronLeft, Person } from "@mui/icons-material";
@@ -40,6 +41,7 @@ const ReuploadView = () => {
     const history = useHistory();
     const [drawerToggled, setDrawerToggled] = useState(false);
     const [creatorAccess, setCreatorAccess] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const handleDrawerToggle = () => {
         setDrawerToggled(!drawerToggled);
@@ -57,6 +59,7 @@ const ReuploadView = () => {
     // Submitting the document through a form
     const handleSubmission = async (event) => {
         event.preventDefault();
+        setLoading(true);
         let result = true;
         for (let i = 0; i < files.length; i++) {
             result = acceptedDocumentTypes.find((docTypes) =>
@@ -71,6 +74,7 @@ const ReuploadView = () => {
                 form.append("files", files[i], files[i].name);
             }
             await paperApi.updateFileVersion(paperId, user.id, form).then();
+            setLoading(false);
             nextVersionDisplay();
         } else {
             return alert("This document is not supported at this time");
@@ -173,10 +177,11 @@ const ReuploadView = () => {
                                 <FormGroup>
                                     <Input
                                         type="file"
+                                        disabled={loading}
                                         onChange={(e) => setFiles(e.target.files)}
                                     />
                                     <br />
-                                    <Input type="submit" disabled={!(files.length !== 0)} onClick={handleSubmission} />
+                                    { loading ? <CircularProgress /> : <Input type="submit" disabled={!(files.length !== 0)} onClick={handleSubmission} /> }
                                 </FormGroup>
                             </Grid>
                         </Grid>
