@@ -368,9 +368,10 @@ export const sharePaper = async (req: Request, res: Response) => {
     const { userId, sharedUserEmail } = req.body;
     const { paperId } = req.params;
     console.log("[paperController] sharePaper");
+    let lowerShare = sharedUserEmail.toLowerCase();
 
     const user = await User.findOne({ where: { id: userId } });
-    const shareUser = await User.findOne({ where: { email: sharedUserEmail } });
+    const shareUser = await User.findOne({ where: { email: lowerShare } });
     if(user && shareUser){
         const paper = await Paper.findOne({ where: { id: paperId } });
         if (paper && paper.creator.id === user.id) {
