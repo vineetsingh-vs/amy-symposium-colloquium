@@ -95,7 +95,7 @@ const Comment = ({ comment, paperId, versionId, pageNum }) => {
                     <Avatar alt="avatar" />
                 </ListItemAvatar>
                 <ListItemText
-                    primary={<Typography className={classes.fonts}>{comment.user}</Typography>}
+                    primary={<Typography className={classes.fonts}>{comment.user} </Typography>}
                     secondary={
                         <>
                             <Typography
@@ -167,6 +167,11 @@ const CommentList = ({ paperId, versionId }) => {
             commentApi.getCommentsByPage(paperId, versionId, PageStore.getState().currentPage).then((comments) => setComments(comments));
         });
     }, []);
+
+    /*
+        Can Probably add a new useEffect here and have the parameter be focused on the value representing the search value. Then have the mapp function below
+        map only by the comments given, or something like that
+    */
 
     return (
         <Grid item xs={4}>
