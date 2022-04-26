@@ -13,18 +13,25 @@ import connectDB from "./utils/db";
 import { existsSync, mkdirSync } from "fs";
 import { errorHandler, notFound } from "./loaders/error";
 
+const plugins = ["../plugins/testPlugin"];
+
 const main = async () => {
-    if (!existsSync(config.tmpFolder)) {
-        mkdirSync(config.tmpFolder, { recursive: true });
+    //
+    // setup file system if not using AWS
+    if (config.usingFS) {
+        if (!existsSync(config.tmpFolder)) {
+            mkdirSync(config.tmpFolder, { recursive: true });
+        }
+        if (!existsSync(config.uploadFolder)) {
+            mkdirSync(config.uploadFolder, { recursive: true });
+        }
     }
-    if (!existsSync(config.uploadFolder)) {
-        mkdirSync(config.uploadFolder, { recursive: true });
-    }
-    console.log("Connecting to database");
-    const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
+
     //
     // database connection
-    while(!await connectDB()) {
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+    while (!(await connectDB())) {
+        console.log("Connecting to database");
         await sleep(30000);
     }
 
@@ -39,6 +46,14 @@ const main = async () => {
             allowedHeaders: "*",
         })
     );
+
+    //
+    // initialize plugins with an event emitter
+    plugins.forEach((pluginPath) => {
+        import(pluginPath).then((plugin) => {
+            plugin.default.initPlugin(app);
+        });
+    });
 
     //
     // routes
@@ -65,10 +80,10 @@ const main = async () => {
 
     app.use(errorHandler);
     app.use(notFound);
-    
+
     //
     // server startup
-    const port = Number(process.env.NODE_PORT);
+    const port = Number(config.port) || 4000;
 
     app.listen(port, "0.0.0.0", () => {
         console.log("Server listening on " + port);

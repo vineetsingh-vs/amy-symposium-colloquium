@@ -1,6 +1,5 @@
 import "dotenv-safe/config";
 import fs from "fs";
-import { join } from "path";
 
 var json: any = null;
 
@@ -16,6 +15,7 @@ const config = () => {
 };
 
 export default {
+    port: process.env.NODE_PORT,
     nodeEnv: process.env.NODE_ENV,
     postgresHost: process.env.POSTGRESQL_HOST,
     postgresUser: process.env.POSTGRESQL_USER,
