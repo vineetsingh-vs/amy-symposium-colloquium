@@ -8,9 +8,8 @@ import { User } from "../entities/User";
 export const createUser = async (req: Request, res: Response) => {
     console.log("[userController] createUser");
     const { firstName, lastName, email, affiliation, password } = req.body;
-    let lowerEmail = email.toLowerCase();
 
-    let user = await User.findOne({ where: { email: lowerEmail } });
+    let user = await User.findOne({ where: { email: email } });
 
     if (user) {
         res.status(400);
@@ -23,7 +22,7 @@ export const createUser = async (req: Request, res: Response) => {
             firstName: firstName,
             lastName: lastName,
             roles: ["user"],
-            email: lowerEmail,
+            email: email,
             password: password,
             affiliation: affiliation,
         });
