@@ -47,9 +47,9 @@ const main = async () => {
     app.use("/v1/papers", paperRoutes);
     app.use("/v1/comments", commentRoutes);
     app.use("/v1/extra", extraRoutes);
-    app.use("*", notFound);
-
+    
     app.use(errorHandler);
+    app.use(notFound);
     
     //
     // server startup
