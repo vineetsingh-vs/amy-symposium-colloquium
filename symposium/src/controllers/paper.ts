@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { Fields, Files, IncomingForm } from "formidable";
 import fs from "fs";
+import path from "path"
 import { Paper } from "../entities/Paper";
 import { Version } from "../entities/Version";
 import { User } from "../entities/User";
@@ -82,44 +83,47 @@ export const createPaper = async (req: Request, res: Response) => {
             return;
         }
 
-        let path = "";
-        if (!Array.isArray(files.files)) {
-            let file = files.files;
-            try {
-                var oldPath = file.filepath;
-                if (config.usingAWS) {
-                    path = file.originalFilename!;
-                    uploadFile(oldPath, path);
-                } else if (config.usingFS) {
-                    path = process.cwd() + "/" + config.uploadFolder + "/" + file.originalFilename;
-                    fs.writeFileSync(path, fs.readFileSync(oldPath));
-                }
-            } catch (err) {
-                console.error("[paperController] Error saving file", err);
-                res.status(500).json({ 
-                    message: "File couldn't be saved",
-                    stack: config.nodeEnv === "production" ? null : err.stack
-                });
-                return;
-            }
-            console.log("[paperController] File uploaded");
-        } else {
-            res.status(500).json({ message: "Backend currently can't handle multiple files" });
-            console.error("[paperController] Can't handle multiple files");
-            return;
-        }
-
         console.debug(fields);
 
         fields["versions"] = [];
         try {
             const newPaper = Paper.create(fields);
+            await newPaper.save();
 
+            let fp = "";
+            if (!Array.isArray(files.files)) {
+                let file = files.files;
+                try {
+                    var oldPath = file.filepath;
+                    var ext = path.extname(file.originalFilename!);
+                    if (config.usingAWS) {
+                        fp = newPaper.id + "-" + newPaper.versionNumber + ext;
+                        uploadFile(oldPath, fp);
+                    } else if (config.usingFS) {
+                        fp = process.cwd() + "/" + config.uploadFolder + "/" + newPaper.id + "-" + newPaper.versionNumber + ext;
+                        fs.writeFileSync(fp, fs.readFileSync(oldPath));
+                    } else {
+                        throw new Error("Invalid storage configuration: Choose either AWS or Local Storage");
+                    }
+                } catch (err) {
+                    console.error("[paperController-createPaper] Error saving file", err);
+                    res.status(500).json({ 
+                        message: "File couldn't be saved",
+                        stack: config.nodeEnv === "production" ? null : err.stack
+                    });
+                    return;
+                }
+                console.log("[paperController-createPaper] File uploaded");
+            } else {
+                res.status(500).json({ message: "Backend currently can't handle multiple files" });
+                console.error("[paperController-createPaper] Can't handle multiple files");
+                return;
+            }
             //
             // create a version and version array
             console.debug(path);
             const newVersion = Version.create({
-                filePath: path,
+                filePath: fp,
                 paper: newPaper,
             });
             await newVersion.save();
@@ -242,52 +246,57 @@ export const updatePaperFileVersion = async (req: Request, res: Response) => {
                     error: err,
                     stack: config.nodeEnv === "production" ? null : err.stack
                 });
-            }
-    
-            let path = "";
-            if (!Array.isArray(files.files)) {
-                let file = files.files;
-                console.debug(files);
-                try {
-                    var oldPath = file.filepath;
-                    // TODO: Where we would either save file to AWS or local storage
-                    try {
-                        var oldPath = file.filepath;
-                        // TODO: Where we would either save file to AWS or local storage
-                        if (config.usingAWS) {
-                            path = file.originalFilename!;
-                            uploadFile(oldPath, path);
-                        } else if (config.usingFS) {
-                            path = process.cwd() + "/" + config.uploadFolder + "/" + file.originalFilename;
-                            fs.writeFileSync(path, fs.readFileSync(oldPath));
-                        }
-                    } catch (err) {
-                        console.error("[paperController] Error saving file", err);
-                        res.status(500).json({ 
-                            message: "File couldn't be saved",
-                            stack: config.nodeEnv === "production" ? null : err.stack
-                        });
-                    }
-                    console.log("[paperController] File uploaded");
-                } catch (err) {
-                    console.error("[paperController-updatePaperFileVersion] Error writing file", err);
-                    res.status(500).json({
-                        message: "File couldn't be saved",
-                        stack: config.nodeEnv === "production" ? null : err.stack
-                    });
-                }
-                console.log("[paperController] File uploaded");
-            } else {
-                console.warn("[paperController-updatePaperFileVersion] Can't handle multiple files");
-                res.status(500).json({ message: "Backend currently can't handle multiple files" });
+                return;
             }
             try {
                 let paper = await Paper.findOne({ where: { id: paperId } });
     
                 if (paper) {
                     paper.versionNumber += 1;
+
+                    let fp = "";
+                    if (!Array.isArray(files.files)) {
+                        let file = files.files;
+                        console.debug(files);
+                        try {
+                            var oldPath = file.filepath;
+                            // TODO: Where we would either save file to AWS or local storage
+                            try {
+                                var oldPath = file.filepath;
+                                var ext = path.extname(file.originalFilename!);
+                                // TODO: Where we would either save file to AWS or local storage
+                                if (config.usingAWS) {
+                                    fp = paper.id + "-" + paper.versionNumber + ext;
+                                    uploadFile(oldPath, fp);
+                                } else if (config.usingFS) {
+                                    fp = process.cwd() + "/" + config.uploadFolder + "/" + paper.id + "-" + paper.versionNumber + ext;
+                                    fs.writeFileSync(fp, fs.readFileSync(oldPath));
+                                }
+                            } catch (err) {
+                                console.error("[paperController-updatePaperFileVersion] Error saving file", err);
+                                res.status(500).json({ 
+                                    message: "File couldn't be saved",
+                                    stack: config.nodeEnv === "production" ? null : err.stack
+                                });
+                                return;
+                            }
+                            console.log("[paperController-updatePaperFileVersion] File uploaded");
+                        } catch (err) {
+                            console.error("[paperController-updatePaperFileVersion] Error writing file", err);
+                            res.status(500).json({
+                                message: "File couldn't be saved",
+                                stack: config.nodeEnv === "production" ? null : err.stack
+                            });
+                            return;
+                        }
+                    } else {
+                        console.warn("[paperController-updatePaperFileVersion] Can't handle multiple files");
+                        res.status(500).json({ message: "Backend currently can't handle multiple files" });
+                        return;
+                    }
+
                     const newVersion = Version.create({
-                        filePath: path,
+                        filePath: fp,
                         paper: paper,
                     });
                     await newVersion.save();
