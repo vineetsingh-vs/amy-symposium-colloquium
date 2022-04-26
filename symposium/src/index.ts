@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import express, { Application } from "express";
+import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import path from "path";
 import logger from "./loaders/logger";
@@ -47,24 +47,9 @@ const main = async () => {
     app.use("/v1/papers", paperRoutes);
     app.use("/v1/comments", commentRoutes);
     app.use("/v1/extra", extraRoutes);
-
-    //
-    // serve compiled frontend if production
-    if (config.nodeEnv == "production") {
-        let rootdir = path.resolve();
-        app.use(express.static(path.join(rootdir, "/frontend/build")));
-        app.get("*", (_req, res) => {
-            res.sendFile(path.resolve(rootdir, "client", "build", "index.html"));
-        });
-    } else {
-        // not production so backend and frontend on separate ports
-        app.get("/", (_, res) => {
-            res.send("API Running :)");
-        });
-    }
+    app.use("*", notFound);
 
     app.use(errorHandler);
-    app.use(notFound);
     
     //
     // server startup
