@@ -30,12 +30,6 @@ type EventTypes = {
     commentRequested: { req: Request; comment: Comment };
 };
 
-let emitter: Emitter<EventTypes>;
-export const eventEmitter = {
-    init: () => {
-        emitter = createEmitter<EventTypes>();
-    },
-    getEmitter: () => {
-        return emitter;
-    },
-};
+//
+// create global emitter obj
+export const emitter = createEmitter<EventTypes>();

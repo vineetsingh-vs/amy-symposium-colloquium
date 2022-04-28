@@ -2,19 +2,19 @@ import { Application, Request, Response } from "express";
 import { EventEmitter } from "events";
 
 const testPlugin = {
+    //
+    // initialize the plugin with the application and event emitter
     initPlugin: (app: Application, emitter: EventEmitter) => {
         console.log("testPlugin init");
 
-        console.log(emitter);
-
         //
-        // add a route and handler
+        // add a test route and handler
         app.get("/test", (req: Request, res: Response) => {
             res.status(200).json({ message: "hello" });
         });
 
         //
-        // set up event listeners
+        // set up test event listeners
         emitter.on("testEvent", (args) => {
             console.log("emitter test: testEvent: ");
             console.log(args.message);

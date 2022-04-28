@@ -11,7 +11,9 @@ import config from "./utils/config";
 import connectDB from "./utils/db";
 import { existsSync, mkdirSync } from "fs";
 import { errorHandler, notFound } from "./loaders/error";
-import { eventEmitter } from "./emitter";
+import { emitter } from "./emitter";
+// import { eventEmitter } from "../emitter";
+// let emitter = eventEmitter.getEmitter();
 
 const main = async () => {
     //
@@ -47,8 +49,6 @@ const main = async () => {
 
     //
     // load all plugins
-    eventEmitter.init();
-    let emitter = eventEmitter.getEmitter();
     let pluginLoads: Promise<any>[] = [];
     config.plugins.forEach((pluginPath: string) => {
         pluginLoads.push(
@@ -61,7 +61,6 @@ const main = async () => {
 
     //
     // routes
-    emitter.emit("testEvent", { message: "skrt" });
     app.use("/v1/auth", authRoutes);
     app.use("/v1/users", userRoutes);
     app.use("/v1/papers", paperRoutes);

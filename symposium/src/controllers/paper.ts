@@ -7,8 +7,7 @@ import { Version } from "../entities/Version";
 import { User } from "../entities/User";
 import config from "../utils/config";
 import { downloadFile, uploadFile } from "../utils/aws";
-import { eventEmitter } from "../emitter";
-let emitter = eventEmitter.getEmitter();
+import { emitter } from "../emitter";
 
 export const getPaperList = async (req: Request, res: Response) => {
     const { filter, userId } = req.query;

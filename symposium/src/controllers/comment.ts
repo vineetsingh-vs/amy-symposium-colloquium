@@ -2,8 +2,7 @@ import { Request, Response } from "express";
 import { Paper } from "../entities/Paper";
 import { Comment } from "../entities/Comment";
 import config from "../utils/config";
-import { eventEmitter } from "../emitter";
-let emitter = eventEmitter.getEmitter();
+import { emitter } from "../emitter";
 
 export const getCommentList = async (req: Request, res: Response) => {
     console.log("[commentController] getCommentList");
@@ -21,7 +20,7 @@ export const createComment = async (req: Request, res: Response) => {
         try {
             const newComment = Comment.create({
                 version: version,
-                parent: parentId || undefined,
+                parent: parentId || null,
                 user: userId,
                 content: content,
                 replies: [],
