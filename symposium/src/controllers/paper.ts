@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { Not } from "typeorm";
 import { Fields, Files, IncomingForm } from "formidable";
 import fs from "fs";
 import { Paper } from "../entities/Paper";
@@ -34,24 +35,23 @@ export const getPaperList = async (req: Request, res: Response) => {
             let paperList = await Paper.find();
             res.status(200).send(paperList);
         } else if (filter == "search") {
-            // let searchPapers : Paper[] = [];
-            // let paperList = await Paper.find({where: { creator : userId} });
-            // paperList.forEach(paper => {
-            //     searchPapers.push(paper);
-            // })
-            // paperList = await Paper.find({where: { isPublished : true} });
-            // paperList.forEach(paper => {
-            //     searchPapers.push(paper);
-            // })
-            // paperList = await Paper.find();
-            // paperList.forEach(paper => {
-            //     for(let i=0; i < paper.sharedWith.length; i++) {
-            //         if(paper.sharedWith[i].id === user!.id) {
-            //             searchPapers.push(paper);
-            //         }
-            //     }
-            // });
-            let searchPapers = await Paper.find({ where: { isPublished: true } });
+            let searchPapers : Paper[] = [];
+            let paperList = await Paper.find({where: { creator : userId, isPublished : false } });
+            paperList.forEach(paper => {
+                searchPapers.push(paper);
+            })
+            paperList = await Paper.find({where: { isPublished : true} });
+            paperList.forEach(paper => {
+                searchPapers.push(paper);
+            })
+            paperList = await Paper.find({where: {creator : Not(userId), isPublished : false}});
+            paperList.forEach(paper => {
+                for(let i=0; i < paper.sharedWith.length; i++) {
+                    if(paper.sharedWith[i].id === user!.id) {
+                        searchPapers.push(paper);
+                    }
+                }
+            });
 
             res.status(200).send(searchPapers);
         } else {
