@@ -55,7 +55,7 @@ const LoginView = () => {
                         name="email"
                         autoComplete="email"
                         autoFocus
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => setEmail(e.target.value.toLowerCase())}
                     />
                     <TextField
                         variant="outlined"

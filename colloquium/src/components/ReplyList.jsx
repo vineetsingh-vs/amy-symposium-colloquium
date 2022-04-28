@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { useState } from "react";
 import makeStyles from '@mui/styles/makeStyles';
 import {
     List,
@@ -10,6 +10,11 @@ import {
     Avatar,
     Typography,
 } from "@mui/material";
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import extraApi from "../api/extra";
+import { useAuth } from "../useAuth";
+
 
 import SubdirectoryArrowRightIcon from '@mui/icons-material/SubdirectoryArrowRight';
 
@@ -28,6 +33,25 @@ const useStyles = makeStyles((theme) => ({
 
 const Reply = ({ reply }) => {
     const classes = useStyles();
+    const { user } = useAuth();
+
+    const addLike = async () => {
+        await extraApi.addLike(reply.id, user.id).then((rep) => {
+            setLikes(rep.likes ? rep.likes.length : likes);
+            setDislikes(rep.dislikes ? rep.dislikes.length : dislikes);
+        });
+    }
+
+    const addDislike = async () => {
+        await extraApi.addDislike(reply.id, user.id).then((rep) => {
+            setLikes(rep.likes ? rep.likes.length : likes);
+            setDislikes(rep.dislikes ? rep.dislikes.length : dislikes);
+        }); 
+    }
+
+    const [likes, setLikes] = useState(reply.likes ? reply.likes.length : 0);
+    const [dislikes, setDislikes] = useState(reply.dislikes ? reply.dislikes.length : 0);
+
     return (
         <div className={`reply ${reply.id}`}>
             <ListItem key={reply.id} alignItems="flex-start">
@@ -52,6 +76,16 @@ const Reply = ({ reply }) => {
                         </>
                     }
                 />
+                <br />
+                <ThumbUpIcon color="primary" variant="contained" onClick={addLike}>
+                    Like
+                </ThumbUpIcon>
+                <b>{likes}</b>
+                <ThumbDownIcon color="primary" variant="contained" onClick={addDislike}>
+                    Dislike
+                </ThumbDownIcon>
+                <b>{dislikes}</b>
+                <br />
             </ListItem>
             <Divider />
         </div>

@@ -5,23 +5,12 @@ const Container = styled.div({
     width:"100%"
 });
 
-const IFrame = styled.iframe({
-    width:"100%",
-    height:"100%",
-    border:"0"
-})
-
 const CustomMSDocRenderer = ({mainState: {currentDocument}}) => {
     if(!currentDocument) return null;
 
     return (
         <Container id="msdoc-renderer">
-            <IFrame
-                id="msdoc-iframe"
-                title="msdoc-iframe"
-                frameBorder={0}
-                src={`https://docs.google.com/gview?url=${encodeURIComponent(currentDocument.uri)}&embedded=true`}
-            />
+            <h3>{currentDocument.fileType}</h3>-- Is not supported at this time.
         </Container>
     )
 }
