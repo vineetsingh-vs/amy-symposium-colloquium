@@ -12,6 +12,7 @@ import ReuploadView from "./views/ReuploadView";
 import SignUp from "./views/SignUpView";
 import ProtectedRoute from "./components/ProtectedRoute"
 import SearchView from "./views/SearchView";
+import SearchCommentView from "./views/SearchCommentView";
 import "./App.css";
 import { ThemeProvider, StyledEngineProvider, createTheme } from "@mui/material/styles";
 import { ProvideAuth } from "./useAuth";
@@ -48,6 +49,11 @@ const App = () => {
                                 />
                                 <ProtectedRoute
                                     exact
+                                    path="/:paperId/:versionId/search"
+                                    component={SearchCommentView}
+                                />
+                                <ProtectedRoute
+                                    exact
                                     path="/:paperId/:versionId"
                                     component={DocumentView}
                                 />
@@ -57,6 +63,7 @@ const App = () => {
                                     path="/search" 
                                     component={SearchView}
                                 />
+                                
                                 <Route path="*" component={PageNotFound} />
                             </Switch>
                         </div>
