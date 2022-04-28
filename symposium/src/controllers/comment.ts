@@ -28,7 +28,9 @@ export const createComment = async (req: Request, res: Response) => {
                 dislikes: [],
                 pageNum: pageNum,
             });
-            // add new comment to parent if provided
+            await newComment.save();
+
+            // add new comment to parent replies if provided
             if (parentId) {
                 let parent = await Comment.findOne({
                     relations: ["parent", "replies"],
@@ -40,8 +42,8 @@ export const createComment = async (req: Request, res: Response) => {
                 } else {
                     res.status(400).json({ message: "Could not find parent comment" });
                 }
-                res.status(200).json(newComment);
             }
+            res.status(200).json(newComment);
             emitter.emit("commentCreated", { comment: newComment });
         } catch (err) {
             console.error("[commentController] Failed to save Reply - Database Error", err);
