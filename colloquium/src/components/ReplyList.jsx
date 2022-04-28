@@ -35,23 +35,6 @@ const Reply = ({ reply }) => {
     const classes = useStyles();
     const { user } = useAuth();
 
-    const addLike = async () => {
-        await extraApi.addLike(reply.id, user.id).then((rep) => {
-            setLikes(rep.likes ? rep.likes.length : likes);
-            setDislikes(rep.dislikes ? rep.dislikes.length : dislikes);
-        });
-    }
-
-    const addDislike = async () => {
-        await extraApi.addDislike(reply.id, user.id).then((rep) => {
-            setLikes(rep.likes ? rep.likes.length : likes);
-            setDislikes(rep.dislikes ? rep.dislikes.length : dislikes);
-        }); 
-    }
-
-    const [likes, setLikes] = useState(reply.likes ? reply.likes.length : 0);
-    const [dislikes, setDislikes] = useState(reply.dislikes ? reply.dislikes.length : 0);
-
     return (
         <div className={`reply ${reply.id}`}>
             <ListItem key={reply.id} alignItems="flex-start">
@@ -76,16 +59,6 @@ const Reply = ({ reply }) => {
                         </>
                     }
                 />
-                <br />
-                <ThumbUpIcon color="primary" variant="contained" onClick={addLike}>
-                    Like
-                </ThumbUpIcon>
-                <b>{likes}</b>
-                <ThumbDownIcon color="primary" variant="contained" onClick={addDislike}>
-                    Dislike
-                </ThumbDownIcon>
-                <b>{dislikes}</b>
-                <br />
             </ListItem>
             <Divider />
         </div>
