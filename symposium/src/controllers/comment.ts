@@ -2,11 +2,11 @@ import { Request, Response } from "express";
 import { Paper } from "../entities/Paper";
 import { Comment } from "../entities/Comment";
 import config from "../utils/config";
-import { User } from "../entities/User";
+import { emitter } from "../emitter";
 
 export const getCommentList = async (req: Request, res: Response) => {
     console.log("[commentController] getCommentList");
-    const comments = await Comment.find({ relations: ['parent', 'replies'] });
+    const comments = await Comment.find({ relations: ["parent", "replies"] });
     res.status(200).send(comments);
 };
 
@@ -14,93 +14,44 @@ export const createComment = async (req: Request, res: Response) => {
     console.log("[commentController] createComment");
     const { paperId, versionId, parentId, userId, content, pageNum } = req.body;
 
-    // TODO: validate inputs
     let paper = await Paper.findOne({ where: { id: paperId } });
     if (paper) {
-        let version = paper.versions[Number(versionId) - 1]
-        if (parentId) {
-            let parent = await Comment.findOne({ relations: ['parent', 'replies'], where: { id: parentId } });
-            if (parent) {
-                try {
-                    const newComment = Comment.create({
-                        version: version,
-                        parent: parent,
-                        user: userId,
-                        content: content,
-                        replies: [],
-                        likes: [],
-                        dislikes: [],
-                        pageNum: pageNum,
-                    });
-                    await newComment.save();
+        let version = paper.versions[Number(versionId) - 1];
+        try {
+            const newComment = Comment.create({
+                version: version,
+                parent: parentId || null,
+                user: userId,
+                content: content,
+                replies: [],
+                likes: [],
+                dislikes: [],
+                pageNum: pageNum,
+            });
+            await newComment.save();
 
+            // add new comment to parent replies if provided
+            if (parentId) {
+                let parent = await Comment.findOne({
+                    relations: ["parent", "replies"],
+                    where: { id: parentId },
+                });
+                if (parent) {
                     parent.replies.push(newComment);
                     await parent.save();
-
-                    console.debug("saved comment: ");
-                    console.debug(newComment);
-
-                    res.status(200).json({
-                        id: newComment.id,
-                        version: newComment.version,
-                        content: newComment.content,
-                        parent: newComment.parent,
-                        replies: newComment.replies,
-                        likes: newComment.likes,
-                        dislikes: newComment.dislikes,
-                        pageNum: newComment.pageNum,
-                        user: newComment.user,
-                        createdAt: newComment.created_at,
-                        updatedAt: newComment.updated_at,
-                    });
-                } catch (err) {
-                    console.error("[commentController] Failed to save Reply - Database Error", err);
-                    res.status(500).json({
-                        message: "Failed to save Reply",
-                        stack: config.nodeEnv === "production" ? null : err.stack
-                    });
+                } else {
+                    res.status(400).json({ message: "Could not find parent comment" });
                 }
-            } else {
-                res.status(400).json({ message: "Could not find parent comment" });
             }
-        } else {
-            try {
-                const newComment = Comment.create({
-                    version: version,
-                    user: userId,
-                    content: content,
-                    replies: [],
-                    pageNum: pageNum,
-                });
-
-                await newComment.save();
-
-                console.debug("saved comment: ");
-                console.debug(newComment);
-
-                res.status(200).json({
-                    id: newComment.id,
-                    version: newComment.version,
-                    content: newComment.content,
-                    parent: newComment.parent,
-                    replies: newComment.replies,
-                    likes: newComment.likes,
-                    dislikes: newComment.dislikes,
-                    pageNum: newComment.pageNum,
-                    user: newComment.user,
-                    createdAt: newComment.created_at,
-                    updatedAt: newComment.updated_at,
-                });
-            } catch (err) {
-                console.error("[commentController] Failed to save Comment - Database Error", err);
-                res.status(500).json({
-                    message: "Failed to save Comment",
-                    stack: config.nodeEnv === "production" ? null : err.stack
-                });
-            }
+            res.status(200).json(newComment);
+            emitter.emit("commentCreated", { comment: newComment });
+        } catch (err) {
+            console.error("[commentController] Failed to save Reply - Database Error", err);
+            res.status(500).json({
+                message: "Failed to save Reply",
+                stack: config.nodeEnv === "production" ? null : err.stack,
+            });
         }
-    } else {
-        res.status(400).json({ message: "Could not find paper" });
     }
 };
 
@@ -109,8 +60,8 @@ export const getCommentById = async (req: Request, res: Response) => {
     const { commentID } = req.params;
 
     let comment = await Comment.findOne({ where: { id: commentID } });
-
     if (comment) {
+        emitter.emit("commentRequested", { req, comment });
         res.status(200).json({
             id: comment.id,
             version: comment.version,
@@ -129,16 +80,13 @@ export const getCommentById = async (req: Request, res: Response) => {
     }
 };
 
-/**Get list of comments for a specific version, given the versionID */
 export const getCommentsByVersionId = async (req: Request, res: Response) => {
     console.log("[commentController] getCommentsByVersionId");
     const { paperID, versionID } = req.params;
     let paper = await Paper.findOne({ where: { id: paperID } });
     if (paper) {
         let version = paper.versions[Number(versionID) - 1];
-        let comments = await Comment.find({ where: { version: version }})
-        console.debug(comments);
-        //let comments = await Comment.find({ where: { version: version } });
+        let comments = await Comment.find({ where: { version: version } });
         if (comments) {
             res.status(200).send(comments);
         } else {
@@ -149,7 +97,6 @@ export const getCommentsByVersionId = async (req: Request, res: Response) => {
     }
 };
 
-/**Get list of comments for a specific version and pageNumber, given the versionID and pageNum*/
 export const getCommentsByVersionAndPage = async (req: Request, res: Response) => {
     console.log("[commentController] getCommentsByVersionAndPage");
     const { paperID, versionID, page } = req.params;
@@ -157,10 +104,10 @@ export const getCommentsByVersionAndPage = async (req: Request, res: Response) =
     let paper = await Paper.findOne({ where: { id: paperID } });
     if (paper) {
         let version = paper.versions[Number(versionID) - 1];
-        let comments = await Comment.find({ relations: ['parent', 'replies'], where: { version: version, parent: null, pageNum: page } });
-        console.debug(comments);
-        //let comments = await Comment.find({ where: { version: version, pageNum: pageNumber } });
-
+        let comments = await Comment.find({
+            relations: ["parent", "replies"],
+            where: { version: version, parent: null, pageNum: page },
+        });
         if (comments) {
             res.status(200).send(comments);
         } else {
@@ -209,11 +156,15 @@ export const updateComment = async (req: Request, res: Response) => {
                 created_at: comment.created_at,
                 updated_at: comment.updated_at,
             });
+            emitter.emit("commentUpdated", { comment });
         } catch (err) {
-            console.error("[commentController] Failed to update Comment - Database Error", err);
+            console.error(
+                "[commentController] Failed to update Comment - Database Error",
+                err
+            );
             res.status(500).json({
                 message: "Failed to update Comment",
-                stack: config.nodeEnv === "production" ? null : err.stack
+                stack: config.nodeEnv === "production" ? null : err.stack,
             });
         }
     } else {
