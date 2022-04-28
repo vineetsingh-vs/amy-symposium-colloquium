@@ -5,7 +5,7 @@ const resource = "papers";
 
 const paperApi = {
     getList: async (userId, filter) => {
-        if (filter !== "shared" && filter !== "uploaded" && filter !== "published")
+        if (filter !== "shared" && filter !== "uploaded" && filter !== "published" && filter !== "search")
             return { message: "filter invalid" };
 
         return axios
