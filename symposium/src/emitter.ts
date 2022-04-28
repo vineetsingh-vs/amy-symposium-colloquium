@@ -1,5 +1,7 @@
 import { EventEmitter } from "events";
+import { Application } from "express";
 import { Paper } from "./entities/Paper";
+import { Comment } from "./entities/Comment";
 import { Request } from "express";
 
 //
@@ -14,23 +16,19 @@ interface Emitter<T extends EventMap> {
 }
 
 //
-// emitter factory
+// strongly typed emitter factory
 function createEmitter<T extends EventMap>(): Emitter<T> {
     return new EventEmitter();
 }
 
 type EventTypes = {
+    testEvent: { message: string };
     paperCreated: { paper: Paper };
     paperUpdated: { paper: Paper };
     paperRequested: { req: Request; paper: Paper };
+    commentCreated: { comment: Comment };
+    commentUpdated: { comment: Comment };
+    commentRequested: { req: Request; comment: Comment };
 };
 
 export const emitter = createEmitter<EventTypes>();
-
-// let x = 2;
-// let y = "hello";
-// emitter.emit("routes", { x, y });
-// emitter.on("routes", (options) => {
-// console.log(options.x);
-// console.log(options.y);
-// });

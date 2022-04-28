@@ -49,6 +49,7 @@ export const getPaperMetaData = async (req: Request, res: Response) => {
     let paper = await Paper.findOne({ where: { id: paperId } });
 
     if (paper) {
+        emitter.emit("paperRequested", { req, paper });
         res.status(200).json({
             id: paper.id,
             title: paper.title,
@@ -69,8 +70,6 @@ export const getPaperMetaData = async (req: Request, res: Response) => {
 export const createPaper = async (req: Request, res: Response) => {
     console.log("[paperController] createPaper");
 
-    //
-    // create the paper with metadata fields first
     let form = new IncomingForm({ uploadDir: config.tmpFolder });
     form.parse(req, async (err, fields: Fields, files: Files) => {
         if (err) {
@@ -120,10 +119,6 @@ export const createPaper = async (req: Request, res: Response) => {
         fields["versions"] = [];
         try {
             const newPaper = Paper.create(fields);
-
-            //
-            // create a version and version array
-            console.debug(path);
             const newVersion = Version.create({
                 filePath: path,
                 paper: newPaper,
@@ -133,20 +128,9 @@ export const createPaper = async (req: Request, res: Response) => {
             newPaper.versions.push(newVersion);
             console.debug(newPaper);
             await newPaper.save();
-            emitter.emit("paperCreated", { paper: newPaper });
 
-            res.status(200).json({
-                id: newPaper.id,
-                title: newPaper.title,
-                creator: newPaper.creator,
-                authors: newPaper.authors,
-                sharedWith: newPaper.sharedWith,
-                isPublished: newPaper.isPublished,
-                createdAt: newPaper.createdAt,
-                updatedAt: newPaper.updatedAt,
-                versionNumber: newPaper.versionNumber,
-                versions: newPaper.versions,
-            });
+            res.status(200).json(newPaper);
+            emitter.emit("paperCreated", { paper: newPaper });
         } catch (err) {
             console.error(
                 "[paperController-createPaper] Failed to create Paper - Database Error",
@@ -242,7 +226,7 @@ export const deletePaper = async (req: Request, res: Response) => {
 
 // update a version of a paper (file and version metadata)
 export const updatePaperFileVersion = async (req: Request, res: Response) => {
-    console.log("[paperController] Uploading new Version");
+    console.log("[paperController] updatePaperFileVersion");
     const { paperId, userId } = req.params;
 
     let paper = await Paper.findOne({ where: { id: paperId } });
@@ -250,10 +234,7 @@ export const updatePaperFileVersion = async (req: Request, res: Response) => {
         let form = new IncomingForm({ uploadDir: config.tmpFolder });
         form.parse(req, async (err, fields: Fields, files: Files) => {
             if (err) {
-                console.error(
-                    "[paperController-updatePaperFileVersion] Error parsing file",
-                    err
-                );
+                console.error("[paperController] Error parsing file", err);
                 res.status(400).json({
                     message: "Error parsing file",
                     error: err,
@@ -267,10 +248,8 @@ export const updatePaperFileVersion = async (req: Request, res: Response) => {
                 console.debug(files);
                 try {
                     var oldPath = file.filepath;
-                    // TODO: Where we would either save file to AWS or local storage
                     try {
                         var oldPath = file.filepath;
-                        // TODO: Where we would either save file to AWS or local storage
                         if (config.usingAWS) {
                             path = file.originalFilename!;
                             uploadFile(oldPath, path);
@@ -292,10 +271,7 @@ export const updatePaperFileVersion = async (req: Request, res: Response) => {
                     }
                     console.log("[paperController] File uploaded");
                 } catch (err) {
-                    console.error(
-                        "[paperController-updatePaperFileVersion] Error writing file",
-                        err
-                    );
+                    console.error("[paperController] Error writing file", err);
                     res.status(500).json({
                         message: "File couldn't be saved",
                         stack: config.nodeEnv === "production" ? null : err.stack,
@@ -303,9 +279,7 @@ export const updatePaperFileVersion = async (req: Request, res: Response) => {
                 }
                 console.log("[paperController] File uploaded");
             } else {
-                console.warn(
-                    "[paperController-updatePaperFileVersion] Can't handle multiple files"
-                );
+                console.warn("[paperController] Can't handle multiple files");
                 res.status(500).json({
                     message: "Backend currently can't handle multiple files",
                 });

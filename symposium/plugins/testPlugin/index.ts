@@ -1,4 +1,4 @@
-import { Application } from "express";
+import express, { Application, Request, Response } from "express";
 import { emitter } from "../../src/emitter";
 
 const testPlugin = {

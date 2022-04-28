@@ -13,8 +13,6 @@ import connectDB from "./utils/db";
 import { existsSync, mkdirSync } from "fs";
 import { errorHandler, notFound } from "./loaders/error";
 
-const plugins = ["../plugins/testPlugin"];
-
 const main = async () => {
     //
     // setup file system if not using AWS
@@ -48,8 +46,8 @@ const main = async () => {
     );
 
     //
-    // initialize plugins with an event emitter
-    plugins.forEach((pluginPath) => {
+    // initialize plugins
+    config.plugins.forEach((pluginPath: string) => {
         import(pluginPath).then((plugin) => {
             plugin.default.initPlugin(app);
         });
