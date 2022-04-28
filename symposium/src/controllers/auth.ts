@@ -33,8 +33,6 @@ export const signUp = async (req: Request, res: Response) => {
                 affiliation: affiliation,
             });
 
-            // TODO: create empty many-many relations with papers and reviews before saving
-
             await newUser.save();
             console.debug("saved user: ");
             console.debug(newUser);
@@ -55,8 +53,8 @@ export const signUp = async (req: Request, res: Response) => {
             console.error("[authController] Failed to create User - Database Error", err);
             res.status(500).json({
                 message: "Failed to create User - Database Error",
-                stack: config.nodeEnv === "production" ? null : err.stack
-            })
+                stack: config.nodeEnv === "production" ? null : err.stack,
+            });
         }
     }
 };
