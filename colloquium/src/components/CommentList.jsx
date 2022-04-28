@@ -168,11 +168,6 @@ const CommentList = ({ paperId, versionId }) => {
         });
     }, []);
 
-    /*
-        Can Probably add a new useEffect here and have the parameter be focused on the value representing the search value. Then have the mapp function below
-        map only by the comments given, or something like that
-    */
-
     return (
         <Grid item xs={4}>
             <List className={classes.root}>
