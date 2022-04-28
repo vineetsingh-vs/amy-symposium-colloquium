@@ -9,13 +9,13 @@ export const createUser = async (req: Request, res: Response) => {
     console.log("[userController] createUser");
     const { firstName, lastName, email, affiliation, password } = req.body;
 
-    let user = await User.findOne({ where: { email: email } });
-
-    if (user) {
-        res.status(400);
-        console.warn("User already exists");
-    }
     try {
+        let user = await User.findOne({ where: { email: email } });
+        
+        if (user) {
+            res.status(400);
+            console.warn("User already exists");
+        }
         //
         // create user from schema and save to db
         const newUser = User.create({
@@ -46,9 +46,10 @@ export const createUser = async (req: Request, res: Response) => {
             updatedAt: newUser.updatedAt,
         });
     } catch (err) {
-        console.error("[userController] Failed to create User - Database Error", err);
+        console.error("[userController-createUser] Failed to create User - Database Error", err);
         res.status(500).json({
             message: "Failed to create User - Database Error",
+            error: err,
             stack: config.nodeEnv === "production" ? null : err.stack
         });
     }
@@ -63,26 +64,34 @@ export const getUserList = async (req: Request, res: Response) => {
 export const getUserById = async (req: Request, res: Response) => {
     console.log("[userController] getUserById");
     const { userID } = req.params;
+    try {
+        //
+        // find user based on id
+        let user = await User.findOne({ where: { id: userID } });
 
-    //
-    // find user based on id
-    let user = await User.findOne({ where: { id: userID } });
-
-    //
-    // return user obj if found
-    if (user) {
-        res.status(200).json({
-            id: user.id,
-            email: user.email,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            password: user.password,
-            affiliation: user.affiliation,
-            createdAt: user.createdAt,
-            updatedAt: user.updatedAt,
+        //
+        // return user obj if found
+        if (user) {
+            res.status(200).json({
+                id: user.id,
+                email: user.email,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                password: user.password,
+                affiliation: user.affiliation,
+                createdAt: user.createdAt,
+                updatedAt: user.updatedAt,
+            });
+        } else {
+            res.status(400).json({ message: "Could not find User" });
+        }
+    } catch (err) {
+        console.error("[userController-getUserById] Failed to get User by Id - Database Error", err);
+        res.status(500).json({
+            message: "Failed to get User by Id - Database Error",
+            error: err,
+            stack: config.nodeEnv === "production" ? null : err.stack
         });
-    } else {
-        res.status(400).json({ message: "Could not find User" });
     }
 };
 
@@ -90,23 +99,24 @@ export const deleteUser = async (req: Request, res: Response) => {
     console.log("[userController] deleteUser");
     const { userID } = req.params;
 
-    //
-    // check if user exists
-    let user = await User.findOne({ where: { id: userID } });
+    try {
+        //
+        // check if user exists
+        let user = await User.findOne({ where: { id: userID } });
 
-    if (user) {
-        try {
+        if (user) {
             await user.remove();
             res.status(200).json({ message: "Successfully deleted user" });
-        } catch (err) {
-            console.error("[userController] Failed to delete User - Database Error", err);
-            res.status(500).json({
-                message: "Failed to delete User - Database Error",
-                stack: config.nodeEnv === "production" ? null : err.stack
-            });
-        }
-    } else {
-        res.status(400).json({ message: "User not found" });
+        } else {
+            res.status(400).json({ message: "User not found" });
+        } 
+    } catch (err) {
+        console.error("[userController-deleteUser] Failed to delete User - Database Error", err);
+        res.status(500).json({
+            message: "Failed to delete User - Database Error",
+            error: err,
+            stack: config.nodeEnv === "production" ? null : err.stack
+        });
     }
 };
 
@@ -114,16 +124,16 @@ export const updateUser = async (req: Request, res: Response) => {
     console.log("[userController] updateUser");
     const { userID } = req.params;
     const { password, firstName, lastName, affiliation } = req.body;
-
-    //
-    // if user exists, update fields with args from request
-    let user = await User.findOne({ where: { id: userID } });
-    if (user) {
-        user.firstName = firstName || user.firstName;
-        user.lastName = lastName || user.lastName;
-        user.password = password || user.password;
-        user.affiliation = affiliation || user.affiliation;
-        try {
+    
+    try {
+        //
+        // if user exists, update fields with args from request
+        let user = await User.findOne({ where: { id: userID } });
+        if (user) {
+            user.firstName = firstName || user.firstName;
+            user.lastName = lastName || user.lastName;
+            user.password = password || user.password;
+            user.affiliation = affiliation || user.affiliation;
             await user.save();
             res.status(200).json({
                 id: user.id,
@@ -135,14 +145,15 @@ export const updateUser = async (req: Request, res: Response) => {
                 createdAt: user.createdAt,
                 updatedAt: user.updatedAt,
             });
-        } catch (err) {
-            console.error("[userController] Failed to update User - Database Error", err);
-            res.status(500).json({
-                message: "Failed to delete User - Database Error",
-                stack: config.nodeEnv === "production" ? null : err.stack
-            });
+        } else {
+            res.status(400).json({ message: "User not found" });
         }
-    } else {
-        res.status(400).json({ message: "User not found" });
+    } catch (err) {
+        console.error("[userController-updateUser] Failed to update User - Database Error", err);
+        res.status(500).json({
+            message: "Failed to update User - Database Error",
+            error: err,
+            stack: config.nodeEnv === "production" ? null : err.stack
+        });
     }
 };

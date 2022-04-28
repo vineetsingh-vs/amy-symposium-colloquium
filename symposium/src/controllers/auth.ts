@@ -11,19 +11,20 @@ export const signUp = async (req: Request, res: Response) => {
     // TODO: validate
     if (!firstName || !lastName || !email || !affiliation || !password) {
         res.status(400).json({ message: "invalid data" });
+        return;
     }
 
-    let user = await User.findOne({ where: { email: email } });
+    try {
+        let user = await User.findOne({ where: { email: email } });
 
-    if (user) {
-        console.warn("User already exists");
-        res.status(400).json({ message: "User with email already exists" });
-    } else {
-        //
-        // encrypt password with salt
-        const salt = await bcrypt.genSalt(10);
-        const salted_password = await bcrypt.hash(password, salt);
-        try {
+        if (user) {
+            console.warn("User already exists");
+            res.status(400).json({ message: "User with email already exists" });
+        } else {
+            //
+            // encrypt password with salt
+            const salt = await bcrypt.genSalt(10);
+            const salted_password = await bcrypt.hash(password, salt);
             const newUser = User.create({
                 firstName: firstName,
                 lastName: lastName,
@@ -34,7 +35,6 @@ export const signUp = async (req: Request, res: Response) => {
             });
 
             // TODO: create empty many-many relations with papers and reviews before saving
-
             await newUser.save();
             console.debug("saved user: ");
             console.debug(newUser);
@@ -51,13 +51,14 @@ export const signUp = async (req: Request, res: Response) => {
                 createdAt: newUser.createdAt,
                 updatedAt: newUser.updatedAt,
             });
-        } catch (err) {
-            console.error("[authController] Failed to create User - Database Error", err);
-            res.status(500).json({
-                message: "Failed to create User - Database Error",
-                stack: config.nodeEnv === "production" ? null : err.stack
-            })
         }
+    } catch (err) {
+        console.error("[authController-signUp] Failed to create User - Database Error", err);
+        res.status(500).json({
+            message: "Failed to create User - Database Error",
+            error: err,
+            stack: config.nodeEnv === "production" ? null : err.stack
+        })
     }
 };
 
@@ -65,21 +66,30 @@ export const login = async (req: Request, res: Response) => {
     console.log("[authController] login");
     const { email, password } = req.body;
 
-    const user = await User.findOne({ where: { email: email } });
+    try {
+        const user = await User.findOne({ where: { email: email } });
 
-    if (user && (await bcrypt.compare(password, user.password))) {
-        res.json({
-            id: user.id,
-            email: user.email,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            password: user.password,
-            affiliation: user.affiliation,
-            createdAt: user.createdAt,
-            updatedAt: user.updatedAt,
-        });
-    } else {
-        res.status(401).json({ message: "Invalid email or password" });
+        if (user && (await bcrypt.compare(password, user.password))) {
+            res.json({
+                id: user.id,
+                email: user.email,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                password: user.password,
+                affiliation: user.affiliation,
+                createdAt: user.createdAt,
+                updatedAt: user.updatedAt,
+            });
+        } else {
+            res.status(401).json({ message: "Invalid email or password" });
+        }
+    } catch (err) {
+        console.error("[authController-login] Failed to login - Database Error", err);
+        res.status(500).json({
+            message: "Failed to login - Database Error",
+            error: err,
+            stack: config.nodeEnv === "production" ? null : err.stack
+        })
     }
 };
 
