@@ -2,7 +2,8 @@ import { Request, Response } from "express";
 import { Paper } from "../entities/Paper";
 import { Comment } from "../entities/Comment";
 import config from "../utils/config";
-import { emitter } from "../emitter";
+import { eventEmitter } from "../emitter";
+let emitter = eventEmitter.getEmitter();
 
 export const getCommentList = async (req: Request, res: Response) => {
     console.log("[commentController] getCommentList");

@@ -1,7 +1,6 @@
 import "reflect-metadata";
-import express, { Application, Request, Response } from "express";
+import express, { Application } from "express";
 import cors from "cors";
-import path from "path";
 import logger from "./loaders/logger";
 import authRoutes from "./routes/auth";
 import userRoutes from "./routes/user";
@@ -12,6 +11,7 @@ import config from "./utils/config";
 import connectDB from "./utils/db";
 import { existsSync, mkdirSync } from "fs";
 import { errorHandler, notFound } from "./loaders/error";
+import { eventEmitter } from "./emitter";
 
 const main = async () => {
     //
@@ -46,21 +46,28 @@ const main = async () => {
     );
 
     //
-    // initialize plugins
+    // load all plugins
+    eventEmitter.init();
+    let emitter = eventEmitter.getEmitter();
+    let pluginLoads: Promise<any>[] = [];
     config.plugins.forEach((pluginPath: string) => {
-        import(pluginPath).then((plugin) => {
-            plugin.default.initPlugin(app);
-        });
+        pluginLoads.push(
+            import(pluginPath).then((plugin) => {
+                plugin.default.initPlugin(app, emitter);
+            })
+        );
     });
+    await Promise.all(pluginLoads);
 
     //
     // routes
+    emitter.emit("testEvent", { message: "skrt" });
     app.use("/v1/auth", authRoutes);
     app.use("/v1/users", userRoutes);
     app.use("/v1/papers", paperRoutes);
     app.use("/v1/comments", commentRoutes);
     app.use("/v1/extra", extraRoutes);
-    
+
     app.use(errorHandler);
     app.use(notFound);
 

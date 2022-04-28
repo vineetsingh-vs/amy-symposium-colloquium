@@ -1,12 +1,24 @@
-import { Application } from "express";
-import { emitter } from "../../src/emitter";
+import { Application, Request, Response } from "express";
+import { EventEmitter } from "events";
 
 const testPlugin = {
-    initPlugin: (app: Application) => {
+    initPlugin: (app: Application, emitter: EventEmitter) => {
         console.log("testPlugin init");
+
+        console.log(emitter);
+
+        //
+        // add a route and handler
+        app.get("/test", (req: Request, res: Response) => {
+            res.status(200).json({ message: "hello" });
+        });
 
         //
         // set up event listeners
+        emitter.on("testEvent", (args) => {
+            console.log("emitter test: testEvent: ");
+            console.log(args.message);
+        });
         emitter.on("paperCreated", (args) => {
             console.log("emitter test: paper created: ");
             console.log(args.paper.title);

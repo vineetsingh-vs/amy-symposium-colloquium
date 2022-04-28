@@ -1,5 +1,4 @@
 import { EventEmitter } from "events";
-import { Application } from "express";
 import { Paper } from "./entities/Paper";
 import { Comment } from "./entities/Comment";
 import { Request } from "express";
@@ -31,4 +30,12 @@ type EventTypes = {
     commentRequested: { req: Request; comment: Comment };
 };
 
-export const emitter = createEmitter<EventTypes>();
+let emitter: Emitter<EventTypes>;
+export const eventEmitter = {
+    init: () => {
+        emitter = createEmitter<EventTypes>();
+    },
+    getEmitter: () => {
+        return emitter;
+    },
+};
