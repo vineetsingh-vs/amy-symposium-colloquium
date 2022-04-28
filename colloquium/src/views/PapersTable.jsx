@@ -56,7 +56,7 @@ const PapersTable = ({ papers, filter, user }) => {
 
     const containsAuthor = (authorsList, searchInput) => {
         for(let i = 0; i < authorsList.length; i++){
-            if(authorsList[i].includes(searchInput)){
+            if(authorsList[i].toLowerCase().includes(searchInput.toLowerCase())){
                 return true;
             }
         }
@@ -113,7 +113,7 @@ const PapersTable = ({ papers, filter, user }) => {
                                 {papers.map((paper) => (
 
                                     <TableRow key={paper.id}>
-                                        {searchInput === "" || (SearchParam === "Title" && paper.title.includes(searchInput)) || (SearchParam === "Owner" && containsAuthor(paper.authors, searchInput)) ? (
+                                        {searchInput === "" || (SearchParam === "Title" && paper.title.toLowerCase().includes(searchInput.toLowerCase())) || (SearchParam === "Owner" && containsAuthor(paper.authors, searchInput)) ? (
                                             <TableCell>
                                                 <Link
                                                     href={
@@ -128,7 +128,7 @@ const PapersTable = ({ papers, filter, user }) => {
                                             <></>
                                         )}
 
-                                        {searchInput === "" || (SearchParam === "Title" && paper.title.includes(searchInput)) || (SearchParam === "Owner" && containsAuthor(paper.authors, searchInput)) ? (
+                                        {searchInput === "" || (SearchParam === "Title" && paper.title.toLowerCase().includes(searchInput.toLowerCase())) || (SearchParam === "Owner" && containsAuthor(paper.authors, searchInput)) ? (
                                             <TableCell>
                                                 <React.Fragment>{paper.authors}</React.Fragment>
                                             </TableCell>
@@ -136,7 +136,7 @@ const PapersTable = ({ papers, filter, user }) => {
                                             <></>
                                         )}
 
-                                        {searchInput === "" || (SearchParam === "Title" && paper.title.includes(searchInput)) || (SearchParam === "Owner" && containsAuthor(paper.authors, searchInput)) ? (
+                                        {searchInput === "" || (SearchParam === "Title" && paper.title.toLowerCase().includes(searchInput.toLowerCase())) || (SearchParam === "Owner" && containsAuthor(paper.authors, searchInput)) ? (
                                             <TableCell>
                                                 {convertNiceDate(paper.updatedAt)}
                                             </TableCell>
@@ -144,7 +144,7 @@ const PapersTable = ({ papers, filter, user }) => {
                                             <></>
                                         )}
                                         
-                                        {(filter === "uploaded" && paper.creator.id === user.id) && (searchInput === "" || (SearchParam === "Title" && paper.title.includes(searchInput)) || (SearchParam === "Owner" && containsAuthor(paper.authors, searchInput))) ? (
+                                        {(filter === "uploaded" && paper.creator.id === user.id) && (searchInput === "" || (SearchParam === "Title" && paper.title.toLowerCase().includes(searchInput.toLowerCase())) || (SearchParam === "Owner" && containsAuthor(paper.authors, searchInput))) ? (
                                             <TableCell>
                                                 <FormControlLabel
                                                     control={
