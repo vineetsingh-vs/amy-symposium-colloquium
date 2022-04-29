@@ -12,6 +12,7 @@ import connectDB from "./utils/db";
 import { existsSync, mkdirSync } from "fs";
 import { errorHandler, notFound } from "./loaders/error";
 import { jwt } from "./loaders/jwt";
+import { emitter } from "./emitter";
 
 const main = async () => {
     //

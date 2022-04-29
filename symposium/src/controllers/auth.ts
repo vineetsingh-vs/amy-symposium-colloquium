@@ -52,12 +52,6 @@ export const signUp = async (req: Request, res: Response) => {
                 updatedAt: newUser.updatedAt,
                 token: generateToken(newUser.id),
             });
-        } catch (err) {
-            console.error("[authController] Failed to create User - Database Error", err);
-            res.status(500).json({
-                message: "Failed to create User - Database Error",
-                stack: config.nodeEnv === "production" ? null : err.stack,
-            });
         }
     } catch (err) {
         console.error("[authController-signUp] Failed to create User - Database Error", err);
