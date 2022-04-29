@@ -64,8 +64,6 @@ const SearchView = () => {
     const [searchInput, setSearchInput] = useState("");
     const [SearchParam, setSearchParam] = useState("Title");
 
-    let commentList = [];
-
     const handleDrawerToggle = () => {
         setDrawerToggled(!drawerToggled);
     };
