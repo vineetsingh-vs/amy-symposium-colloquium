@@ -12,7 +12,7 @@ export const getCommentList = async (req: Request, res: Response) => {
 
 export const createComment = async (req: Request, res: Response) => {
     console.log("[commentController] createComment");
-    const { paperId, versionId, parentId, userId, content, pageNum } = req.body;
+    const { paperId, versionId, parentId, content, pageNum, name } = req.body;
     
     // TODO: validate inputs
     try {
@@ -25,7 +25,7 @@ export const createComment = async (req: Request, res: Response) => {
                     const newComment = Comment.create({
                         version: version,
                         parent: parent,
-                        user: userId,
+                        user: name,
                         content: content,
                         replies: [],
                         likes: [],
@@ -39,26 +39,14 @@ export const createComment = async (req: Request, res: Response) => {
                     console.debug("saved comment: ");
                     console.debug(newComment);
 
-                    res.status(200).json({
-                        id: newComment.id,
-                        version: newComment.version,
-                        content: newComment.content,
-                        parent: newComment.parent,
-                        replies: newComment.replies,
-                        likes: newComment.likes,
-                        dislikes: newComment.dislikes,
-                        pageNum: newComment.pageNum,
-                        user: newComment.user,
-                        createdAt: newComment.created_at,
-                        updatedAt: newComment.updated_at,
-                    });
+                    res.status(200).json(newComment);
                 } else {
                     res.status(400).json({ message: "Could not find parent comment" });
                 }
             } else {
                 const newComment = Comment.create({
                     version: version,
-                    user: userId,
+                    user: name,
                     content: content,
                     replies: [],
                     pageNum: pageNum,
@@ -68,19 +56,7 @@ export const createComment = async (req: Request, res: Response) => {
                 console.debug("saved comment: ");
                 console.debug(newComment);
 
-                res.status(200).json({
-                    id: newComment.id,
-                    version: newComment.version,
-                    content: newComment.content,
-                    parent: newComment.parent,
-                    replies: newComment.replies,
-                    likes: newComment.likes,
-                    dislikes: newComment.dislikes,
-                    pageNum: newComment.pageNum,
-                    user: newComment.user,
-                    createdAt: newComment.created_at,
-                    updatedAt: newComment.updated_at,
-                });
+                res.status(200).json(newComment);
             }
         } else {
             res.status(400).json({ message: "Could not find paper" });

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { User } from "../entities/User";
 import bcrypt from "bcrypt";
 import config from "../utils/config";
+import { generateToken } from "../utils/jwt";
 
 export const signUp = async (req: Request, res: Response) => {
     console.log("[authController] signUp");
@@ -50,6 +51,7 @@ export const signUp = async (req: Request, res: Response) => {
                 affiliation: newUser.affiliation,
                 createdAt: newUser.createdAt,
                 updatedAt: newUser.updatedAt,
+                token: generateToken(newUser.id),
             });
         }
     } catch (err) {
@@ -79,6 +81,7 @@ export const login = async (req: Request, res: Response) => {
                 affiliation: user.affiliation,
                 createdAt: user.createdAt,
                 updatedAt: user.updatedAt,
+                token: generateToken(user.id),
             });
         } else {
             res.status(401).json({ message: "Invalid email or password" });

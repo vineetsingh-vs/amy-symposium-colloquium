@@ -79,7 +79,7 @@ const ReuploadView = () => {
             for (let i = 0; i < files.length; i++) {
                 form.append("files", files[i], files[i].name);
             }
-            await paperApi.updateFileVersion(paperId, user.id, form).then();
+            await paperApi.updateFileVersion(paperId, form).then();
             setLoading(false);
             nextVersionDisplay();
         } else {

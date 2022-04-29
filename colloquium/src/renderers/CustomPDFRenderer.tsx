@@ -1,7 +1,6 @@
 import styled from "@emotion/styled";
 import { DocRenderer } from "react-doc-viewer";
 import PDFPages from "react-doc-viewer/build/plugins/pdf/components/pages/PDFPages"
-import PDFControls from "react-doc-viewer/build/plugins/pdf/components/PDFControls"
 import { PDFProvider } from "react-doc-viewer/build/plugins/pdf/state/index"
 import PDFCustomControls from "./PDFControls/PDFCustomControls";
 

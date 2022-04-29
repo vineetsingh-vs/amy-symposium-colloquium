@@ -9,10 +9,11 @@ import config from "../utils/config";
 import { downloadFile, uploadFile } from "../utils/aws";
 
 export const getPaperList = async (req: Request, res: Response) => {
-    const { filter, userId } = req.query;
+    const { filter } = req.query;
     console.log("[paperController] getPaperList");
+    console.log(req.userId)
     try {
-        let user = await User.findOne({ where: { id: userId } });
+        let user = await User.findOne({ where: { id: req.userId } });
         if (user) {
             if (filter === "shared") {
                 let sharedPapers : Paper[] = [];
@@ -26,7 +27,7 @@ export const getPaperList = async (req: Request, res: Response) => {
                 });
                 res.status(200).send(sharedPapers);
             } else if (filter === "uploaded") {
-                let paperList = await Paper.find({ where: { creator: userId } });
+                let paperList = await Paper.find({ where: { creator: req.userId } });
                 res.status(200).send(paperList);
             } else if (filter == "published") {
                 let paperList = await Paper.find({ where: { isPublished: true } });
@@ -175,14 +176,13 @@ export const createPaper = async (req: Request, res: Response) => {
 export const updatePaperMetaData = async (req: Request, res: Response) => {
     console.log("[paperController] updatePaperMetaData");
     const { paperId } = req.params;
-    const { title, creator, authors, isPublished } = req.body;
+    const { title, authors, isPublished } = req.body;
     console.debug(req.body);
     console.debug(isPublished);
     try {
     let paper = await Paper.findOne({ where: { id: paperId } });
         if (paper) {
             paper.title = title || paper.title;
-            paper.creator = creator || paper.creator;
             paper.authors = authors || paper.authors;
             if (isPublished !== undefined && isPublished !== null) paper.isPublished = isPublished;
             const updatedPaper = await paper.save();
@@ -283,10 +283,10 @@ export const deletePaper = async (req: Request, res: Response) => {
 // update a version of a paper (file and version metadata)
 export const updatePaperFileVersion = async (req: Request, res: Response) => {
     console.log("[paperController] Uploading new Version");
-    const { paperId, userId } = req.params;
+    const { paperId } = req.params;
     try {
         let paper = await Paper.findOne({ where: { id: paperId } });
-        if(paper && paper.creator.id === userId){
+        if(paper && paper.creator.id === req.userId){
             let form = new IncomingForm({ uploadDir: config.tmpFolder });
             form.parse(req, async (err, fields: Fields, files: Files) => {
                 if (err) {
@@ -349,7 +349,7 @@ export const updatePaperFileVersion = async (req: Request, res: Response) => {
         } else {
             if(!paper)
                 res.status(400).json({ message: "Paper not found" });
-            else if(paper.creator.id !== userId)
+            else if(paper.creator.id !== req.userId)
                 res.status(400).json({ message: "User is not the owner of the paper" });
         }
     } catch (err) {
@@ -363,11 +363,11 @@ export const updatePaperFileVersion = async (req: Request, res: Response) => {
 };
 
 export const sharePaper = async (req: Request, res: Response) => {
-    const { userId, sharedUserEmail } = req.body;
+    const { sharedUserEmail } = req.body;
     const { paperId } = req.params;
     console.log("[paperController] sharePaper");
     try {
-    const user = await User.findOne({ where: { id: userId } });
+    const user = await User.findOne({ where: { id: req.userId } });
     const shareUser = await User.findOne({ where: { email: sharedUserEmail } });
     if(user && shareUser){
         const paper = await Paper.findOne({ where: { id: paperId } });
