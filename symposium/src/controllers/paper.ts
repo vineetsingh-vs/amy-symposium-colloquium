@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { Not } from "typeorm";
 import { Fields, Files, IncomingForm } from "formidable";
 import fs from "fs";
 import path from "path";
@@ -12,7 +13,7 @@ import { emitter } from "../emitter";
 export const getPaperList = async (req: Request, res: Response) => {
     const { filter, userId } = req.query;
     console.log("[paperController] getPaperList");
-
+    console.log(filter);
     let user = await User.findOne({ where: { id: userId } });
     if (user) {
         if (filter === "shared") {
@@ -35,6 +36,26 @@ export const getPaperList = async (req: Request, res: Response) => {
         } else if (filter == "all") {
             let paperList = await Paper.find();
             res.status(200).send(paperList);
+        } else if (filter == "search") {
+            let searchPapers : Paper[] = [];
+            let paperList = await Paper.find({where: { creator : userId, isPublished : false } });
+            paperList.forEach(paper => {
+                searchPapers.push(paper);
+            })
+            paperList = await Paper.find({where: { isPublished : true} });
+            paperList.forEach(paper => {
+                searchPapers.push(paper);
+            })
+            paperList = await Paper.find({where: {creator : Not(userId), isPublished : false}});
+            paperList.forEach(paper => {
+                for(let i=0; i < paper.sharedWith.length; i++) {
+                    if(paper.sharedWith[i].id === user!.id) {
+                        searchPapers.push(paper);
+                    }
+                }
+            });
+
+            res.status(200).send(searchPapers);
         } else {
             res.status(400).json({ message: "Invalid filter" });
         }

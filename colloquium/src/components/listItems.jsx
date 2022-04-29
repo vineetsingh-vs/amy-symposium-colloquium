@@ -37,6 +37,14 @@ const DocumentItems = (versionId) => {
         Reviews
       </Link>
     </ListItem>
+    <ListItem>
+      <ListItemIcon>
+        <Assignment />
+      </ListItemIcon>
+      <Link href={"/" + paperId + "/" + versionId.versionId + "/search"} underline="hover">
+        Search Comments
+      </Link>
+    </ListItem>
   </List>
 )};
 
