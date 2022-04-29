@@ -55,18 +55,16 @@ const convertNiceDate = (badDate) => {
 };
 
 const SearchView = () => {
-
     const classes = usePaperViewStyles();
     const classes2 = usePaperTableStyles();
     const [drawerToggled, setDrawerToggled] = useState(false);
     const [filter, setFilter] = useState("search");
-    const [title, setTitle] = useState("My Papers");
     const [papers, setPapers] = useState([]);
     const { user, logout } = useAuth();
     const [searchInput, setSearchInput] = useState("");
-    const [SearchParam, setSearchParam] = useState("Content");
+    const [SearchParam, setSearchParam] = useState("Title");
 
-
+    let commentList = [];
 
     const handleDrawerToggle = () => {
         setDrawerToggled(!drawerToggled);
@@ -92,15 +90,21 @@ const SearchView = () => {
 
     // get filtered papers on mount and everytime filter state is updated
     useEffect(() => {
-        paperApi.getList(user.id, filter).then((paperList) => {
-            if (paperList) {
-                setPapers(paperList);
-            }
-            else {
-                setPapers([]);
-            }
-        });
-    }, [filter]);
+        async function apiCalls() {
+
+            await paperApi.getList(user.id, filter).then((paperList) => {
+                if (paperList) {
+                    setPapers(paperList);
+                }
+                else {
+                    setPapers([]);
+                }
+            });
+        }
+
+        apiCalls();
+    }, []);
+
 
     return (
         <div className={classes.root}>
@@ -130,7 +134,7 @@ const SearchView = () => {
                         noWrap
                         className={classes.title}
                     >
-                        {"Search Papers and Comments"}
+                        {"Search All Papers"}
                     </Typography>
                     <Button
                         variant="outlined"
@@ -199,62 +203,62 @@ const SearchView = () => {
                                     label="Search By"
                                     onChange={searchParamChange}
                                 >
-                                    <MenuItem value={"Content"}>Content</MenuItem>
-                                    <MenuItem value={"Owner"}>Author</MenuItem>
+                                    <MenuItem value={"Title"}>Document Title</MenuItem>
+                                    <MenuItem value={"Owner"}>Document Owner</MenuItem>
                                 </Select>
                             </Grid>
-
-                            <Grid item xs={12} md={12} lg={12}>
-                                <Table>
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>Document Title</TableCell>
-                                            <TableCell>Document Owner</TableCell>
-                                            <TableCell>Most Recent Edit</TableCell>
-
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {papers.map((paper) => (
-
-                                            <TableRow key={paper.id}>
-                                                {true || searchInput !== "" && containsAuthor(paper.authors, searchInput) ? (
-                                                    <TableCell>
-                                                        <Link
-                                                            href={
-                                                                "/" + paper.id + "/" + paper.versionNumber
-                                                            }
-                                                            underline="hover"
-                                                        >
-                                                            {paper.title}
-                                                        </Link>
-                                                    </TableCell>
-                                                ) : (
-                                                    <></>
-                                                )}
-
-                                                {searchInput !== "" && containsAuthor(paper.authors, searchInput) ? (
-                                                    <TableCell>
-                                                        <React.Fragment>{paper.authors}</React.Fragment>
-                                                    </TableCell>
-                                                ) : (
-                                                    <></>
-                                                )}
-
-                                                {searchInput !== "" && containsAuthor(paper.authors, searchInput) ? (
-                                                    <TableCell>
-                                                        {convertNiceDate(paper.updatedAt)}
-                                                    </TableCell>
-                                                ) : (
-                                                    <></>
-                                                )}
+                            {searchInput !== "" ? (
+                                <Grid item xs={12} md={12} lg={12}>
+                                    <Table>
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell>Document Title</TableCell>
+                                                <TableCell>Document Owner</TableCell>
+                                                <TableCell>Most Recent Edit</TableCell>
 
                                             </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </Grid>
+                                        </TableHead>
+                                        <TableBody>
+                                            {papers.map((paper) => (  
+                                                <TableRow key={paper.id}>
+                                                    {searchInput !== "" && ((SearchParam === "Title" && paper.title.toLowerCase().includes(searchInput.toLowerCase())) || (SearchParam === "Owner" && containsAuthor(paper.authors, searchInput))) ? (
+                                                        <TableCell>
+                                                            <Link
+                                                                href={
+                                                                    "/" + paper.id + "/" + paper.versionNumber
+                                                                }
+                                                                underline="hover"
+                                                            >
+                                                                {paper.title}
+                                                            </Link>
+                                                        </TableCell>
+                                                    ) : (
+                                                        <></>
+                                                    )}
 
+                                                    {searchInput !== "" && ((SearchParam === "Title" && paper.title.toLowerCase().includes(searchInput.toLowerCase())) || (SearchParam === "Owner" && containsAuthor(paper.authors, searchInput))) ? (
+                                                        <TableCell>
+                                                            <React.Fragment>{paper.authors}</React.Fragment>
+                                                        </TableCell>
+                                                    ) : (
+                                                        <></>
+                                                    )}
+
+                                                    {searchInput !== "" && ((SearchParam === "Title" && paper.title.toLowerCase().includes(searchInput.toLowerCase())) || (SearchParam === "Owner" && containsAuthor(paper.authors, searchInput))) ? (
+                                                        <TableCell>
+                                                            {convertNiceDate(paper.updatedAt)}
+                                                        </TableCell>
+                                                    ) : (
+                                                        <></>
+                                                    )}
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </Grid>
+                            ) : (
+                                <></>
+                            )}
                         </Grid>
                     </Container>
                 </div>
