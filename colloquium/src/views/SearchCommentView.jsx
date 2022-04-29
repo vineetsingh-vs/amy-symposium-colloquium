@@ -270,7 +270,7 @@ const SearchCommentView = ({ match, history }) => {
                                             {/* Filtering of Comments */}
                                             {comments.map((comments) => (
 
-                                                <TableRow>
+                                                <TableRow key={comments.id}>
 
                                                     {(SearchParam == "Owner" && containsAuthor(comments.user, searchInput)) || (SearchParam == "Content" && containsContent(comments.content, searchInput)) || (SearchParam == "Page" && containsPage(comments.pageNum, searchInput)) ? (
 

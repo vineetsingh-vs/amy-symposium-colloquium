@@ -90,7 +90,7 @@ const SearchView = () => {
     useEffect(() => {
         async function apiCalls() {
 
-            await paperApi.getList(user.id, filter).then((paperList) => {
+            await paperApi.getList(filter).then((paperList) => {
                 if (paperList) {
                     setPapers(paperList);
                 }

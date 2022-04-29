@@ -12,7 +12,7 @@ export const getCommentList = async (req: Request, res: Response) => {
 
 export const createComment = async (req: Request, res: Response) => {
     console.log("[commentController] createComment");
-    const { paperId, versionId, parentId, content, pageNum } = req.body;
+    const { paperId, versionId, parentId, content, pageNum, name } = req.body;
     
     try {
         let paper = await Paper.findOne({ where: { id: paperId } });
@@ -21,7 +21,7 @@ export const createComment = async (req: Request, res: Response) => {
                 const newComment = Comment.create({
                     version: version,
                     parent: parentId || null,
-                    user: req.userId,
+                    user: name,
                     content: content,
                     replies: [],
                     likes: [],

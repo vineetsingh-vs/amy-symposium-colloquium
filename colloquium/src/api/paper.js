@@ -3,7 +3,7 @@ import { api, apiUrl } from "./api.config";
 const resource = "papers";
 
 const paperApi = {
-    getList: async (userId, filter) => {
+    getList: async (filter) => {
         if (filter !== "shared" && filter !== "uploaded" && filter !== "published" && filter !== "search")
             return { message: "filter invalid" };
 
