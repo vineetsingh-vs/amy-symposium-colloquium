@@ -8,7 +8,7 @@ import {
     BaseEntity,
     ManyToOne,
     ManyToMany,
-    JoinTable
+    JoinTable,
 } from "typeorm";
 import { Version } from "./Version";
 import { User } from "./User";
@@ -19,27 +19,27 @@ export class Comment extends BaseEntity {
     id!: string;
 
     @ManyToOne(() => Version, (version) => version.comments, {
-        eager: true
+        eager: true,
     })
     version!: Version;
 
     @ManyToOne(() => Comment, (comment) => comment.replies, {
-        onUpdate: 'CASCADE'
+        onUpdate: "CASCADE",
     })
     parent: Comment;
 
     @OneToMany(() => Comment, (comment) => comment.parent, {
-        cascade: true
+        cascade: true,
     })
     replies: Comment[];
 
     @ManyToMany(() => User, { eager: true })
     @JoinTable()
-    likes: User[]
+    likes: User[];
 
     @ManyToMany(() => User, { eager: true })
     @JoinTable()
-    dislikes: User[]
+    dislikes: User[];
 
     @Column()
     pageNum: number;
@@ -47,7 +47,7 @@ export class Comment extends BaseEntity {
     @Column()
     content!: string;
 
-    @Column({nullable: true})
+    @Column({ nullable: true })
     user!: string;
 
     @CreateDateColumn()

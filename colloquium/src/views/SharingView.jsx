@@ -158,7 +158,7 @@ const SharingView = ({match, history}) => {
                 <Container maxWidth="lg" className={classes.container}>
                     <Grid container spacing={3}>
                         <Grid item xs={12} md={12} lg={12}>
-                            <TextField fullWidth label='Enter an Email Address' onChange={(e) => setSharedUserEmail(e.target.value)}></TextField>
+                            <TextField fullWidth label='Enter an Email Address' onChange={(e) => setSharedUserEmail(e.target.value.toLowerCase())}></TextField>
                             <Button variant="contained" color="primary" onClick={addSharedUser}>
                                 Share With
                             </Button>

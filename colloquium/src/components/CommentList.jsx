@@ -36,20 +36,20 @@ const useStyles = makeStyles((theme) => ({
 const Comment = ({ comment, paperId, versionId, pageNum }) => {
     const classes = useStyles();
     const [hidden, setHidden] = useState(false);
-    const [comments, setComments] = useState([]);
     const { user } = useAuth();
     const [replies, setReplies] = useState([]);
     const [likes, setLikes] = useState(comment.likes ? comment.likes.length : 0);
     const [dislikes, setDislikes] = useState(comment.dislikes ? comment.dislikes.length : 0);
     const [value, setValue] = useState("");
+    let replyId = 0;
 
     const handleType = (text) => {
         text.preventDefault();
         setValue(text.target.value);
     }
 
-    const handleClick = () => {
-        replies.push(createReply(comments.length, user.firstName, value));
+    const handleClick = async () => {
+        replies.push(await createReply(user.firstName, value));
         listReplies();
         setValue("");
         setHidden(!hidden);
@@ -69,9 +69,9 @@ const Comment = ({ comment, paperId, versionId, pageNum }) => {
         }); 
     }
     
-    const createReply = (id, name, body) => {
-        commentApi.createComment(paperId, versionId, comment.id, name, body, pageNum);
-        return { id, pageNum: pageNum, parentId: comment.id, content: body, user: name };
+    const createReply = async (name, body) => {
+        await commentApi.createComment(paperId, versionId, comment.id, name, body, pageNum).then((rep) => replyId = rep.id);
+        return { id: replyId, pageNum: pageNum, parentId: comment.id, content: body, user: name };
     }
 
     const listReplies = () => {
@@ -167,11 +167,6 @@ const CommentList = ({ paperId, versionId }) => {
             commentApi.getCommentsByPage(paperId, versionId, PageStore.getState().currentPage).then((comments) => setComments(comments));
         });
     }, []);
-
-    /*
-        Can Probably add a new useEffect here and have the parameter be focused on the value representing the search value. Then have the mapp function below
-        map only by the comments given, or something like that
-    */
 
     return (
         <Grid item xs={4}>

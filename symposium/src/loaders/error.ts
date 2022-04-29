@@ -3,7 +3,7 @@ import config from "../utils/config";
 
 export const notFound = (req: Request, res: Response, next: NextFunction) => {
     const error = new Error(`Path Not Found - ${req.originalUrl}`);
-    res.status(404);
+    res.status(404).send(`Path Not Found - ${req.originalUrl}`);
     next(error);
 };
 
