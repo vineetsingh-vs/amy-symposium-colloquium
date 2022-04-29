@@ -1,4 +1,5 @@
 import express from "express";
+import { jwt } from "../loaders/jwt";
 import {
     getPaperList,
     getPaperMetaData,
@@ -14,10 +15,10 @@ import {
 
 const router = express.Router();
 
-router.route("/").get(getPaperList).post(createPaper);
-router.route("/:paperId").get(getPaperMetaData).put(updatePaperMetaData).delete(deletePaper);
-router.route("/:paperId/share").post(sharePaper).put(stopSharingPaper);
-router.route("/:paperId/:userId/reupload").put(updatePaperFileVersion);
-router.route("/:paperId/:versionId").get(getPaperFileVersion).delete(deletePaperVersion);
+router.route("/").get(jwt, getPaperList).post(jwt, createPaper);
+router.route("/:paperId").get(jwt, getPaperMetaData).put(jwt, updatePaperMetaData).delete(jwt, deletePaper);
+router.route("/:paperId/share").post(jwt, sharePaper).put(jwt, stopSharingPaper);
+router.route("/:paperId/reupload").put(jwt, updatePaperFileVersion);
+router.route("/:paperId/:versionId").get(getPaperFileVersion).delete(jwt, deletePaperVersion);
 
 export default router;

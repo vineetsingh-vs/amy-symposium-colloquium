@@ -11,9 +11,7 @@ import config from "./utils/config";
 import connectDB from "./utils/db";
 import { existsSync, mkdirSync } from "fs";
 import { errorHandler, notFound } from "./loaders/error";
-import { emitter } from "./emitter";
-// import { eventEmitter } from "../emitter";
-// let emitter = eventEmitter.getEmitter();
+import { jwt } from "./loaders/jwt";
 
 const main = async () => {
     //
@@ -62,11 +60,11 @@ const main = async () => {
     //
     // routes
     app.use("/v1/auth", authRoutes);
-    app.use("/v1/users", userRoutes);
+    app.use("/v1/users", jwt, userRoutes);
     app.use("/v1/papers", paperRoutes);
-    app.use("/v1/comments", commentRoutes);
-    app.use("/v1/extra", extraRoutes);
-
+    app.use("/v1/comments", jwt, commentRoutes);
+    app.use("/v1/extra", jwt, extraRoutes);
+    
     app.use(errorHandler);
     app.use(notFound);
 

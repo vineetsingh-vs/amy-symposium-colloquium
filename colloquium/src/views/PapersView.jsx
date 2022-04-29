@@ -42,7 +42,7 @@ const PapersView = () => {
 
     // get filtered papers on mount and everytime filter state is updated
     useEffect(() => {
-        paperApi.getList(user.id, filter).then((paperList) => {
+        paperApi.getList(filter).then((paperList) => {
             if(paperList){
                 setPapers(paperList);
             }

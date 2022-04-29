@@ -11,7 +11,7 @@ import { downloadFile, uploadFile } from "../utils/aws";
 import { emitter } from "../emitter";
 
 export const getPaperList = async (req: Request, res: Response) => {
-    const { filter, userId } = req.query;
+    const { filter } = req.query;
     console.log("[paperController] getPaperList");
     console.log(filter);
     let user = await User.findOne({ where: { id: userId } });
@@ -57,10 +57,15 @@ export const getPaperList = async (req: Request, res: Response) => {
 
             res.status(200).send(searchPapers);
         } else {
-            res.status(400).json({ message: "Invalid filter" });
+            res.status(400).json({ message: "User not found" });
         }
-    } else {
-        res.status(400).json({ message: "User not found" });
+    } catch (err) {
+        console.error("[paperController-getPaperList] Failed to get Paper List - Database Error", err);
+        res.status(500).json({
+            message: "Failed to get Paper List - Database Error",
+            error: err,
+            stack: config.nodeEnv === "production" ? null : err.stack
+        });
     }
 };
 
@@ -93,7 +98,8 @@ export const getPaperMetaData = async (req: Request, res: Response) => {
         );
         res.status(500).json({
             message: "Failed to get Paper MetaData - Database Error",
-            stack: config.nodeEnv === "production" ? null : err.stack,
+            error: err,
+            stack: config.nodeEnv === "production" ? null : err.stack
         });
     }
 };
@@ -149,7 +155,8 @@ export const createPaper = async (req: Request, res: Response) => {
                     console.error("[paperController-createPaper] Error saving file", err);
                     res.status(500).json({
                         message: "File couldn't be saved",
-                        stack: config.nodeEnv === "production" ? null : err.stack,
+                        error: err,
+                        stack: config.nodeEnv === "production" ? null : err.stack
                     });
                     return;
                 }
@@ -183,7 +190,8 @@ export const createPaper = async (req: Request, res: Response) => {
             );
             res.status(500).json({
                 message: "Failed to create Paper - Database Error",
-                stack: config.nodeEnv === "production" ? null : err.stack,
+                error: err,
+                stack: config.nodeEnv === "production" ? null : err.stack
             });
         }
     });
@@ -192,14 +200,13 @@ export const createPaper = async (req: Request, res: Response) => {
 export const updatePaperMetaData = async (req: Request, res: Response) => {
     console.log("[paperController] updatePaperMetaData");
     const { paperId } = req.params;
-    const { title, creator, authors, isPublished } = req.body;
+    const { title, authors, isPublished } = req.body;
     console.debug(req.body);
     console.debug(isPublished);
     try {
         let paper = await Paper.findOne({ where: { id: paperId } });
         if (paper) {
             paper.title = title || paper.title;
-            paper.creator = creator || paper.creator;
             paper.authors = authors || paper.authors;
             if (isPublished !== undefined && isPublished !== null)
                 paper.isPublished = isPublished;
@@ -216,7 +223,8 @@ export const updatePaperMetaData = async (req: Request, res: Response) => {
         );
         res.status(500).json({
             message: "Failed to update Paper MetaData - Database Error",
-            stack: config.nodeEnv === "production" ? null : err.stack,
+            error: err,
+            stack: config.nodeEnv === "production" ? null : err.stack
         });
     }
 };
@@ -246,7 +254,8 @@ export const getPaperFileVersion = async (req: Request, res: Response) => {
                                 );
                                 res.status(500).json({
                                     message: "Failed to download file",
-                                    stack: config.nodeEnv === "production" ? null : err.stack,
+                                    error: err,
+                                    stack: config.nodeEnv === "production" ? null : err.stack
                                 });
                             } else {
                                 fs.unlinkSync(path);
@@ -257,7 +266,8 @@ export const getPaperFileVersion = async (req: Request, res: Response) => {
                     console.error("[paperController] Failed to send file", err);
                     res.status(500).json({
                         message: "Failed to send paper",
-                        stack: config.nodeEnv === "production" ? null : err.stack,
+                        error: err,
+                        stack: config.nodeEnv === "production" ? null : err.stack
                     });
                 }
             } else {
@@ -276,7 +286,8 @@ export const getPaperFileVersion = async (req: Request, res: Response) => {
         );
         res.status(500).json({
             message: "Failed to get Paper File Version - Database Error",
-            stack: config.nodeEnv === "production" ? null : err.stack,
+            error: err,
+            stack: config.nodeEnv === "production" ? null : err.stack
         });
     }
 };
@@ -301,18 +312,19 @@ export const deletePaper = async (req: Request, res: Response) => {
         );
         res.status(500).json({
             message: "Failed to delete Paper - Database Error",
-            stack: config.nodeEnv === "production" ? null : err.stack,
+            error: err,
+            stack: config.nodeEnv === "production" ? null : err.stack
         });
     }
 };
 
 // update a version of a paper (file and version metadata)
 export const updatePaperFileVersion = async (req: Request, res: Response) => {
-    console.log("[paperController] updatePaperFileVersion");
-    const { paperId, userId } = req.params;
+    console.log("[paperController] Uploading new Version");
+    const { paperId } = req.params;
     try {
         let paper = await Paper.findOne({ where: { id: paperId } });
-        if (paper && paper.creator.id === userId) {
+        if(paper && paper.creator.id === req.userId){
             let form = new IncomingForm({ uploadDir: config.tmpFolder });
             form.parse(req, async (err, fields: Fields, files: Files) => {
                 if (err) {
@@ -404,7 +416,9 @@ export const updatePaperFileVersion = async (req: Request, res: Response) => {
                         await paper.save();
                         res.status(200).json({ message: "Successfully Reuploaded Paper" });
                     } else {
-                        res.status(400).json({ message: "Paper not found" });
+                        console.warn("[paperController-updatePaperFileVersion] Can't handle multiple files");
+                        res.status(500).json({ message: "Backend currently can't handle multiple files" });
+                        return;
                     }
                 } catch (err) {
                     console.error(
@@ -421,7 +435,6 @@ export const updatePaperFileVersion = async (req: Request, res: Response) => {
             if (!paper) res.status(400).json({ message: "Paper not found" });
             else if (paper.creator.id !== userId) {
                 res.status(400).json({ message: "User is not the owner of the paper" });
-            }
         }
     } catch (err) {
         console.error(
@@ -430,17 +443,18 @@ export const updatePaperFileVersion = async (req: Request, res: Response) => {
         );
         res.status(500).json({
             message: "Failed to update Paper Version - Database Error",
-            stack: config.nodeEnv === "production" ? null : err.stack,
+            error: err,
+            stack: config.nodeEnv === "production" ? null : err.stack
         });
     }
 };
 
 export const sharePaper = async (req: Request, res: Response) => {
-    const { userId, sharedUserEmail } = req.body;
+    const { sharedUserEmail } = req.body;
     const { paperId } = req.params;
     console.log("[paperController] sharePaper");
-
-    const user = await User.findOne({ where: { id: userId } });
+    try {
+    const user = await User.findOne({ where: { id: req.userId } });
     const shareUser = await User.findOne({ where: { email: sharedUserEmail } });
     if (user && shareUser) {
         const paper = await Paper.findOne({ where: { id: paperId } });
@@ -460,13 +474,21 @@ export const sharePaper = async (req: Request, res: Response) => {
         if (!user) res.status(404).json({ message: "user not found" });
         else if (!shareUser) res.status(404).json({ message: "shared with user not found" });
     }
+    } catch (err) {
+        console.error("[paperController-sharePaper] Failed to Share Paper - Database Error", err);
+        res.status(500).json({
+            message: "Failed to Share Paper - Database Error",
+            error: err,
+            stack: config.nodeEnv === "production" ? null : err.stack
+        });
+    }
 };
 
 export const stopSharingPaper = async (req: Request, res: Response) => {
     const { userId, sharedUserEmail } = req.body;
     const { paperId } = req.params;
     console.log("[paperController] stopSharingPaper");
-
+    try {
     const user = await User.findOne({ where: { id: userId } });
     const shareUser = await User.findOne({ where: { email: sharedUserEmail } });
     if (user && shareUser) {
@@ -491,6 +513,14 @@ export const stopSharingPaper = async (req: Request, res: Response) => {
     } else {
         if (!user) res.status(404).json({ message: "user not found" });
         else if (!shareUser) res.status(404).json({ message: "shared with user not found" });
+    }
+    } catch (err) {
+        console.error("[paperController-stopSharingPaper] Failed to Unshare Paper - Database Error", err);
+        res.status(500).json({
+            message: "Failed to Unshare Paper - Database Error",
+            error: err,
+            stack: config.nodeEnv === "production" ? null : err.stack
+        });
     }
 };
 

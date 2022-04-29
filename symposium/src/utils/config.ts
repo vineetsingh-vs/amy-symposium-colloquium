@@ -23,4 +23,5 @@ export default {
     postgresDB: process.env.POSTGRESQL_DB,
     awsAccessKey: process.env.AWS_ACCESS_KEY_ID,
     awsSecret: process.env.AWS_SECRET_ACCESS_KEY,
+    tokenSecret: process.env.TOKEN_SECRET
 } as const;

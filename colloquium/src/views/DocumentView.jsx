@@ -208,7 +208,6 @@ const DocumentView = () => {
                                     config={{
                                         header: {
                                             disableFileName: true,
-                                            disableHeader: true,
                                             retainURLParams: false,
                                         },
                                     }}

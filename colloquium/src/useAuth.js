@@ -1,6 +1,5 @@
 import { useEffect, useState, useContext, createContext } from "react";
-import axios from "axios";
-import { apiUrl } from "./api/api.config";
+import { authApi, setApiToken } from "./api/api.config";
 
 const authContext = createContext();
 
@@ -12,13 +11,14 @@ const useProvideAuth = () => {
     // login, store and set the user info from response
     const login = async (email, password) => {
         try {
-            const response = await axios.post(`${apiUrl}/auth/login`, {
+            const response = await authApi().post(`auth/login`, {
                 email,
                 password,
             });
             localStorage.setItem("userInfo", JSON.stringify(response.data));
             setUser(response.data);
             setError(null);
+            setApiToken(response.data.token);
         } catch (error) {
             const errMsg =
                 error.response && error.response.data.message
@@ -31,7 +31,7 @@ const useProvideAuth = () => {
     // signup, store and set the user info from response
     const signup = async (email, password, firstName, lastName, affiliation) => {
         try {
-            const response = await axios.post(`${apiUrl}/auth/signup`, {
+            const response = await authApi().post(`auth/signup`, {
                 email,
                 password,
                 firstName,
@@ -41,6 +41,7 @@ const useProvideAuth = () => {
             localStorage.setItem("userInfo", JSON.stringify(response.data));
             setUser(response.data);
             setError(null);
+            setApiToken(response.data.token);
             return response.data;
         } catch (error) {
             const errMsg =
@@ -58,7 +59,7 @@ const useProvideAuth = () => {
 
     const setConfig = () => {
         return {
-            headers: { "x-auth-token": user.token },
+            headers: { "Authorization": user.token },
         };
     };
 

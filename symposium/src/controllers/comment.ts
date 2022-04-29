@@ -75,8 +75,6 @@ export const getCommentById = async (req: Request, res: Response) => {
             createdAt: comment.created_at,
             updatedAt: comment.updated_at,
         });
-    } else {
-        res.status(400).json({ message: "Could not find Comment" });
     }
 };
 
@@ -90,10 +88,15 @@ export const getCommentsByVersionId = async (req: Request, res: Response) => {
         if (comments) {
             res.status(200).send(comments);
         } else {
-            res.status(400).json({ message: "Could not find comments" });
+            res.status(400).json({ message: "Could not find paper" });
         }
-    } else {
-        res.status(400).json({ message: "Could not find paper" });
+    } catch (err) {
+        console.error("[commentController-getCommentsByVersionId] Failed to get Comments by Version - Database Error", err);
+        res.status(500).json({
+            message: "Failed to get Comments by Version - Database Error",
+            error: err,
+            stack: config.nodeEnv === "production" ? null : err.stack
+        });
     }
 };
 
@@ -111,10 +114,15 @@ export const getCommentsByVersionAndPage = async (req: Request, res: Response) =
         if (comments) {
             res.status(200).send(comments);
         } else {
-            res.status(400).json({ message: "Could not find comments" });
+            res.status(400).json({ message: "Could not find paper" });
         }
-    } else {
-        res.status(400).json({ message: "Could not find paper" });
+    } catch (err) {
+        console.error("[commentController-getCommentsByVersionAndPage] Failed to get Comments by Page - Database Error", err);
+        res.status(500).json({
+            message: "Failed to get Comments by Page - Database Error",
+            error: err,
+            stack: config.nodeEnv === "production" ? null : err.stack
+        });
     }
 };
 
@@ -122,13 +130,22 @@ export const deleteComment = async (req: Request, res: Response) => {
     console.log("commentController] deleteComment");
     const { commentID } = req.params;
 
-    let comment = await Comment.findOne({ where: { id: commentID } });
+    try {
+        let comment = await Comment.findOne({ where: { id: commentID } });
 
-    if (comment) {
-        await comment.remove();
-        res.status(200).json({ message: "Successfully deleted comment" });
-    } else {
-        res.status(400).json({ message: "Comment not found" });
+        if (comment) {
+            await comment.remove();
+            res.status(200).json({ message: "Successfully deleted comment" });
+        } else {
+            res.status(400).json({ message: "Comment not found" });
+        }
+    } catch (err) {
+        console.error("[commentController-deleteComment] Failed to delete Comment - Database Error", err);
+        res.status(500).json({
+            message: "Failed to delete Comment - Database Error",
+            error: err,
+            stack: config.nodeEnv === "production" ? null : err.stack
+        });
     }
 };
 
@@ -137,11 +154,11 @@ export const updateComment = async (req: Request, res: Response) => {
     const { commentID } = req.params;
     const { pageNum, content } = req.body;
 
-    let comment = await Comment.findOne({ where: { id: commentID } });
-    if (comment) {
-        comment.pageNum = pageNum || comment.pageNum;
-        comment.content = content || comment.content;
-        try {
+    try {
+        let comment = await Comment.findOne({ where: { id: commentID } });
+        if (comment) {
+            comment.pageNum = pageNum || comment.pageNum;
+            comment.content = content || comment.content;
             await comment.save();
             res.status(200).json({
                 id: comment.id,
@@ -167,7 +184,12 @@ export const updateComment = async (req: Request, res: Response) => {
                 stack: config.nodeEnv === "production" ? null : err.stack,
             });
         }
-    } else {
-        res.status(400).json({ message: "Comment not found" });
+    } catch (err) {
+        console.error("[commentController-updateComment] Failed to update Comment - Database Error", err);
+        res.status(500).json({
+            message: "Failed to update Comment - Database Error",
+            error: err,
+            stack: config.nodeEnv === "production" ? null : err.stack
+        });
     }
 };
