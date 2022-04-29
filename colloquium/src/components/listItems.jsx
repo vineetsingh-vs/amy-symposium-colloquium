@@ -4,7 +4,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Dashboard from '@mui/icons-material/Dashboard';
 import People from '@mui/icons-material/People';
-import Person from '@mui/icons-material/Person';
+import SearchIcon from '@mui/icons-material/Search';
 import Assignment from '@mui/icons-material/Assignment';
 import List from '@mui/material/List';
 import {useParams} from "react-router-dom";
@@ -35,6 +35,14 @@ const DocumentItems = (versionId) => {
       </ListItemIcon>
       <Link href={"/" + paperId + "/" + versionId.versionId + "/reviews"} underline="hover">
         Reviews
+      </Link>
+    </ListItem>
+    <ListItem>
+      <ListItemIcon>
+        <SearchIcon />
+      </ListItemIcon>
+      <Link href={"/" + paperId + "/" + versionId.versionId + "/search"} underline="hover">
+        Search Comments
       </Link>
     </ListItem>
   </List>

@@ -15,7 +15,6 @@ import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import extraApi from "../api/extra";
 import { useAuth } from "../useAuth";
 
-
 import SubdirectoryArrowRightIcon from '@mui/icons-material/SubdirectoryArrowRight';
 
 const useStyles = makeStyles((theme) => ({
@@ -34,6 +33,8 @@ const useStyles = makeStyles((theme) => ({
 const Reply = ({ reply }) => {
     const classes = useStyles();
     const { user } = useAuth();
+    const [likes, setLikes] = useState(reply.likes ? reply.likes.length : 0);
+    const [dislikes, setDislikes] = useState(reply.dislikes ? reply.dislikes.length : 0);
 
     const addLike = async () => {
         await extraApi.addLike(reply.id, user.id).then((rep) => {
@@ -48,9 +49,6 @@ const Reply = ({ reply }) => {
             setDislikes(rep.dislikes ? rep.dislikes.length : dislikes);
         }); 
     }
-
-    const [likes, setLikes] = useState(reply.likes ? reply.likes.length : 0);
-    const [dislikes, setDislikes] = useState(reply.dislikes ? reply.dislikes.length : 0);
 
     return (
         <div className={`reply ${reply.id}`}>
@@ -76,7 +74,6 @@ const Reply = ({ reply }) => {
                         </>
                     }
                 />
-                <br />
                 <ThumbUpIcon color="primary" variant="contained" onClick={addLike}>
                     Like
                 </ThumbUpIcon>

@@ -20,6 +20,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import Assignment from "@mui/icons-material/Assignment";
 import People from "@mui/icons-material/People";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import SearchIcon from '@mui/icons-material/Search';
 import Person from "@mui/icons-material/Person";
 import PapersTable from "./PapersTable";
 import paperApi from "../api/paper";
@@ -141,6 +142,14 @@ const PapersView = () => {
                         </ListItemIcon>
                         <Link onClick={() => setFilter("uploaded")} underline="hover">
                             My Papers
+                        </Link>
+                    </ListItem>
+                    <ListItem>
+                        <ListItemIcon>
+                            <SearchIcon />
+                        </ListItemIcon>
+                        <Link href={"/search"} underline="hover">
+                            Search
                         </Link>
                     </ListItem>
                 </List>

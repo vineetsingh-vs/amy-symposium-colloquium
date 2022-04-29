@@ -2,11 +2,6 @@ import { api, } from "./api.config";
 
 const resource = "comments";
 
-//
-// get list of
-//  shared with me
-//  my uploaded papers
-//  all papers
 const commentApi = {
     createComment: async (paperId, versionId, parentId, name, body, page) => {
         return api()
