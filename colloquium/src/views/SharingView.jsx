@@ -49,7 +49,7 @@ const SharingView = ({match, history}) => {
     const [rows, setRows] = useState([]);
     const addSharedUser = () => {
         async function apiCalls() {
-            await paperApi.sharePaper(user.id, sharedUserEmail, paperId);
+            await paperApi.sharePaper(sharedUserEmail, paperId);
         }
         apiCalls();
         window.location.replace("/" + paperId + "/" + versionId + "/share");
@@ -57,7 +57,7 @@ const SharingView = ({match, history}) => {
 
     const removeSharedUser = (email) => {
         async function apiCalls() {
-            await paperApi.stopSharingPaper(user.id, email, paperId);
+            await paperApi.stopSharingPaper(email, paperId);
         }
         apiCalls();
         window.location.replace("/" + paperId + "/" + versionId + "/share");
@@ -178,7 +178,7 @@ const SharingView = ({match, history}) => {
                                                 {row.firstName}
                                             </TableCell>
                                             <TableCell>
-                                                <Button variant="contained" color="secondary" onClick={() => removeSharedUser(row.email)}>Remove?</Button>
+                                                <Button variant="contained" color="secondary" onClick={() => removeSharedUser(row.email.toLowerCase())}>Remove?</Button>
                                             </TableCell>
                                         </TableRow>
                                     ))}
