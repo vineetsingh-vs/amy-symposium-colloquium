@@ -6,7 +6,7 @@
     "awsBucket": "symposium-s3",
     "awsRegion": "us-east-1",
     "plugins": [
-        "../plugins/testPlugin",
-        "../plugins/spaceInvadersPlugin"
+        "./plugins/testPlugin",
+        "./plugins/spaceInvadersPlugin"
     ]
 }
