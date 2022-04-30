@@ -49,18 +49,16 @@ const SharingView = ({match, history}) => {
     const [rows, setRows] = useState([]);
     const addSharedUser = () => {
         async function apiCalls() {
-            await paperApi.sharePaper(sharedUserEmail, paperId);
+            await paperApi.sharePaper(sharedUserEmail, paperId).then(() => window.location.replace("/" + paperId + "/" + versionId + "/share"));
         }
         apiCalls();
-        window.location.replace("/" + paperId + "/" + versionId + "/share");
     };
 
     const removeSharedUser = (email) => {
         async function apiCalls() {
-            await paperApi.stopSharingPaper(email, paperId);
+            await paperApi.stopSharingPaper(email, paperId).then(() => window.location.replace("/" + paperId + "/" + versionId + "/share"));
         }
         apiCalls();
-        window.location.replace("/" + paperId + "/" + versionId + "/share");
     };
 
     // Document Info

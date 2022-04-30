@@ -42,13 +42,13 @@ const paperApi = {
     },
     // start sharing paper (paperId) with user (userId) and set permissions
     sharePaper: async (sharedUserEmail, paperId) => {
-        return await api().post(`${resource}/${paperId}/share`, {
+        return api().post(`${resource}/${paperId}/share`, {
             sharedUserEmail,
         });
     },
     // stop sharing paper (paperId) with user (userId)
     stopSharingPaper: async (sharedUserEmail, paperId) => {
-        return await api().put(`${resource}/${paperId}/share`, {
+        return api().put(`${resource}/${paperId}/share`, {
             sharedUserEmail,
         });
     },
