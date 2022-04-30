@@ -202,7 +202,7 @@ const SearchView = () => {
                                     onChange={searchParamChange}
                                 >
                                     <MenuItem value={"Title"}>Document Title</MenuItem>
-                                    <MenuItem value={"Owner"}>Document Owner</MenuItem>
+                                    <MenuItem value={"Owner"}>Document Author</MenuItem>
                                 </Select>
                             </Grid>
                             {searchInput !== "" ? (
@@ -211,7 +211,7 @@ const SearchView = () => {
                                         <TableHead>
                                             <TableRow>
                                                 <TableCell>Document Title</TableCell>
-                                                <TableCell>Document Owner</TableCell>
+                                                <TableCell>Document Author</TableCell>
                                                 <TableCell>Most Recent Edit</TableCell>
 
                                             </TableRow>

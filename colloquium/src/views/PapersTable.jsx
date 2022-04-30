@@ -91,7 +91,7 @@ const PapersTable = ({ papers, filter, user }) => {
                         onChange={searchParamChange}
                     >
                         <MenuItem value={"Title"}>Document Title</MenuItem>
-                        <MenuItem value={"Owner"}>Document Owner</MenuItem>
+                        <MenuItem value={"Owner"}>Document Author</MenuItem>
                     </Select>
                     </Grid>
 
@@ -100,7 +100,7 @@ const PapersTable = ({ papers, filter, user }) => {
                             <TableHead>
                                 <TableRow>
                                     <TableCell>Document Title</TableCell>
-                                    <TableCell>Document Owner</TableCell>
+                                    <TableCell>Document Author</TableCell>
                                     <TableCell>Most Recent Edit</TableCell>
                                     {filter === "uploaded" ? (
                                         <TableCell>Publish</TableCell>
