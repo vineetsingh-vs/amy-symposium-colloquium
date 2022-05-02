@@ -1,4 +1,1 @@
-run with `npm start`
-
--   admin dash on root ("http://localhost:3000/")
--   https://marmelab.com/react-admin/Tutorial.html
+Can find all information required to run Colloquium and Symposium here: https://symposium.gitbook.io/colsy/
