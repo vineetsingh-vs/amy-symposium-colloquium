@@ -169,14 +169,7 @@ const CommentList = ({ paperId, versionId }) => {
     }, []);
 
     return (
-        <Grid item xs={4}>
-            <List className={classes.root}>
-                {comments.map((comment, index) => (
-                    <React.Fragment key={index}>
-                        <Comment comment={comment} paperId={paperId} versionId={versionId} pageNum={PageStore.getState().currentPage} />
-                    </React.Fragment>
-                ))}
-            </List>
+        <Grid item xs={4} >
             <TextField
                 variant="outlined"
                 multiline
@@ -194,6 +187,13 @@ const CommentList = ({ paperId, versionId }) => {
             >
                 Add Comment
             </Button>
+            <List className={classes.root}>
+                {comments.map((comment, index) => (
+                    <React.Fragment key={index}>
+                        <Comment comment={comment} paperId={paperId} versionId={versionId} pageNum={PageStore.getState().currentPage} />
+                    </React.Fragment>
+                ))}
+            </List>
         </Grid>
     );
 };

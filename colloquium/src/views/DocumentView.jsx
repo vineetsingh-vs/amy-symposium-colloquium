@@ -27,6 +27,7 @@ import {
 import Menu from "@mui/icons-material/Menu";
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import Person from "@mui/icons-material/Person";
+import Link from "@mui/material/Link";
 import { CommentList } from "../components/CommentList";
 import { DocumentItems, CreatorItems } from "../components/listItems";
 import Copyright from "../components/Copyright";
@@ -51,17 +52,15 @@ const DocumentView = () => {
     const classes = useDocumentViewStyles();
     const {paperId, versionId} = useParams();
     const { user } = useAuth()
-    const [drawerToggled, setDrawerToggled] = useState(false);
+    const [drawerToggled, setDrawerToggled] = useState(true);
     const [docUri, setDocUri] = useState([]);
     const [documentTitle, setDocumentTitle] = useState("");
     const [isFetching, setIsFetching] = useState(false);
     const [displayVersions, setDisplayVersions] = useState([]);
     const [fileType, setFileType] = useState("");
     const [creatorAccess, setCreatorAccess] = useState(false);
+    const site = "Colloquium";
 
-    const handleDrawerToggle = () => {
-        setDrawerToggled(!drawerToggled);
-    };
 
     const handleChangeVersion = (event) => {
         const newVersionId = event.target.value;
@@ -128,7 +127,6 @@ const DocumentView = () => {
                             edge="start"
                             color="inherit"
                             aria-label="open drawer"
-                            onClick={handleDrawerToggle}
                             className={clsx(
                                 classes.menuButton,
                                 drawerToggled && classes.menuButtonHidden
@@ -163,10 +161,10 @@ const DocumentView = () => {
                     }}
                     open={drawerToggled}
                 >
-                    <div className={classes.toolbarIcon}>
-                        <IconButton onClick={handleDrawerToggle} size="large">
-                            <ChevronLeft />
-                        </IconButton>
+                    <div className={classes.colloquium}>
+                        <Link href={"/"} underline="hover">
+                            Colloquium
+                        </Link>
                     </div>
                     <Divider />
                     <DocumentItems versionId={versionId} />

@@ -6,6 +6,7 @@ import Dashboard from '@mui/icons-material/Dashboard';
 import People from '@mui/icons-material/People';
 import SearchIcon from '@mui/icons-material/Search';
 import Assignment from '@mui/icons-material/Assignment';
+import PostAddIcon from '@mui/icons-material/PostAdd';
 import List from '@mui/material/List';
 import {useParams} from "react-router-dom";
 
@@ -19,30 +20,6 @@ const DocumentItems = (versionId) => {
       </ListItemIcon>
       <Link href="/papers" underline="hover">
         Dashboard
-      </Link>
-    </ListItem>
-    <ListItem>
-      <ListItemIcon>
-        <Assignment />
-      </ListItemIcon>
-      <Link href={"/" + paperId + "/" + versionId.versionId} underline="hover">
-        Document
-      </Link>
-    </ListItem>
-    <ListItem>
-      <ListItemIcon>
-        <People />
-      </ListItemIcon>
-      <Link href={"/" + paperId + "/" + versionId.versionId + "/reviews"} underline="hover">
-        Reviews
-      </Link>
-    </ListItem>
-    <ListItem>
-      <ListItemIcon>
-        <SearchIcon />
-      </ListItemIcon>
-      <Link href={"/" + paperId + "/" + versionId.versionId + "/search"} underline="hover">
-        Search Comments
       </Link>
     </ListItem>
   </List>
@@ -62,10 +39,10 @@ const CreatorItems = (versionId) => {
     </ListItem>
     <ListItem>
       <ListItemIcon>
-        <Assignment />
+        <PostAddIcon />
       </ListItemIcon>
       <Link href={"/" + paperId + "/" + versionId.versionId + "/reupload"} underline="hover">
-        ReUpload
+        New Version
       </Link>
     </ListItem>
   </List>

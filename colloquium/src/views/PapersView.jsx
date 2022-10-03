@@ -30,15 +30,16 @@ import { useAuth } from "../useAuth";
 
 const PapersView = () => {
     const classes = usePaperViewStyles();
-    const [drawerToggled, setDrawerToggled] = useState(false);
+    const [drawerToggled, setDrawerToggled] = useState(true);
     const [filter, setFilter] = useState("uploaded");
     const [title, setTitle] = useState("My Papers");
     const [papers, setPapers] = useState([]);
     const { user, logout } = useAuth();
+    const site = "Colloquium";
 
-    const handleDrawerToggle = () => {
-        setDrawerToggled(!drawerToggled);
-    };
+    // const handleDrawerToggle = () => {
+    //     setDrawerToggled(true);
+    // };
 
     // get filtered papers on mount and everytime filter state is updated
     useEffect(() => {
@@ -67,7 +68,7 @@ const PapersView = () => {
                         edge="start"
                         color="inherit"
                         aria-label="open drawer"
-                        onClick={handleDrawerToggle}
+                        //onClick={handleDrawerToggle}
                         className={clsx(
                             classes.menuButton,
                             drawerToggled && classes.menuButtonHidden
@@ -113,10 +114,10 @@ const PapersView = () => {
                 }}
                 open={drawerToggled}
             >
-                <div className={classes.toolbarIcon}>
-                    <IconButton onClick={handleDrawerToggle} size="large">
-                        <ChevronLeftIcon />
-                    </IconButton>
+                <div className={classes.colloquium}>
+                    <Link href={"/"} underline="hover">
+                        Colloquium
+                    </Link>
                 </div>
                 <Divider />
                 <List>
@@ -142,14 +143,6 @@ const PapersView = () => {
                         </ListItemIcon>
                         <Link onClick={() => setFilter("uploaded")} underline="hover">
                             My Papers
-                        </Link>
-                    </ListItem>
-                    <ListItem>
-                        <ListItemIcon>
-                            <SearchIcon />
-                        </ListItemIcon>
-                        <Link href={"/search"} underline="hover">
-                            Search
                         </Link>
                     </ListItem>
                 </List>
