@@ -19,7 +19,7 @@ import {
     IconButton,
     Toolbar,
     Typography,
-    Box
+    Box, Snackbar, Alert
 
 } from "@mui/material"
 
@@ -41,15 +41,39 @@ const SharingView = ({match, history}) => {
     const { user } = useAuth();
     const [sharedUserEmail, setSharedUserEmail] = useState("");
     const [creatorAccess, setCreatorAccess] = useState(false);
+    const [sharedPaperState, setSharedPaperState] = useState({
 
+    });
+    const [messageState, setMessageState] = useState({
+        message: '',
+        display: false
+    });
     // Drawer
     const [open, setOpen] = useState(false);
 
     // Who is being shared with
     const [rows, setRows] = useState([]);
+    /*
+* maintaining state for displaying warning or error
+* * */
+
+
     const addSharedUser = () => {
         async function apiCalls() {
-            await paperApi.sharePaper(sharedUserEmail, paperId).then(() => window.location.replace("/" + paperId + "/" + versionId + "/share"));
+            try {
+                await paperApi.sharePaper(sharedUserEmail, paperId).then((data) => {
+                    window.location.replace("/" + paperId + "/" + versionId + "/share")
+                });
+            }
+            catch (err) {
+                const data = ((err || {}).response || {}).data;
+                if(!!data) {
+                    setMessageState((prevState) => {
+                        return {...prevState, message: data.message, display: true};
+                    });
+                }
+            }
+
         }
         apiCalls();
     };
@@ -60,6 +84,12 @@ const SharingView = ({match, history}) => {
         }
         apiCalls();
     };
+
+    const messageCloseHandle =() => {
+        setMessageState((prevState) => {
+            return {...prevState, message: '', display: false};
+        });
+    }
 
     // Document Info
     const [documentTitle, setDocumentTitle] = useState("");
@@ -110,6 +140,16 @@ const SharingView = ({match, history}) => {
 
     return (
         <div className={classes.root}>
+        <Snackbar
+            anchorOrigin={{vertical: 'top', horizontal: 'right'}}
+            open={messageState.display}
+            autoHideDuration={3000}
+            onClose={messageCloseHandle}
+        >
+            <Alert onClose={messageCloseHandle} severity="error" sx={{ width: '100%' }}>
+                {messageState.message}
+            </Alert>
+        </Snackbar>
         <CssBaseline />
         <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
             <Toolbar className={classes.toolbar}>

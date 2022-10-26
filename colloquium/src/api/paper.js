@@ -44,7 +44,8 @@ const paperApi = {
     sharePaper: async (sharedUserEmail, paperId) => {
         return api().post(`${resource}/${paperId}/share`, {
             sharedUserEmail,
-        });
+        })
+        .then((response) => response.data);
     },
     // stop sharing paper (paperId) with user (userId)
     stopSharingPaper: async (sharedUserEmail, paperId) => {
