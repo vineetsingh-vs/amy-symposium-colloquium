@@ -9,6 +9,7 @@ import { User } from "../entities/User";
 import config from "../utils/config";
 import { downloadFile, uploadFile } from "../utils/aws";
 import { emitter } from "../emitter";
+import  MailService from "../services/mail/mailService";
 
 export const getPaperList = async (req: Request, res: Response) => {
     const { filter } = req.query;
@@ -104,7 +105,8 @@ export const getPaperMetaData = async (req: Request, res: Response) => {
 
 export const createPaper = async (req: Request, res: Response) => {
     console.log("[paperController] createPaper");
-
+    console.log("$amy req",req);
+    console.log("$amy res",res);
     let form = new IncomingForm({ uploadDir: config.tmpFolder });
     form.parse(req, async (err, fields: Fields, files: Files) => {
         if (err) {
@@ -394,6 +396,26 @@ export const updatePaperFileVersion = async (req: Request, res: Response) => {
     }
 };
 
+export const emailPaper = async (req: Request, res: Response) => {
+    console.log("[paperController] emailPaper");
+    try {
+        const mailService = MailService.getInstance();
+        await mailService.sendMail(req.headers['X-Request-Id'] || '', {
+            to: req.body['sharedUserEmail'],
+            subject: 'User has requested your review on a paper',
+            text: 'it\'s true!'
+        });
+        res.status(200).json({
+            message: "email sent successfully!"
+        });
+    } catch (err) {
+        console.error("[paperController-emailPaper]", err);
+        res.status(500).json({
+            message: "Failed to email Paper - SMTP Error"
+        });
+    }
+};
+
 export const sharePaper = async (req: Request, res: Response) => {
     const { sharedUserEmail } = req.body;
     const { paperId } = req.params;
@@ -410,14 +432,16 @@ export const sharePaper = async (req: Request, res: Response) => {
                     const updatedPaper = await paper.save();
                     res.status(200).json(updatedPaper);
                 } else {
-                    res.status(200).json({ message: "you own paper" });
+                    res.status(200).json({ message: "That is your own email" });
                 }
             } else {
-                res.status(404).json({ message: "paper not found" });
+                res.status(404).json({ message: "Paper not found" });
             }
         } else {
-            if (!user) res.status(404).json({ message: "user not found" });
-            else if (!shareUser) res.status(404).json({ message: "shared with user not found" });
+            if (!user) res.status(404).json({ message: "Author user not found" });
+            else if (!shareUser) {
+                res.status(404).json({ message: "user not found" });
+            }
         }
     } catch (err) {
         console.error("[paperController-sharePaper] Failed to Share Paper - Database Error", err);

@@ -207,6 +207,7 @@ const DocumentView = () => {
                                         header: {
                                             disableFileName: true,
                                             retainURLParams: false,
+                                            disableHeader: false,
                                         },
                                     }}
                                 />

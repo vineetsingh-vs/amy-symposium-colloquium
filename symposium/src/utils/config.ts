@@ -23,5 +23,10 @@ export default {
     postgresDB: process.env.POSTGRESQL_DB,
     awsAccessKey: process.env.AWS_ACCESS_KEY_ID,
     awsSecret: process.env.AWS_SECRET_ACCESS_KEY,
-    tokenSecret: process.env.TOKEN_SECRET
+    tokenSecret: process.env.TOKEN_SECRET,
+    smtpHost: process.env.SMTP_HOST,
+    smtpPort: process.env.SMTP_PORT,
+    smtpUserName: process.env.SMTP_USERNAME,
+    smtpPassword: process.env.SMTP_PASSWORD,
+    smtpSender: process.env.SMTP_SENDER
 } as const;

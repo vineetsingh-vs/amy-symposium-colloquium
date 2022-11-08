@@ -19,7 +19,14 @@ import {
     IconButton,
     Toolbar,
     Typography,
-    Box, Snackbar, Alert
+    Box, 
+    Snackbar, 
+    Alert,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle
 
 } from "@mui/material"
 
@@ -46,7 +53,9 @@ const SharingView = ({match, history}) => {
     });
     const [messageState, setMessageState] = useState({
         message: '',
-        display: false
+        display: false,
+        confirmation: false,
+        severity: 'error'
     });
     // Drawer
     const [open, setOpen] = useState(false);
@@ -69,7 +78,7 @@ const SharingView = ({match, history}) => {
                 const data = ((err || {}).response || {}).data;
                 if(!!data) {
                     setMessageState((prevState) => {
-                        return {...prevState, message: data.message, display: true};
+                        return {...prevState, message: data.message, confirmation: true};
                     });
                 }
             }
@@ -91,6 +100,12 @@ const SharingView = ({match, history}) => {
         });
     }
 
+    const handleCloseConfirmation = () => {
+        setMessageState((prevState) => ({
+            ...prevState, confirmation: false
+        }));
+    }
+
     // Document Info
     const [documentTitle, setDocumentTitle] = useState("");
 
@@ -101,6 +116,25 @@ const SharingView = ({match, history}) => {
     
     const handleDrawerClose = () => {
         setOpen(false);
+    };
+
+    const sendEmail = () => {
+        async function apiCalls() {
+            try {
+                await paperApi.emailPaper(sharedUserEmail).then(() => {
+                    handleCloseConfirmation();
+                    setMessageState((prevState) => ({
+                        ...prevState, display: true, severity: 'success', message: 'Email sent successfully'
+                    }));
+                });
+            } catch (err) {
+                handleCloseConfirmation();
+                setMessageState((prevState) => ({
+                    ...prevState, display: true, severity: 'error', message: 'Please enter a valid email address'
+                }));
+            }
+        }
+        apiCalls();  
     };
 
     useEffect(() => {
@@ -141,12 +175,12 @@ const SharingView = ({match, history}) => {
     return (
         <div className={classes.root}>
         <Snackbar
-            anchorOrigin={{vertical: 'top', horizontal: 'right'}}
+            anchorOrigin={{vertical: 'top', horizontal: 'center'}}
             open={messageState.display}
             autoHideDuration={3000}
             onClose={messageCloseHandle}
         >
-            <Alert onClose={messageCloseHandle} severity="error" sx={{ width: '100%' }}>
+            <Alert onClose={messageCloseHandle} severity={messageState.severity} sx={{ width: '100%' }}>
                 {messageState.message}
             </Alert>
         </Snackbar>
@@ -230,6 +264,26 @@ const SharingView = ({match, history}) => {
                 </Container>
             </div>   
         </main>
+        <Dialog
+            open={messageState.confirmation}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+        >
+            <DialogTitle id="alert-dialog-title">
+                {"Share document with user"}
+            </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        Send paper to {sharedUserEmail}? 
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseConfirmation} >Cancel</Button>
+                    <Button onClick={sendEmail} autoFocus>
+                        Send
+                    </Button>
+                </DialogActions>
+            </Dialog>
     </div>
        
     );

@@ -53,6 +53,12 @@ const paperApi = {
             sharedUserEmail,
         });
     },
+    // send email to recipient 
+    emailPaper: async (sharedUserEmail) => {
+        return api().post(`${resource}/email`, {
+            sharedUserEmail,
+        });
+    },
     create: async (formData) => {
         return api()
             .post(`${resource}`, formData, {
