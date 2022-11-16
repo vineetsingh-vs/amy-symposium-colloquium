@@ -16,7 +16,6 @@ import SearchCommentView from "./views/SearchCommentView";
 import "./App.css";
 import { ThemeProvider, StyledEngineProvider, createTheme } from "@mui/material/styles";
 import { ProvideAuth } from "./useAuth";
-import ReviewAuth from "./views/ReviewAuth";
 const theme = createTheme();
 
 const App = () => {
@@ -29,7 +28,6 @@ const App = () => {
                             <Switch>
                                 <Route exact path="/" component={LoginView} />
                                 <Route exact path="/signup" component={SignUp} />
-                                <ProtectedRoute exact path="/:token/review-auth" component={ReviewAuth} />
                                 <ProtectedRoute exact path="/admin" component={AdminDashboard} />
                                 <ProtectedRoute exact path="/userprofile" component={ProfileView} />
                                 <ProtectedRoute exact path="/papers" component={PapersView} />
