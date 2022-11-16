@@ -54,8 +54,8 @@ const paperApi = {
         });
     },
     // send email to recipient 
-    emailPaper: async (sharedUserEmail) => {
-        return api().post(`${resource}/email`, {
+    emailPaper: async (sharedUserEmail, paperId) => {
+        return api().post(`${resource}/${paperId}/email`, {
             sharedUserEmail,
         });
     },
@@ -73,6 +73,13 @@ const paperApi = {
             .delete(`${resource}/${paperId}`)
             .then((response) => response.data);
     },
+    validatePaperReview: async (token) => {
+        return await api()
+            .get(`${resource}/${token}/authReview`)
+            .then((response) => response.data);
+
+    }
+
 };
 
 export default paperApi;

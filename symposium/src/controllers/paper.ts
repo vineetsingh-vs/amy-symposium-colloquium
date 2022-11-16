@@ -10,6 +10,7 @@ import config from "../utils/config";
 import { downloadFile, uploadFile } from "../utils/aws";
 import { emitter } from "../emitter";
 import  MailService from "../services/mail/mailService";
+import {PaperReviewAuth} from "../entities/PaperReviewAuth";
 
 export const getPaperList = async (req: Request, res: Response) => {
     const { filter } = req.query;
@@ -398,12 +399,28 @@ export const updatePaperFileVersion = async (req: Request, res: Response) => {
 
 export const emailPaper = async (req: Request, res: Response) => {
     console.log("[paperController] emailPaper");
+    const { paperId } = req.params;
+    const paper = await Paper.findOne({ where: { id: paperId } });
+    const paperAuthMail = PaperReviewAuth.create({
+        redirect_url: `/${paper?.id}/${paper?.versionNumber}`,
+        time_to_live: new Date(),
+        visited: false
+    });
+    await paperAuthMail.save();
+
     try {
+        const link = `http://localhost:3000/${paperAuthMail.id}/review-auth`;
         const mailService = MailService.getInstance();
         await mailService.sendMail(req.headers['X-Request-Id'] || '', {
             to: req.body['sharedUserEmail'],
             subject: 'User has requested your review on a paper',
-            text: 'it\'s true!'
+            text: 'it\'s true!',
+            html: '<p>Hello,</p>'
+                + '<p>You have requested to review the paper '+ paper?.title +' by  ' + paper?.authors+ '.</p>'
+                + '<p>Click the link below to review:</p>'
+                + '<p><a href='+ link +'>'+ paper?.title +'</a></p>'
+                + '<br>'
+                + '<p>Ignore this email if you already reviewed.</p>'
         });
         res.status(200).json({
             message: "email sent successfully!"
@@ -415,6 +432,19 @@ export const emailPaper = async (req: Request, res: Response) => {
         });
     }
 };
+
+export const validateAccess = async (req: Request, res: Response) => {
+    const { token } = req.params;
+    const tokenObject  = await PaperReviewAuth.findOne({ where: { id: token } });
+    const isTokenValid = !!tokenObject && !tokenObject.visited;
+    if(isTokenValid) {
+        tokenObject.visited = !tokenObject.visited;
+        await tokenObject.save();
+        return res.status(200).json({tokenObject});
+    }
+    return res.status(200).json(isTokenValid);
+};
+
 
 export const sharePaper = async (req: Request, res: Response) => {
     const { sharedUserEmail } = req.body;

@@ -71,7 +71,12 @@ const SharingView = ({match, history}) => {
         async function apiCalls() {
             try {
                 await paperApi.sharePaper(sharedUserEmail, paperId).then((data) => {
-                    window.location.replace("/" + paperId + "/" + versionId + "/share")
+                    if(!!data) {
+                        setMessageState((prevState) => {
+                            return {...prevState, message:`Do you wish to send email to ${sharedUserEmail}?`, confirmation: true};
+                        });
+                    }
+
                 });
             }
             catch (err) {
@@ -121,7 +126,7 @@ const SharingView = ({match, history}) => {
     const sendEmail = () => {
         async function apiCalls() {
             try {
-                await paperApi.emailPaper(sharedUserEmail).then(() => {
+                await paperApi.emailPaper(sharedUserEmail, paperId).then(() => {
                     handleCloseConfirmation();
                     setMessageState((prevState) => ({
                         ...prevState, display: true, severity: 'success', message: 'Email sent successfully'
