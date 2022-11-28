@@ -23,6 +23,7 @@ export default function SignUp() {
     const [affiliation, setAffiliation] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [path, setPath] = useState("");
     const auth = useAuth();
     const history = useHistory();
     const { state } = useLocation();
@@ -33,8 +34,10 @@ export default function SignUp() {
     }
 
     useEffect(() => {
+        setPath(path || state?.path || "/papers");
         if (auth.user) 
-            history.push(state?.path || "/papers")
+            history.push(path);
+
     }, [auth.user]);
 
     return (
