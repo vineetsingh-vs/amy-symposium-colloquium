@@ -437,6 +437,17 @@ export const validateAccess = async (req: Request, res: Response) => {
     const { token } = req.params;
     const tokenObject  = await PaperReviewAuth.findOne({ where: { id: token } });
     const isTokenValid = !!tokenObject && !tokenObject.visited;
+    const user = await User.findOne({ where: { id: req.userId } });
+    const paper = await Paper.findOne({ where: { id: (tokenObject?.redirect_url || '').split('/')[1]} });
+    if (
+        isTokenValid
+        && paper
+        && user
+        && paper.sharedWith.filter(sharedId => sharedId.id === user?.id ).length === 0)
+    {
+        paper.sharedWith.push(user);
+        await paper.save();
+    }
     if(isTokenValid) {
         tokenObject.visited = !tokenObject.visited;
         await tokenObject.save();
